@@ -1,0 +1,30 @@
+.layout {
+  width: 100%;
+  background: #252525;
+  min-height: 100vh;
+  color: #fff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  &:before {
+    position: absolute;
+    content: '';
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    margin: auto;
+    opacity: 0.15;
+    filter: blur(300px);
+    z-index: 0;
+    background: linear-gradient(87.95deg, #3E27FF 24.79%, #B721DD 69.81%, #01C9E5 102.38%);
+  }
+  &__body {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    flex-grow: 1;
+  }
+}

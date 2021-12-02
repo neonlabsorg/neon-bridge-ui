@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import { useMemo } from 'react'
+import Layout from './common/Layout'
+import { SplConverter } from './SplConverter';
+import { Web3ReactProvider } from '@web3-react/core'
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { useSolanaWallet } from './SplConverter/hooks/useSolanaWallet'
+import { clusterApiUrl } from '@solana/web3.js';
+import Web3 from 'web3'
+function getLibrary(provider) {
+  return new Web3(provider)
+}
 
 function App() {
+  const {wallets, network} = useSolanaWallet()
+  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Web3ReactProvider getLibrary={getLibrary}>
+      <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={wallets} autoConnect>
+          <Layout className='flex flex-col w-full'>
+            <SplConverter />
+          </Layout>
+        </WalletProvider>
+      </ConnectionProvider>
+    </Web3ReactProvider>
   );
 }
 
-export default App;
+export default App

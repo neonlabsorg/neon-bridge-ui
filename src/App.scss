@@ -1,0 +1,35 @@
+$dark_background: #0E0E0E;
+$pink: #CE3A8B;
+$blue: #4355F9;
+$gray: #C4C4C4;
+$light: #EBEBF1;
+$white: #fff;
+$offset_grid_top: 80px;
+$offset_grid_top_xs: 50px;
+$header_height: 80px;
+$cube_side: 75px;
+$plate_width: 1120px;
+%title {
+  line-height: 1.2;
+  strong {
+      color: $pink;
+      font-weight: inherit;
+  }
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import './common/Button/index.scss';
+@import './common/Button/index.scss';
+@import './common/Input/index.scss';
+@import './common/Layout/index.scss';
+@import './common/Layout/Header/index.scss';
+@import './common/Modal/index.scss';
+
+body {
+  margin: 0;
+  padding: 0;
+}
+*, *:before, *:after {
+  box-sizing: border-box;
+}
