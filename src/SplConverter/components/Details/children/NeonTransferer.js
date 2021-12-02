@@ -1,20 +1,26 @@
-import CurrencySelect from './CurrencySelect'
-import Input from '../../common/Input'
-import Button from '../../common/Button'
+import CurrencySelect from '../../CurrencySelect'
+import Input from '@/common/Input'
+import Button from '@/common/Button'
 import { useEffect, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnection } from '@solana/wallet-adapter-react';
 import { useWeb3React } from '@web3-react/core'
 
-const Details = ({
-  className = ''
-}) => {
+const NeonTransferer = () => {
   const [targetToken, setTargetToken] = useState(null)
   const [solanaBalance, setSolanaBalance] = useState(0)
   const [amount, setAmount] = useState(0)
   const { publicKey } = useWallet()
   const { account } = useWeb3React()
   const { connection } = useConnection()
+  const [transferError, setTransferError] = useState('')
+
+  const handleTransferError = (msg = '') => {
+    setTransferError(msg)
+    setTimeout(() => {
+      setTransferError('')
+    }, 5000)
+  }
 
   useEffect(() => {
       if (!connection || !publicKey) return;
@@ -39,10 +45,10 @@ const Details = ({
     }).then(txHash => {
       console.log(txHash)
     }).catch(err => {
-      console.warn(err)
+      handleTransferError(err.message)
     })
   }
-  return <div className={`w-full p-3 ${className}`}>
+  return <>
     <div className='flex mb-4'>
       <div className='w-1/2 flex flex-col'>
         <span className='text-lg mb-4'>Source</span>
@@ -66,8 +72,10 @@ const Details = ({
         <CurrencySelect className='self-start' currency={targetToken} onChangeCurrency={(token) => setTargetToken(token)}/>
       </div>
     </div>
-    <Button disabled={amount <= 0 || amount > solanaBalance || !targetToken}
+    <Button disabled={amount <= 0 || amount > solanaBalance || !targetToken || transferError}
       onClick={createTransfer}>Transfer</Button>
-  </div>
+    <div v-if={transferError} className='text-red-400 mt-4'>{transferError}</div>
+  </>
 }
-export default Details
+
+export default NeonTransferer

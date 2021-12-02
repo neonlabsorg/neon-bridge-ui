@@ -6,6 +6,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { SourceCard } from './SourceCard'
 import { useWeb3React } from '@web3-react/core';
 import Button from '../../common/Button'
+import Switcher from '../../common/Switcher';
 
 
 
@@ -14,6 +15,7 @@ import Button from '../../common/Button'
 const Connection = ({
   direction = 'neon',
   className = '',
+  onToggleDirection = () => {},
   onNextStep = () => {}
 }) => {
   const { active } = useWeb3React()
@@ -26,13 +28,19 @@ const Connection = ({
     <div className='flex'>
       <div className='w-1/2 flex flex-col pr-4'>
         <div className='text-lg mb-6'>Source</div>
-        <SourceCard sourceName={direction === 'neon' ? 'solana' : direction} />
+        <SourceCard sourceName={direction === 'neon' ? 'solana' : direction === 'solana' ? 'neon' : 'solana'} />
       </div>
       <div className='w-1/2 flex flex-col items-start pl-4'>
         <div className='text-lg mb-6'>Target</div>
         <SourceCard sourceName={direction} />
       </div>
     </div>
+    <div className='flex items-center mb-4'>
+      <span className='mr-4'>{'Reverse convertation'}</span>
+      <Switcher active={direction === 'solana'}
+        onClick={onToggleDirection}/>
+    </div>
+    
     <Button className='self-start' onClick={onNextStep}
       disabled={!publicKey || !active}>Next</Button>
 

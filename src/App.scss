@@ -20,11 +20,13 @@ $plate_width: 1120px;
 @tailwind components;
 @tailwind utilities;
 @import './common/Button/index.scss';
+@import './common/Switcher/index.scss';
 @import './common/Button/index.scss';
 @import './common/Input/index.scss';
 @import './common/Layout/index.scss';
 @import './common/Layout/Header/index.scss';
 @import './common/Modal/index.scss';
+@import './styles/vendor/solana-wallet-adapter.scss';
 
 body {
   margin: 0;

@@ -7,16 +7,16 @@ import { Accordion } from './components/Accordion'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useWeb3React } from '@web3-react/core';
 
-
-// Default styles that can be overridden by your app
-require('@solana/wallet-adapter-react-ui/styles.css');
-
 export const SplConverter = () => {
     
-    const [direction] = useState('neon')
+    const [direction, setDirection] = useState('neon')
     const [activeStep, setActiveStep] = useState('connection')
     const { connected } = useWallet()
     const { active } = useWeb3React()
+    const toggleDirection = () => {
+        if (direction === 'neon') setDirection('solana')
+        else setDirection('neon')
+    }
     return (
         <div className='w-full'>
             <Accordion title={'Connection'}
@@ -25,6 +25,7 @@ export const SplConverter = () => {
                 onOpenContent={() => setActiveStep('connection')}>
                 <Connection direction={direction}
                     className='mb-6'
+                    onToggleDirection={toggleDirection}
                     onNextStep={() => setActiveStep('details')}/>
             </Accordion>
             <Accordion title={'Details'}
@@ -34,8 +35,7 @@ export const SplConverter = () => {
                     if (!connected || !active) return
                     setActiveStep('details')
                 }}>
-                <Details
-                    className='mb-6'/>
+                <Details direction={direction}/>
             </Accordion>
         </div>
 
