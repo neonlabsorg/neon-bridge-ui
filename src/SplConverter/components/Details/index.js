@@ -21,11 +21,11 @@ const Details = ({
       </div>
       <div className='flex'>
         <div className='w-1/4 p-3'>Address from</div>
-        <div className='w-3/4 p-3'>{signedTransfer.fromPublicKey.toBase58()}</div>
+        <div className='w-3/4 p-3'>{signedTransfer.fromPublicKey ? signedTransfer.fromPublicKey.toBase58() : ''}</div>
       </div>
       <div className='flex'>
         <div className='w-1/4 p-3'>Address to</div>
-        <div className='w-3/4 p-3'>{signedTransfer.toPublicKey.toBase58()}</div>
+        <div className='w-3/4 p-3'>{signedTransfer.toPublicKey ? signedTransfer.toPublicKey.toBase58() : ''}</div>
       </div>
       <div className='flex'>
         <div className='w-1/4 p-3'>Transfer token</div>
