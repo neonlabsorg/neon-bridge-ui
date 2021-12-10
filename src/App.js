@@ -18,7 +18,7 @@ function App() {
     <Web3ReactProvider getLibrary={getLibrary}>
       <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
-          <Layout className='flex flex-col w-full'
+          <Layout className='flex flex-col w-full px-4'
             bodyClassName='flex flex-col justify-center'>
             <SplConverter />
           </Layout>

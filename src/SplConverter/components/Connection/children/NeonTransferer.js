@@ -5,9 +5,8 @@ import { useEffect, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useConnection } from '@solana/wallet-adapter-react';
 import { useWeb3React } from '@web3-react/core'
-import {PublicKey, Transaction, Keypair, TransactionInstruction, SystemProgram, SYSVAR_RENT_PUBKEY} from '@solana/web3.js'
+import {PublicKey, Transaction, TransactionInstruction, SystemProgram, SYSVAR_RENT_PUBKEY} from '@solana/web3.js'
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import * as BufferLayout from 'buffer-layout'
 const web3 = require('web3')
 
 const NEON_EVM_LOADER_ID = 'eeLSJgWzzxrqKv1UxtRVVH8FX3qCQWUs9QuAjJpETGU'
@@ -34,7 +33,6 @@ const NeonTransferer = ({onSignTransfer = () => {}}) => {
         }).catch(err => {
           console.warn(err)
         })
-        console.dir(BufferLayout)
     }, [connection, publicKey])
 
     const mergeTypedArraysUnsafe = (a, b) => {
@@ -45,22 +43,62 @@ const NeonTransferer = ({onSignTransfer = () => {}}) => {
       return c;
     }
 
+    const createTransferInstruction = async () => {
+      const enc = new TextEncoder()
+      const mintPublicKey = new PublicKey(targetToken.address_spl)
+      const accountSeed = web3.utils.hexToBytes(account)
+      const targetERC20Seed = web3.utils.hexToBytes(targetToken.address)
+  
+      const solanaPubkey = new PublicKey(publicKey)
+      
+      const toERC20TokenWallet = await PublicKey.findProgramAddress([
+        new Uint8Array([1]),
+        enc.encode('ERC20Balance'),
+        mintPublicKey.toBytes(),
+        targetERC20Seed,
+        accountSeed
+      ], new PublicKey(NEON_EVM_LOADER_ID))
+
+      const fromTokenAccount = await Token.getAssociatedTokenAddress(
+        ASSOCIATED_TOKEN_PROGRAM_ID,
+        TOKEN_PROGRAM_ID,
+        mintPublicKey,
+        solanaPubkey
+      );
+      return Token.createTransferInstruction(
+        TOKEN_PROGRAM_ID,
+        fromTokenAccount,
+        toERC20TokenWallet[0],
+        solanaPubkey,
+        [],
+        Number(amount)
+      )
+
+    }
+
 
     const createERC20AccountInstruction = async () => {
       const data = new Uint8Array([0x0f])
       const ownerPublicKey = new PublicKey(publicKey)
       const targetTokenPublicKey = new PublicKey(targetToken.address_spl)
       const accountSeed = web3.utils.hexToBytes(account)
+      const targetERC20Seed = web3.utils.hexToBytes(targetToken.address)
       const enc = new TextEncoder()
-      const toERC20TokenWallet = await PublicKey.findProgramAddress([new Uint8Array([1]), enc.encode('ERC20Balance'), targetTokenPublicKey.toBytes(), accountSeed], new PublicKey(NEON_EVM_LOADER_ID))
-      const toNeonWallet = await PublicKey.findProgramAddress([new Uint8Array([1]), accountSeed], new PublicKey(NEON_EVM_LOADER_ID))
+      const toERC20TokenWallet = await PublicKey.findProgramAddress([
+        new Uint8Array([1]),
+        enc.encode('ERC20Balance'),
+        targetTokenPublicKey.toBytes(),
+        targetERC20Seed,
+        accountSeed
+      ], new PublicKey(NEON_EVM_LOADER_ID))
+      const toNeonWallet = await PublicKey.findProgramAddress([
+        new Uint8Array([1]),
+        accountSeed
+      ], new PublicKey(NEON_EVM_LOADER_ID))
       const contractAddress = await PublicKey.findProgramAddress([new Uint8Array([1]), web3.utils.hexToBytes(targetToken.address)], new PublicKey(NEON_EVM_LOADER_ID))
       const keys = [
+        { isSigner: true, isWritable: true, pubkey: ownerPublicKey },
         {
-          pubkey: ownerPublicKey,
-          isSigner: true,
-          isWritable: true
-        }, {
           pubkey: toERC20TokenWallet[0],
           isSigner: false,
           isWritable: true
@@ -164,10 +202,6 @@ const NeonTransferer = ({onSignTransfer = () => {}}) => {
         data: eth3data,
         keys
       })
-      keys.forEach(key => {
-        console.log(key.pubkey.toString())
-      })
-      // console.dir(keys)
       return instruction
     }
 
@@ -183,83 +217,35 @@ const NeonTransferer = ({onSignTransfer = () => {}}) => {
     const neonAccount = await connection.getAccountInfo(neonAccountWithNonce[0])
     if (!neonAccount) {
       const neonAccountInstruction = await createNeonAccountInstruction()
-      console.log('add new neon addr ', neonAccountInstruction)
+      // console.log('add new neon addr ', neonAccountInstruction)
       transaction.add(neonAccountInstruction)
     }
     const targetTokenPublicKey = new PublicKey(targetToken.address_spl)
+    const targetERC20Seed = web3.utils.hexToBytes(targetToken.address)
     const accountSeed = web3.utils.hexToBytes(account)
     const enc = new TextEncoder()
-    const erc20addrWithNonce = await PublicKey.findProgramAddress([new Uint8Array([1]), enc.encode('ERC20Balance'), targetTokenPublicKey.toBytes(), accountSeed], new PublicKey(NEON_EVM_LOADER_ID))
+    const erc20addrWithNonce = await PublicKey.findProgramAddress([
+      new Uint8Array([1]),
+      enc.encode('ERC20Balance'),
+      targetTokenPublicKey.toBytes(),
+      targetERC20Seed,
+      accountSeed
+    ],new PublicKey(NEON_EVM_LOADER_ID))
     const erc20addr = await connection.getAccountInfo(erc20addrWithNonce[0])
     if (!erc20addr) {
       
       const erc20AccountInstruction = await createERC20AccountInstruction()
-      console.log('add new erc20 addr ', erc20AccountInstruction)
+      // console.log('add new erc20 addr ', erc20AccountInstruction)
       transaction.add(erc20AccountInstruction)
     }
-    console.log('before sign ', transaction)
+    const transferInstruction = await createTransferInstruction()
+    transaction.add(transferInstruction)
+    // console.log('before sign ', transaction)
+    console.log('before')
     const signedTransaction = await window.solana.signTransaction(transaction)
+    console.log('after')
     const sig = await connection.sendRawTransaction(signedTransaction.serialize())
-    onSignTransfer(sig, '', '', '', '')
-  }
-
-  const createTransfer = async () => {
-    if (error) setError('')
-    // const accountSeed = web3.utils.hexToBytes(account)
-    // const solFromWallet = await PublicKey.findProgramAddress([new Uint8Array([1]), accountSeed], new PublicKey(NEON_EVM_LOADER_ID))
-    const fromWallet = new PublicKey(publicKey)
-    const toWallet = Keypair.generate()
-    const mintPublicKey = new PublicKey(targetToken.address_spl)
-    const mintToken = new Token(
-      connection,
-      mintPublicKey,
-      TOKEN_PROGRAM_ID,
-      fromWallet
-    );
-    const recentBlockhash = await connection.getRecentBlockhash()
-    console.log(toWallet, recentBlockhash)
-    // const r = await mintToken.createAssociatedTokenAccount(toWallet.publicKey)
-    // console.dir(r)
-    const fromTokenAccount = await mintToken.getOrCreateAssociatedAccountInfo(
-      new PublicKey(publicKey)
-    );
-    // const toTokenAccount = await mintToken.getOrCreateAssociatedAccountInfo(
-    //   toWallet.publicKey
-    // );
-    const associatedAccount = await Token.getAssociatedTokenAddress(
-      ASSOCIATED_TOKEN_PROGRAM_ID,
-      TOKEN_PROGRAM_ID,
-      mintPublicKey,
-      toWallet.publicKey
-    );
-    const transaction = new Transaction({
-      recentBlockhash: recentBlockhash.blockhash,
-      feePayer: fromWallet
-    })
-    .add(
-      Token.createAssociatedTokenAccountInstruction(
-        ASSOCIATED_TOKEN_PROGRAM_ID,
-        TOKEN_PROGRAM_ID,
-        mintPublicKey,
-        associatedAccount,
-        toWallet.publicKey,
-        fromWallet,
-      )
-    )
-    .add(
-      Token.createTransferInstruction(
-        TOKEN_PROGRAM_ID,
-        fromTokenAccount.address,
-        associatedAccount,
-        fromWallet,
-        [],
-        Number(amount)
-      )
-    );
-    const signedTransaction = await window.solana.signTransaction(transaction)
-    // console.log(signedTransaction)
-    const sig = await connection.sendRawTransaction(signedTransaction.serialize())
-    onSignTransfer(sig, fromWallet, toWallet.publicKey, targetToken, amount)
+    onSignTransfer(sig, fromWallet.toBase58(), account, targetToken, amount)
   }
 
   const handleCreateTransfer = async () => {
@@ -284,18 +270,16 @@ const NeonTransferer = ({onSignTransfer = () => {}}) => {
             <Input value={amount}
               type='number'
               className='mb-4'
-              error={amount > solanaBalance}
               onChange={(value) => {
                 setAmount(Number(value))
               }}/>
-              {amount > solanaBalance ? <span className='text-red-400'>{`Max balance: ${solanaBalance} SOL`}</span> : null }
           </div>
         </div>
       </div>
     </div>
-    <Button disabled={amount <= 0 || amount > solanaBalance || !targetToken}
+    <Button disabled={amount <= 0 || !targetToken}
       onClick={handleCreateTransfer}>Transfer</Button>
-    <Button className='ml-2' onClick={createERC20AccountInstruction}>Create neon account instruction</Button>
+    {/* <Button className='ml-2' onClick={createERC20AccountInstruction}>Create neon account instruction</Button> */}
     {error ? <div className='flex p-3 my-3 bg-red-500 rounded-lg'>
       {error}
     </div> : null}

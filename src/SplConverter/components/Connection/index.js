@@ -17,9 +17,8 @@ import NeonTransferer from './children/NeonTransferer';
 const Connection = ({
   direction = 'neon',
   className = '',
-  onToggleDirection = () => {},
-  onSignTransfer = () => {},
-  onNextStep = () => {}
+  // onToggleDirection = () => {},
+  onSignTransfer = () => {}
 }) => {
 
   return <div className={`w-full py-3 ${className}`}>
