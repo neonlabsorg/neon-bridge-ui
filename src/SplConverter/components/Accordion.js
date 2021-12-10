@@ -7,7 +7,7 @@ const Accordion = ({
   active = false,
   children = <></>
 }) => {
-  return <div className={`w-full border border-blue rounded-xl p-4 ${className}`}>
+  return <div className={`w-full rounded-xl bg-ocean-blue p-4 ${className}`}>
     <div className='flex w-full'>
       <div className='rounded-full bg-blue-700 text-white flex items-center justify-center mt-4 mr-4' style={{
         width: '24px',
