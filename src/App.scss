@@ -35,3 +35,7 @@ body {
 *, *:before, *:after {
   box-sizing: border-box;
 }
+.react-notie {
+  position: relative;
+  z-index: 100;
+}
