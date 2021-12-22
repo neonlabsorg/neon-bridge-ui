@@ -10,6 +10,7 @@ const NeonTransferer = ({onSignTransfer = () => {}, ...props}) => {
   const [amount, setAmount] = useState('')
   const [error, setError] = useState('')
 
+
   const createNeonTransfer = useTransfering()
   const {alert} = props.notie
   const handleCreateTransfer = async () => {
@@ -35,10 +36,13 @@ const NeonTransferer = ({onSignTransfer = () => {}, ...props}) => {
     }
   }
   return <>
-    <div className='flex xs:flex-col mb-4'>
-      <div className='sm:w-1/2 xs:w-full flex flex-col'>
+    <div className='flex xs:flex-col sm:mb-8'>
+      <div className='sm:w-1/2 xs:w-full flex flex-col xs:mb-8 sm:pr-8'>
         <span className='mb-2'>Select a token</span>
-        <CurrencySelect className='self-start' currency={targetToken} onChangeCurrency={(token) => setTargetToken(token)}/>
+        <CurrencySelect
+          className='self-start'
+          currency={targetToken}
+          onChangeCurrency={(token) => setTargetToken(token)}/>
       </div>
       <div className='sm:w-1/2 xs:w-full flex flex-col'>
         <span className='mb-2'>Enter token amount</span>
@@ -54,10 +58,14 @@ const NeonTransferer = ({onSignTransfer = () => {}, ...props}) => {
         </div>
       </div>
     </div>
-    <Button disabled={amount <= 0 || !targetToken}
-      onClick={handleCreateTransfer}>Transfer</Button>
+    <Button
+      disabled={amount <= 0 || !targetToken}
+      onClick={handleCreateTransfer}>Apply transfer</Button>
     {/* <Button className='ml-2' onClick={createERC20AccountInstruction}>Create neon account instruction</Button> */}
-    {error ? <div className='flex p-3 my-3 bg-red-500 rounded-lg'>
+    {error ? <div className='flex mt-8 p-3 text-red-400 rounded-lg'
+      style={{
+        maxWidth: '600px'
+      }}>
       {error}
     </div> : null}
   </>

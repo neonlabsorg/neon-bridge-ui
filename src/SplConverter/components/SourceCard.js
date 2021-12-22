@@ -1,6 +1,8 @@
 import React from 'react'
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWeb3React } from '@web3-react/core';
+import {ReactComponent as NeonIcon} from '@/assets/neon.svg'
+import {ReactComponent as SolanaIcon} from '@/assets/solana.svg'
 import Web3Status from '../../common/Web3Status'
 import {
   WalletModalProvider,
@@ -11,13 +13,21 @@ const SourceCard = ({sourceName = 'solana'}) => {
   const { active } = useWeb3React()
   const { publicKey } = useWallet()
   return <>
-    <div className='flex mb-4'>
+    <div className='flex items-center mb-6'>
       {sourceName === 'solana' ? 
         <>
+          <SolanaIcon style={{
+            maxWidth: '80px',
+            maxHeight: '50px'
+          }} />
           <span className='ml-4 text-3xl'>Solana</span>
         </>
       :
         <>
+          <NeonIcon style={{
+            maxWidth: '50px',
+            maxHeight: '50px'
+          }} />
           <span className='ml-4 text-3xl'>Neon</span>
         </>}
     </div>
