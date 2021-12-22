@@ -16,7 +16,11 @@ const CurrencySelect = ({className = '', currency = undefined, onChangeCurrency 
     })
   }
   return <>
-    <div className={`inline-flex cursor-pointer items-center justify-between py-3 px-4 rounded-md bg-gray-700 transition-all hover:bg-gray-600 ${className}`} onClick={() => openManageTokenModal()}>
+    <div className={`inline-flex cursor-pointer items-center justify-between py-3 px-4 rounded-md bg-gray-700 transition-all hover:bg-gray-600 ${className}`}
+      style={{
+        minWidth: '280px'
+      }}
+      onClick={() => openManageTokenModal()}>
       {currency && currency.name ? <>
           {currency.name}
         </>
