@@ -36,8 +36,8 @@ const NeonTransferer = ({onSignTransfer = () => {}, ...props}) => {
     }
   }
   return <>
-    <div className='flex xs:flex-col mb-4'>
-      <div className='sm:w-1/2 xs:w-full flex flex-col xs:mb-8'>
+    <div className='flex xs:flex-col sm:mb-8'>
+      <div className='sm:w-1/2 xs:w-full flex flex-col xs:mb-8 sm:pr-8'>
         <span className='mb-2'>Select a token</span>
         <CurrencySelect
           className='self-start'

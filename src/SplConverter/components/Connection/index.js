@@ -26,11 +26,11 @@ const Connection = ({
   const { account, error } = useWeb3React()
   return <div className={`w-full py-3 ${className}`}>
     <div className='flex xs:flex-col sm:flex-row'>
-      <div className='sm:w-1/2 xs:w-full flex flex-col sm:pr-4 xs:mb-4'>
+      <div className='sm:w-1/2 xs:w-full flex flex-col sm:pr-8 xs:mb-4'>
         <div className='text-2xl mb-6'>Source</div>
         <SourceCard sourceName={direction === 'neon' ? 'solana' : direction === 'solana' ? 'neon' : 'solana'} />
       </div>
-      <div className='sm:w-1/2  xs:w-full flex flex-col items-start sm:pl-4 xs:mb-4'>
+      <div className='sm:w-1/2  xs:w-full flex flex-col items-start xs:mb-4'>
         <div className='text-2xl mb-6'>Target</div>
         <SourceCard sourceName={direction} />
       </div>

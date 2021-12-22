@@ -15,7 +15,7 @@ const Accordion = ({
         height: '27px'
       }}>{stepNumber}</div>
       <div className='flex flex-col flex-grow'>
-        <h3 className='text-2xl pb-3 pt-4'
+        <h3 className={`text-2xl pb-3 pt-4 ${!active ? 'cursor-pointer' : ''}`}
           onClick={onOpenContent}>{title}</h3>
         {active ? children : null}
       </div>
