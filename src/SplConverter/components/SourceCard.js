@@ -8,9 +8,12 @@ import {
   WalletModalProvider,
   WalletMultiButton
 } from '@solana/wallet-adapter-react-ui';
+import { NetworkSelect } from './NetworkSelect';
+import { useNetworkType } from '../hooks';
 
 const SourceCard = ({sourceName = 'solana'}) => {
   const { active } = useWeb3React()
+  const network = useNetworkType()
   const { publicKey } = useWallet()
   return <>
     <div className='flex items-center mb-6'>
@@ -36,13 +39,17 @@ const SourceCard = ({sourceName = 'solana'}) => {
     <div className='flex py-4 mb-4'>
       {sourceName === 'solana' ?
         <WalletModalProvider>
-        <WalletMultiButton />
-      </WalletModalProvider>
+          <WalletMultiButton />
+        </WalletModalProvider>
       :
         sourceName === 'neon' ? <>
           <Web3Status />
         </> : null
       }
+    </div>
+    <div className='py-4 mb-4 flex flex-col items-start'>
+      <span className='mb-4'>Network</span>
+      {sourceName === 'solana' ? <NetworkSelect/> : <span className='uppercase'>{network}</span> }
     </div>
   </>
 }

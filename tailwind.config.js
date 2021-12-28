@@ -23,6 +23,9 @@ module.exports = {
       maxHeight: {
         '3/4': '75%'
       },
+      height: {
+        '48px': '48px'
+      },
       colors: {
         'ocean-blue': 'rgba(94,118,153, 0.15)'
       }

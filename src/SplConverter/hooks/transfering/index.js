@@ -1,6 +1,6 @@
 import { useWeb3React } from '@web3-react/core'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useConnection } from '@solana/wallet-adapter-react';
+import { useConnectionConfig } from '../../../contexts/connection';
 import {PublicKey, Transaction, TransactionInstruction, SystemProgram, SYSVAR_RENT_PUBKEY} from '@solana/web3.js'
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
@@ -12,7 +12,8 @@ const web3 = require('web3')
 export const useTransfering = () => {
   const { publicKey } = useWallet()
   const { account } = useWeb3React()
-  const { connection } = useConnection()
+  const { connection } = useConnectionConfig()
+  console.log(connection)
   const mergeTypedArraysUnsafe = (a, b) => {
     const c = new a.constructor(a.length + b.length)
     c.set(a)
@@ -155,11 +156,18 @@ export const useTransfering = () => {
   const createTransferInstruction = async (token = {
     name: '',
     address: '',
-    address_spl: ''
-  }, amount = 0.0001) => {
+    address_spl: '',
+    decimals: 6
+  }, amount = 0.0001, toSolana = false) => {
     const mintPubkey = getSolanaPubkey(token.address_spl)
     const solanaPubkey = getSolanaWalletPubkey()
     const {erc20Address} = await getERC20WrapperAddress(token)
+    const associatedAccount = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID,
+      new PublicKey(token.address_spl),
+      solanaPubkey
+    )
     const fromTokenAccount = await Token.getAssociatedTokenAddress(
       ASSOCIATED_TOKEN_PROGRAM_ID,
       TOKEN_PROGRAM_ID,
@@ -169,17 +177,19 @@ export const useTransfering = () => {
     return Token.createTransferInstruction(
       TOKEN_PROGRAM_ID,
       fromTokenAccount,
-      erc20Address,
+      toSolana ? associatedAccount : erc20Address,
       solanaPubkey,
       [],
-      Number(amount)
+      Number(amount) * Math.pow(10, token.decimals)
     )
   }
+
   
   const createNeonTransfer = async (token = {
     name: '',
     address: '',
-    address_spl: ''
+    address_spl: '',
+    decimals: 6
   },
   amount = 0.0001,
   onSign = () => {},
@@ -207,5 +217,39 @@ export const useTransfering = () => {
     const sig = await connection.sendRawTransaction(signedTransaction.serialize())
     onSign(sig)
   }
-  return createNeonTransfer
+
+  const createSolanaTransfer = async (token = {
+    name: '',
+    address: '',
+    address_spl: '',
+    decimals: 6
+  }, amount = 0.0001, onSign = () => {}) => {
+    const solanaPubkey = getSolanaPubkey()
+    const recentBlockhash = await connection.getRecentBlockhash()
+    const transactionParameters = {
+      // gasPrice: '0x09184e72a000', // customizable by user during MetaMask confirmation.
+      // gas: '0x2710', // customizable by user during MetaMask confirmation.
+      to: token.address, // Required except during contract publications.
+      from: account,// must match user's active address.
+      value: '0x00', // Only required to send ether to the recipient from the initiating external account.
+      data: '0x7f7465737432000000000000000000000000000000000000000000000000000000600057' // Optional, but used for defining smart contract creation and interaction.
+    };
+    // txHash is a hex string
+    // As with any RPC call, it may throw an error
+    const txHash = await window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [transactionParameters],
+    });
+    const liquidityInstruction = await createTransferInstruction(token, amount, true)
+    const transaction = new Transaction({
+      recentBlockhash: recentBlockhash.blockhash,
+      feePayer: solanaPubkey
+    })
+    transaction.add(liquidityInstruction)
+    const signedTransaction = await window.solana.signTransaction(transaction)
+    const sig = await connection.sendRawTransaction(signedTransaction.serialize())
+    onSign(sig, txHash)
+  }
+  
+  return {createSolanaTransfer, createNeonTransfer}
 }

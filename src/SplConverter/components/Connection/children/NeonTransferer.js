@@ -5,17 +5,18 @@ import { useState } from 'react'
 import { withNotie } from 'react-notie';
 import { useTransfering } from '../../../hooks/transfering'
 
-const NeonTransferer = ({onSignTransfer = () => {}, ...props}) => {
+const NeonTransferer = ({onSignTransfer = () => {}, direction = 'neon', ...props}) => {
   const [targetToken, setTargetToken] = useState(null)
   const [amount, setAmount] = useState('')
   const [error, setError] = useState('')
 
 
-  const createNeonTransfer = useTransfering()
+  const {createNeonTransfer, createSolanaTransfer} = useTransfering()
   const {alert} = props.notie
   const handleCreateTransfer = async () => {
+    const func = direction === 'neon' ? createNeonTransfer : createSolanaTransfer
     try {
-      await createNeonTransfer(
+      await func(
         targetToken,
         Number(amount),
         (sig) => {

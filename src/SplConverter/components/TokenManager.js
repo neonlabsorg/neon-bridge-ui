@@ -2,13 +2,13 @@ import React from 'react'
 import { useTokenList } from '../hooks/useTokenList'
 import { shortenAddress } from '../../utils'
 const TokenManager = ({onClose = () => {}, onChooseToken = () => {}}) => {
-  const {list, error} = useTokenList()
+  const {list, error, loading} = useTokenList()
   return <div className='flex flex-col overflow-y-auto flex-grow' style={{
     maxHeight: '70vh'
   }}>
-    {list && !error && list.length ?
+    {list && !error && list.length && !loading ?
       list.map(token => {
-        return <div key={token.symbol} className='flex w-full p-4 cursor-pointer hover:bg-purple-900 rounded-lg'
+        return <div key={token.address_spl} className='flex w-full p-4 cursor-pointer hover:bg-purple-900 rounded-lg'
           onClick={() => {
             onChooseToken(token)
             onClose()
@@ -22,10 +22,10 @@ const TokenManager = ({onClose = () => {}, onChooseToken = () => {}}) => {
           </div>
         </div>
       })
-    : 'No tokens have been provided'}
-    {
-      error ? <>Error getting token list</> : null
-    }
+    : loading ?
+      <div>Loading list...</div>
+      : error ? <>Error getting token list</>
+      : list.length ? <>No tokens has been provided</> : null }
   </div>
 }
 export default TokenManager
