@@ -227,8 +227,6 @@ export const useTransfering = () => {
     const solanaPubkey = getSolanaPubkey()
     const recentBlockhash = await connection.getRecentBlockhash()
     const transactionParameters = {
-      // gasPrice: '0x09184e72a000', // customizable by user during MetaMask confirmation.
-      // gas: '0x2710', // customizable by user during MetaMask confirmation.
       to: token.address, // Required except during contract publications.
       from: account,// must match user's active address.
       value: '0x00', // Only required to send ether to the recipient from the initiating external account.
