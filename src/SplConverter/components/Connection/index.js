@@ -1,6 +1,5 @@
 import React from 'react'
 // import { useWallet } from '@solana/wallet-adapter-react';
-// import { useActiveWeb3React } from '../hooks'
 // import { useCurrencyBalance } from 'state/wallet/hooks'
 // import { useWalletAdapters } from '../hooks/useSourceWallet'
 import { SourceCard } from '../SourceCard'

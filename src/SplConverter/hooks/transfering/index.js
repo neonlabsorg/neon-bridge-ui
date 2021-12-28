@@ -13,7 +13,6 @@ export const useTransfering = () => {
   const { publicKey } = useWallet()
   const { account } = useWeb3React()
   const { connection } = useConnectionConfig()
-  console.log(connection)
   const mergeTypedArraysUnsafe = (a, b) => {
     const c = new a.constructor(a.length + b.length)
     c.set(a)

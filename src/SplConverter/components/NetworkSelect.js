@@ -32,7 +32,6 @@ export const NetworkSelect = ({className = ''}) => {
         ${!openDD ? 'opacity-0 pointer-events-none' : ''}
       `}
       onChoose={(network) => {
-        console.log(network)
         setOpenDD(false)
         setEndpoint(network.endpoint)
       }}/>

@@ -13,7 +13,7 @@ import { useNetworkType } from '../hooks';
 
 const SourceCard = ({sourceName = 'solana'}) => {
   const { active } = useWeb3React()
-  const network = useNetworkType()
+  const { network } = useNetworkType()
   const { publicKey } = useWallet()
   return <>
     <div className='flex items-center mb-6'>

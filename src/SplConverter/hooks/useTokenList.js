@@ -1,6 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import { useNetworkType } from '.'
 export function useTokenList () {
-  const [list, setList] = useState([])
+  const { chainId } = useNetworkType()
+  const [sourceList, setSourceList] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   useEffect(() => {
@@ -9,7 +11,7 @@ export function useTokenList () {
     .then((resp) => {
       if (resp.ok) {
         resp.json().then(data => {
-          setList(data.tokens)
+          setSourceList(data.tokens)
         })
           .catch((err) => setError(err.message))
       }
@@ -17,6 +19,13 @@ export function useTokenList () {
     .catch(err => {
       setError(`Failed to fetch neon transfer token list: ${err.message}`)
     }).finally(() => setLoading(false))
-  }, [])
+  }, [chainId])
+  const list = useMemo(() => {
+    const filtered = sourceList.filter(token => {
+      return token.chainId === chainId
+    })
+    return filtered
+  }, [chainId, sourceList])
+
   return { list, error, loading }
 }

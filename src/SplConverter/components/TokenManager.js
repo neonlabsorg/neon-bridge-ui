@@ -1,11 +1,11 @@
 import React from 'react'
-import { useTokenList } from '../hooks/useTokenList'
+
 import { shortenAddress } from '../../utils'
-const TokenManager = ({onClose = () => {}, onChooseToken = () => {}}) => {
-  const {list, error, loading} = useTokenList()
+const TokenManager = ({list = [], loading = false, error = undefined, onClose = () => {}, onChooseToken = () => {}}) => {
   return <div className='flex flex-col overflow-y-auto flex-grow' style={{
     maxHeight: '70vh'
   }}>
+    
     {list && !error && list.length && !loading ?
       list.map(token => {
         return <div key={token.address_spl} className='flex w-full p-4 cursor-pointer hover:bg-purple-900 rounded-lg'
