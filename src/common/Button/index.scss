@@ -3,11 +3,11 @@
   align-items: center;
   justify-content: center;
   padding: 12px 32px;
+  height: 64px;
   font-size: 18px;
   outline: none;
   text-decoration: none;
   $parent: &;
-  border-radius: 99px;
   cursor: pointer;
   font-weight: 700;
   transition: all 0.15s ease-in-out;
@@ -18,8 +18,8 @@
           color: $white;
       }
       &#{$parent}--light {
-          border: 1px solid $dark_background;
-          color: $dark_background;
+          border: 1px solid $blue;
+          color: $blue;
       }
   }
   &--gradient {
@@ -28,7 +28,7 @@
   }
   &--light {
       &:not(#{$parent}--transparent) {
-          background-color: $dark_background;
+          background-color: $blue;
       }
       color: $white;
   }
@@ -40,15 +40,24 @@
   }
   &:hover {
       &#{$parent}--light {
-          box-shadow: 0 0 5px $dark_background;
+          box-shadow: 0 0 5px $blue;
       }
       &#{$parent}--dark {
           box-shadow: 0 0 5px $white;
       }
   }
+  &--iconed {
+    padding: 12px 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 99px;
+  }
+  &--gray {
+    background: $light-gray !important;
+    box-shadow: 0 0 5px $light-gray !important;
+  }
   &--disabled {
-    filter: grayscale(1);
-    opacity: 0.5;
+    background: #E2E6EA !important;
     pointer-events: none;
   }
 }

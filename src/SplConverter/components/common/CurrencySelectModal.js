@@ -1,8 +1,8 @@
 import React from 'react'
 import { ReactComponent as DropDownIcon } from '../../assets/dropdown.svg'
-import TokenManager from './TokenManager'
-import {ModalCaller} from '../../common/Modal'
-import { useTokenList } from '../hooks/useTokenList'
+import TokenManager from '../TokenManager'
+import {ModalCaller} from '../../../common/Modal'
+import { useTokenList } from '../../hooks/useTokenList'
 
 const CurrencySelect = ({className = '', currency = undefined, onChangeCurrency = () => {}}) => {
   const {list, error, loading} = useTokenList()

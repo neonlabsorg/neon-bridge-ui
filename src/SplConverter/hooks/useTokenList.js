@@ -20,12 +20,15 @@ export function useTokenList () {
       setError(`Failed to fetch neon transfer token list: ${err.message}`)
     }).finally(() => setLoading(false))
   }, [chainId])
+  const filteringChainId = useMemo(() => {
+    if (isNaN(chainId)) return 111
+    else return chainId
+  }, [chainId])
   const list = useMemo(() => {
     const filtered = sourceList.filter(token => {
-      return token.chainId === chainId
+      return token.chainId === filteringChainId
     })
     return filtered
-  }, [chainId, sourceList])
-
+  }, [filteringChainId, sourceList])
   return { list, error, loading }
 }

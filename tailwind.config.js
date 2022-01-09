@@ -27,7 +27,9 @@ module.exports = {
         '48px': '48px'
       },
       colors: {
-        'ocean-blue': 'rgba(94,118,153, 0.15)'
+        'ocean-blue': 'rgba(94,118,153, 0.15)',
+        'light-gray': '#F3F6FD',
+        'light-blue': 'rgba(67, 85, 249, 0.35)'
       }
     },
   },

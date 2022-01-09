@@ -3,6 +3,7 @@ import Layout from './common/Layout'
 import { SplConverter } from './SplConverter';
 import { Web3ReactProvider } from '@web3-react/core'
 import { ConnectionProvider } from './contexts/connection';
+import { StateProvider } from './contexts/states'
 import { WalletProvider } from '@solana/wallet-adapter-react';
 import { useSolanaWallet } from './SplConverter/hooks/useSolanaWallet'
 import { NotieProvider } from 'react-notie';
@@ -21,7 +22,9 @@ function App() {
           <NotieProvider>
             <Layout className='flex flex-col w-full px-4'
               bodyClassName='flex flex-col justify-center'>
-              <SplConverter />
+              <StateProvider>
+                <SplConverter />
+              </StateProvider>
             </Layout>
           </NotieProvider>
         </WalletProvider>

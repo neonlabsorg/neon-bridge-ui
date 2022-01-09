@@ -1,10 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
 
 .wallet-adapter-button {
-    background-color: $white;
+    background-color: transparent;
     border: none;
     border-radius: 999px;
-    color: $dark_background;
+    color: $blue;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -15,6 +15,7 @@
     line-height: 50px;
     padding: 0 20px;
     transition: all 0.15s ease-in-out;
+    margin-bottom: 24px;
 }
 
 .wallet-adapter-button-trigger {
