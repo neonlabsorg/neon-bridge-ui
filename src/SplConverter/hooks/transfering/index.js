@@ -13,7 +13,10 @@ const ab2str = require('arraybuffer-to-string')
 
 
 export const useTransfering = () => {
-  const {amount, splToken} = useStatesContext()
+  const {amount, splToken, setError,
+    setSolanaTransferSign,
+    setNeonTransferSign,
+    setTransfering} = useStatesContext()
   const { publicKey } = useWallet()
   const { account } = useWeb3React()
   const { connection } = useConnectionConfig()
@@ -168,6 +171,7 @@ export const useTransfering = () => {
     onCreateNeonAccount = () => {}
   ) => {
     // required minimum 0.002 sol
+    setTransfering(true)
     const solanaPubkey = getSolanaWalletPubkey()
     const recentBlockhash = await connection.getRecentBlockhash()
     const transaction = new Transaction({
@@ -187,9 +191,15 @@ export const useTransfering = () => {
     }
     const transferInstruction = await createTransferInstruction()
     transaction.add(transferInstruction)
-    const signedTransaction = await window.solana.signTransaction(transaction)
-    const sig = await connection.sendRawTransaction(signedTransaction.serialize())
-    onSign(sig)
+    try {
+      const signedTransaction = await window.solana.signTransaction(transaction)
+      const sig = await connection.sendRawTransaction(signedTransaction.serialize())
+      setSolanaTransferSign(sig)
+      setTransfering(false)
+    } catch (e) {
+      setError(e)
+      setTransfering(false)
+    }
   }
 
   const computeEthTransactionData = () => {
@@ -203,7 +213,8 @@ export const useTransfering = () => {
     return `${approveSolanaMethodID}${solanaStr}${amountStr}`
   }
 
-  const createSolanaTransfer = async (onSign = () => {}) => {
+  const createSolanaTransfer = async () => {
+    setTransfering(true)
     const solanaPubkey = getSolanaPubkey()
     const recentBlockhash = await connection.getRecentBlockhash()
     const transactionParameters = {
@@ -224,9 +235,16 @@ export const useTransfering = () => {
       feePayer: solanaPubkey
     })
     transaction.add(liquidityInstruction)
-    const signedTransaction = await window.solana.signTransaction(transaction)
-    const sig = await connection.sendRawTransaction(signedTransaction.serialize())
-    onSign(sig, txHash)
+    try {
+      const signedTransaction = await window.solana.signTransaction(transaction)
+      const sig = await connection.sendRawTransaction(signedTransaction.serialize())
+      setSolanaTransferSign(sig)
+      setNeonTransferSign(txHash)
+      setTransfering(false)
+    } catch (e) {
+      setError(e)
+      setTransfering(false)
+    }
   }
 
   return {createSolanaTransfer, createNeonTransfer, computeEthTransactionData}

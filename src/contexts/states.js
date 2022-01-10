@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 const STEPS = {
   source: {
     title: 'Source',
@@ -15,6 +15,7 @@ const STEPS = {
 }
 export const StateContext = createContext({
   steps: {},
+  transfering: false,
   direction: 'neon',
   toggleDirection: () => {},
   finishStep: () => {}
@@ -23,13 +24,32 @@ export const StateContext = createContext({
 
 export function StateProvider({ children = undefined}) {
   const [amount, setAmount] = useState(0.0)
+  const [transfering, setTransfering] = useState(false)
+  const [solanaTransferSign, setSolanaTransferSign] = useState('')
+  const [neonTransferSign, setNeonTransferSign] = useState('')
+  const [error, setError] = useState(undefined)
   const [splToken, setSplToken] = useState({})
   const [steps, setSteps] = useState(STEPS)
   const [direction, setDirection] = useState('neon')
   const toggleDirection = () => {
-    
     if (direction === 'neon') setDirection('solana')
     else setDirection('neon')
+  }
+  const resetSteps = () => {
+    setSteps({
+      source: {
+        title: 'Source',
+        status: 'active'
+      },
+      target: {
+        title: 'Target',
+        status: 'next'
+      },
+      confirm: {
+        title: 'Confirmation',
+        status: 'next'
+      }
+    })
   }
   const finishStep = (stepKey = '') => {
     let activeIndex = null
@@ -69,15 +89,25 @@ export function StateProvider({ children = undefined}) {
     })
     setSteps(currentSteps)
   }
+  useEffect(() => {
+    if (error !== undefined) setError(undefined)
+  // eslint-disable-next-line
+  }, [amount, splToken])
+
   return <StateContext.Provider
     value={{
       steps,
       finishStep,
       setStepActive,
+      resetSteps,
       direction,
       toggleDirection,
       amount, setAmount,
-      splToken, setSplToken
+      splToken, setSplToken,
+      error, setError,
+      transfering, setTransfering,
+      solanaTransferSign, setSolanaTransferSign,
+      neonTransferSign, setNeonTransferSign
     }}>
     {children}
   </StateContext.Provider>

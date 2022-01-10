@@ -7,6 +7,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { shortenAddress } from '../utils';
 import { useWeb3React } from '@web3-react/core';
 import { useMemo } from 'react'
+import { Transfering } from './components/Transfering';
 const COMPONENTS_BY_STEPS = {
     source: Source,
     target: Target,
@@ -22,20 +23,23 @@ const ResultsView = ({stepKey = ''}) => {
     console.log(splToken, amount, direction, account, publicKey, shortSolanaKey, shortNeonKey)
     const renderTransferInfo = () => {
         return <div>
-            {`Transfer 
-                ${amount} ${splToken.symbol} from 
-                ${direction === 'neon' ? 
-                    shortSolanaKey :
-                    shortNeonKey} on ${direction === 'neon' ? 'Solana' : 'Neon'}`}
+            <span>Transfer </span>
+            <span>{`${amount} `}</span>
+            <span className='text-blue-500'>{`${splToken.symbol} `}</span>
+            <span>from </span>
+            <span className='text-blue-500'>{`${direction === 'neon' ? 
+                shortSolanaKey :
+                shortNeonKey} `}</span>
+            <span>{`on ${direction === 'neon' ? 'Solana' : 'Neon'}`}</span>
         </div>
     }
     const renderRecieveInfo = () => {
         return <div>
-            {`Recieve 
-                ${splToken.symbol}
-                to ${direction === 'neon' ? `${shortNeonKey} 
-                on Neon` : `${shortSolanaKey} on Solana`}
-            `}
+            <span>Recieve </span>
+            <span className='text-blue-500'>{`${splToken.symbol} `}</span>
+            <span>to </span>
+            <span className='text-blue-500'>{`${direction === 'neon' ? shortNeonKey : shortSolanaKey} `}</span>
+            <span>{`on ${direction === 'neon' ? 'Neon' : 'Solana'}`}</span>
         </div>
     }
     if (stepKey === 'source') return renderTransferInfo()
@@ -44,22 +48,26 @@ const ResultsView = ({stepKey = ''}) => {
 
 
 export const SplConverter =  () => {
-    const { steps } = useStatesContext()
-    return (
-        <div className='w-full'>
-            {Object.keys(steps).map((stepKey, index) => {
-                const step = steps[stepKey]
-                const StepComponent = COMPONENTS_BY_STEPS[stepKey]
-                return <Accordion className='mb-8' key={stepKey}
-                    title={step.title}
-                    stepKey={stepKey}
-                    stepNumber={index + 1}
-                    active={step.status === 'active'}
-                    finished={step.status === 'finished'}
-                    resultsView={<ResultsView stepKey={stepKey} />}>
-                    <StepComponent/>
-                </Accordion>
-            })}
-        </div>
-    )
+    const { steps, transfering, neonTransferSign, solanaTransferSign } = useStatesContext()
+    if (transfering === true || solanaTransferSign || neonTransferSign) {
+        return <Transfering />
+    } else {
+        return (
+            <div className='w-full'>
+                {Object.keys(steps).map((stepKey, index) => {
+                    const step = steps[stepKey]
+                    const StepComponent = COMPONENTS_BY_STEPS[stepKey]
+                    return <Accordion className='mb-8' key={stepKey}
+                        title={step.title}
+                        stepKey={stepKey}
+                        stepNumber={index + 1}
+                        active={step.status === 'active'}
+                        finished={step.status === 'finished'}
+                        resultsView={<ResultsView stepKey={stepKey} />}>
+                        <StepComponent/>
+                    </Accordion>
+                })}
+            </div>
+        )
+    }
 }

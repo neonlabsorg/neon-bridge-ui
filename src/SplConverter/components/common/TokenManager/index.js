@@ -70,7 +70,7 @@ const TokenManager = ({list = [], loading = false, error = undefined, onClose = 
           }}/>
         }) :
         loading ?
-          <div>Loading list...</div> :
+          <div className='p-6'>Loading list...</div> :
           error ?
             <>Error getting token list</>
         : list.length ? <>No tokens has been provided</> : null }

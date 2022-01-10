@@ -1,0 +1,9 @@
+.network-select {
+  @apply inline-flex flex-col justify-center relative cursor-pointer p-6 h-64px bg-light-gray;
+  &__selected {
+    @apply flex items-center;
+    span {
+      @apply text-lg;
+    }
+  }
+}

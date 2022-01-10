@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import TokenManager from '../TokenManager'
+import TokenManager from './TokenManager'
 import {ModalCaller} from '../../../common/Modal'
 import { useTokenList } from '../../hooks/useTokenList'
 import { ReactComponent as DropDownIcon } from '../../../assets/dropdown.svg'

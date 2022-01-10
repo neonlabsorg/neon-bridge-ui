@@ -7,21 +7,24 @@ import { useLocalStorageState } from '../utils';
 
 export const ENDPOINTS = [
   {
-    name: 'mainnet-beta',
+    key: 'mainnet-beta',
+    name: 'Solana Mainnet Beta',
     endpoint:  process.env.REACT_APP_MAINNET_RPC ||  'https://api.mainnet-beta.solana.com'
   },
   {
-    name: 'testnet',
+    key: 'testnet',
+    name: 'Solana TestNet',
     endpoint: clusterApiUrl('testnet')
   },
   {
-    name: 'devnet',
-    endpoint: process.env.REACT_APP_DEVNET_RPC ||  'https://api.devnet.solana.com'
-  },
-  {
-    name: 'localnet',
-    endpoint: 'http://127.0.0.1:8899'
-  },
+    key: 'devnet',
+    name: 'Solana DevNet',
+    endpoint: clusterApiUrl('devnet')
+  }
+  // {
+  //   name: 'LocalNet',
+  //   endpoint: 'http://127.0.0.1:8899'
+  // },
 ];
 const DEFAULT = ENDPOINTS[0].endpoint;
 const DEFAULT_SLIPPAGE = 0.25;
