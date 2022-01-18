@@ -234,6 +234,29 @@ export const useTransfering = () => {
       recentBlockhash: recentBlockhash.blockhash,
       feePayer: solanaPubkey
     })
+
+    const mintPubkey = getSolanaPubkey(splToken.address_spl)
+    const assocTokenAccountAddress = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID,
+      mintPubkey,
+      solanaPubkey
+    )
+
+    const associatedTokenAccount = await connection.getAccountInfo(assocTokenAccountAddress)
+    if (!associatedTokenAccount) {
+      // Create token account if it not exists
+      const createAccountInstruction = Token.createAssociatedTokenAccountInstruction(
+        ASSOCIATED_TOKEN_PROGRAM_ID,
+        TOKEN_PROGRAM_ID,
+        mintPubkey,               // token mint
+        assocTokenAccountAddress, // account to create
+        solanaPubkey,             // new account owner
+        solanaPubkey              // payer
+      )
+      transaction.add(createAccountInstruction)
+    }
+
     transaction.add(liquidityInstruction)
     try {
       const signedTransaction = await window.solana.signTransaction(transaction)
