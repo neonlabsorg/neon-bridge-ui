@@ -4,9 +4,6 @@ import React from 'react'
 import NeonIcon from '@/assets/neon.png'
 import SolanaIcon from '@/assets/solana.png'
 
-// import { NetworkSelect } from './NetworkSelect';
-// import { useNetworkType } from '../hooks';
-
 const SourceCard = ({direction = 'solana', prefix}) => {
   // const { active } = useWeb3React()
   // const { network } = useNetworkType()
@@ -38,13 +35,6 @@ const SourceCard = ({direction = 'solana', prefix}) => {
           <span className='mt-4 text-xl'>Neon</span>
         </>}
     </div>
-    {/* {(sourceName === 'solana' && publicKey) ||
-      (sourceName === 'neon' && active) ? 'Connected' : 'Disconnected'} */}
-    
-    {/* <div className='py-4 mb-4 flex flex-col items-start'>
-      <span className='mb-4'>Network</span>
-      {sourceName === 'solana' ? <NetworkSelect/> : <span className='uppercase'>{network}</span> }
-    </div> */}
   </>
 }
 export { SourceCard }
