@@ -1,9 +1,12 @@
 import { useWeb3React } from '@web3-react/core'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useConnectionConfig } from '../../../contexts/connection';
 import {PublicKey, Transaction, TransactionInstruction, SystemProgram, SYSVAR_RENT_PUBKEY} from '@solana/web3.js'
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { useStatesContext } from '../../../contexts/states';
+import {
+  clusterApiUrl,
+  Connection
+} from '@solana/web3.js';
 
 const NEON_EVM_LOADER_ID = 'eeLSJgWzzxrqKv1UxtRVVH8FX3qCQWUs9QuAjJpETGU'
 const NEON_MINT_TOKEN = '89dre8rZjLNft7HoupGiyxu3MNftR577ZYu8bHe2kK7g'
@@ -11,6 +14,11 @@ const NEON_MINT_TOKEN = '89dre8rZjLNft7HoupGiyxu3MNftR577ZYu8bHe2kK7g'
 const web3 = require('web3')
 const ab2str = require('arraybuffer-to-string')
 
+const NEON_CHAIN_ID_TO_SOLANA_URL = {
+  '245022926' : clusterApiUrl('devnet'),
+  '245022934' : clusterApiUrl('mainnet-beta'),
+  '245022940' : clusterApiUrl('testnet')
+}
 
 export const useTransfering = () => {
   const {amount, splToken, setError,
@@ -19,7 +27,10 @@ export const useTransfering = () => {
     setTransfering} = useStatesContext()
   const { publicKey } = useWallet()
   const { account } = useWeb3React()
-  const { connection } = useConnectionConfig()
+  const chainId = parseInt(window.ethereum.chainId, 16)
+  const solana_url = NEON_CHAIN_ID_TO_SOLANA_URL[chainId]
+  // TODO show error if mapping not found
+  const connection = new Connection(solana_url, 'recent');
   const mergeTypedArraysUnsafe = (a, b) => {
     const c = new a.constructor(a.length + b.length)
     c.set(a)
