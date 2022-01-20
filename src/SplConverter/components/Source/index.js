@@ -10,7 +10,6 @@ import {
 } from '@solana/wallet-adapter-react-ui';
 import { CurrencyInput } from "../common/CurrencyInput"
 import { useStatesContext } from "../../../contexts/states"
-import { NetworkSelect } from "../common/NetworkSelect"
 
 export const Source = ({
   className = ''
@@ -45,7 +44,6 @@ export const Source = ({
         </> : null
       }
     </div>
-    {(direction === 'neon' && connected) ? <NetworkSelect className='mb-2'/> : null}
     {(direction === 'neon' && connected) || (direction === 'solana' && active) ?
       <CurrencyInput className='mb-2'/> : null}
     <Button disabled={amount === 0 || !splToken} onClick={() => finishStep('source')}>Next</Button>
