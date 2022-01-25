@@ -3,7 +3,7 @@ import { SourceCard } from "../common/SourceCard"
 import {
   WalletModalProvider,
   WalletMultiButton
-} from '@solana/wallet-adapter-react-ui';
+} from '@/common/SolanaStatus';
 import Web3Status from '@/common/Web3Status'
 import { useWeb3React } from "@web3-react/core";
 import Button from "@/common/Button";

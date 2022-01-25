@@ -1,20 +1,27 @@
 import Button from "@/common/Button"
+import { useEffect } from "react"
 import { SourceCard } from '../common/SourceCard'
 import {ReactComponent as ReverseIcon} from '@/assets/reverse.svg'
 import Web3Status from '@/common/Web3Status'
 import { useWeb3React } from '@web3-react/core'
-import { useWallet } from '@solana/wallet-adapter-react'
 import {
   WalletModalProvider,
   WalletMultiButton
-} from '@solana/wallet-adapter-react-ui';
+} from '@/common/SolanaStatus';
 import { CurrencyInput } from "../common/CurrencyInput"
-import { useStatesContext } from "../../../contexts/states"
+import { useStatesContext } from "@/contexts/states"
 import { NetworkSelect } from "../common/NetworkSelect"
+import { withNotie } from "@/common/Notifications"
+import { useWallet } from '@solana/wallet-adapter-react';
 
-export const Source = ({
-  className = ''
+export const Source = withNotie( ({
+  className = '',
+  ...props
 }) => {
+
+  useEffect(() => {
+    props.notie.success('init source', 'main app initiated', 600000)
+  }, [props.notie])
   const {direction, toggleDirection, finishStep, amount, splToken} = useStatesContext()
   const { connected } = useWallet()
   const { active } = useWeb3React()
@@ -50,4 +57,4 @@ export const Source = ({
       <CurrencyInput className='mb-2'/> : null}
     <Button disabled={amount === 0 || !splToken} onClick={() => finishStep('source')}>Next</Button>
   </div>
-}
+})

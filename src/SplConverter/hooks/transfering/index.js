@@ -1,9 +1,9 @@
 import { useWeb3React } from '@web3-react/core'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { useConnectionConfig } from '../../../contexts/connection';
+import { useConnectionConfig } from '@/contexts/connection';
 import {PublicKey, Transaction, TransactionInstruction, SystemProgram, SYSVAR_RENT_PUBKEY} from '@solana/web3.js'
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { useStatesContext } from '../../../contexts/states';
+import { useStatesContext } from '@/contexts/states';
+import { useWallet } from '@solana/wallet-adapter-react';
 
 const NEON_EVM_LOADER_ID = 'eeLSJgWzzxrqKv1UxtRVVH8FX3qCQWUs9QuAjJpETGU'
 const NEON_MINT_TOKEN = '89dre8rZjLNft7HoupGiyxu3MNftR577ZYu8bHe2kK7g'

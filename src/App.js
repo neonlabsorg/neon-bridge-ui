@@ -6,8 +6,7 @@ import { ConnectionProvider } from './contexts/connection';
 import { StateProvider } from './contexts/states'
 import { WalletProvider } from '@solana/wallet-adapter-react';
 import { useSolanaWallet } from './SplConverter/hooks/useSolanaWallet'
-import { NotieProvider } from 'react-notie';
-import 'react-notie/css/notie.css'
+import { NotieProvider } from '@/common/Notifications';
 import Web3 from 'web3'
 function getLibrary(provider) {
   return new Web3(provider)
@@ -18,7 +17,7 @@ function App() {
   return (
     <Web3ReactProvider getLibrary={getLibrary}>
       <ConnectionProvider>
-        <WalletProvider wallets={wallets} autoConnect>
+        <WalletProvider wallets={wallets}>
           <NotieProvider>
             <Layout className='flex flex-col w-full px-4'
               bodyClassName='flex flex-col justify-center'>

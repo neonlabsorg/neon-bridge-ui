@@ -4,7 +4,7 @@ import { TransferInfo } from "../common/TransferInfo";
 import {ReactComponent as ArrowIcon} from '@/assets/arrow-right.svg'
 import Button from "../../../common/Button";
 import { useTransfering } from "../../hooks/transfering"
-import { withNotie } from 'react-notie';
+import { withNotie } from '@/common/Notifications';
 import { ErrorHandler } from "../common/ErrorHandler";
 export const Confirm = withNotie((props) => {
   const { amount, splToken, direction, error } = useStatesContext()
@@ -14,7 +14,7 @@ export const Confirm = withNotie((props) => {
     if (direction === 'neon') createNeonTransfer(() => {
       props.notie.success('Transfering Complete')
     }, () => {
-      props.notie.info('Creating new neon account.')
+      props.notie.info(`Neon account don't find on this address. We will create new one and recieve you 1000 test tokens.`)
     })
     else if (direction === 'solana') createSolanaTransfer(() => {
       props.notie.success('Transfering Complete')
@@ -35,7 +35,6 @@ export const Confirm = withNotie((props) => {
         {`${amount} ${splToken.symbol}`}
       </div>
     </div>
-    
     <div className='flex justify-between mb-8'>
       <div className='w-5/12 p-6 flex items-center justify-center bg-pinky-white'>
         {direction === 'neon' ? 'Solana' : 'Neon'}

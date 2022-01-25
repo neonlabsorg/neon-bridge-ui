@@ -30,10 +30,6 @@ export const Transfering = () => {
         onClick={handleRepeatScript}/>
       <DoneIcon className='mb-10'/>
       <div className='font-medium text-xl mb-6'>Transfer complete</div>
-      <a href={`https://etherscan.io/tx/${neonTransferSign}`}
-        target='_blank'
-        rel='noopener noreferrer'
-        className='text-blue-500'>View on Etherscan</a>
       {neonTransferSign ?
         <a href={`https://etherscan.io/tx/${neonTransferSign}`}
           target='_blank'

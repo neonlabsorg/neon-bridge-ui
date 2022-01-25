@@ -1,5 +1,4 @@
-import React from 'react'
-// import { useWallet } from '@solana/wallet-adapter-react';
+
 // import { useWeb3React } from '@web3-react/core';
 import NeonIcon from '@/assets/neon.png'
 import SolanaIcon from '@/assets/solana.png'
@@ -10,7 +9,6 @@ import SolanaIcon from '@/assets/solana.png'
 const SourceCard = ({direction = 'solana', prefix}) => {
   // const { active } = useWeb3React()
   // const { network } = useNetworkType()
-  // const { publicKey } = useWallet()
   return <>
     <div className='flex flex-col items-center mb-6'>
       {direction === 'solana' ? 

@@ -3,11 +3,11 @@ import { Source } from './components/Source';
 import { useStatesContext } from '../contexts/states';
 import { Target } from './components/Target';
 import { Confirm } from './components/Confirm';
-import { useWallet } from '@solana/wallet-adapter-react';
 import { shortenAddress } from '../utils';
 import { useWeb3React } from '@web3-react/core';
 import { useMemo } from 'react'
 import { Transfering } from './components/Transfering';
+import { useWallet } from '@solana/wallet-adapter-react';
 const COMPONENTS_BY_STEPS = {
     source: Source,
     target: Target,
