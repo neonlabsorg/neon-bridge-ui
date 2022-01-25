@@ -1,5 +1,4 @@
 import Button from "@/common/Button"
-import { useEffect } from "react"
 import { SourceCard } from '../common/SourceCard'
 import {ReactComponent as ReverseIcon} from '@/assets/reverse.svg'
 import Web3Status from '@/common/Web3Status'
@@ -10,17 +9,12 @@ import {
 } from '@/common/SolanaStatus';
 import { CurrencyInput } from "../common/CurrencyInput"
 import { useStatesContext } from "@/contexts/states"
-import { withNotie } from "@/common/Notifications"
 import { useWallet } from '@solana/wallet-adapter-react';
 
-export const Source = withNotie( ({
-  className = '',
-  ...props
+export const Source = ({
+  className = ''
 }) => {
 
-  useEffect(() => {
-    props.notie.success('init source', 'main app initiated', 600000)
-  }, [props.notie])
   const {direction, toggleDirection, finishStep, amount, splToken} = useStatesContext()
   const { connected } = useWallet()
   const { active } = useWeb3React()
@@ -55,4 +49,4 @@ export const Source = withNotie( ({
       <CurrencyInput className='mb-2'/> : null}
     <Button disabled={amount === 0 || !splToken} onClick={() => finishStep('source')}>Next</Button>
   </div>
-})
+}
