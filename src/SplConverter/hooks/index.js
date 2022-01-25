@@ -2,9 +2,9 @@ import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 import {useMemo} from 'react'
 export const ChainId = {
   111: 'LOCAL',
-  245022926: 'NEONDEV (devnet)',
-  245022940: 'NEONTEST (testnet)',
-  245022934: 'NEONMAIN (mainnet)'
+  245022926: 'devnet',
+  245022940: 'testnet',
+  245022934: 'mainnet-beta'
 }
 
 export function useNetworkType() {

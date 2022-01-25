@@ -3,20 +3,24 @@ import {
   Connection
 } from '@solana/web3.js';
 import { createContext, useMemo, useEffect, useContext } from 'react';
+import { useNetworkType } from '../SplConverter/hooks';
 import { useLocalStorageState } from '../utils';
 
 export const ENDPOINTS = [
   {
+    associatedChainId: 245022934,
     key: 'mainnet-beta',
     name: 'Solana Mainnet Beta',
     endpoint:  process.env.REACT_APP_MAINNET_RPC ||  'https://api.mainnet-beta.solana.com'
   },
   {
+    associatedChainId: 245022940,
     key: 'testnet',
     name: 'Solana TestNet',
     endpoint: clusterApiUrl('testnet')
   },
   {
+    associatedChainId: 245022926,
     key: 'devnet',
     name: 'Solana DevNet',
     endpoint: clusterApiUrl('devnet')
@@ -38,11 +42,15 @@ const ConnectionContext = createContext({
 });
 
 export function ConnectionProvider({ children = undefined}) {
-  const [endpoint, setEndpoint] = useLocalStorageState(
-    'connectionEndpoint',
-    ENDPOINTS[0].endpoint,
-  );
-
+  const {chainId} = useNetworkType()
+  const endpoint = useMemo(() => {
+    if (!chainId) return DEFAULT
+    let endpointByChain;
+    ENDPOINTS.forEach(item => {
+      if (item.associatedChainId === chainId) endpointByChain = item.endpoint
+    })
+    return endpointByChain
+  }, [chainId])
   const [slippage, setSlippage] = useLocalStorageState(
     'slippage',
     DEFAULT_SLIPPAGE.toString(),
@@ -63,7 +71,6 @@ export function ConnectionProvider({ children = undefined}) {
     <ConnectionContext.Provider
       value={{
         endpoint,
-        setEndpoint,
         slippage: parseFloat(slippage),
         setSlippage: val => setSlippage(val.toString()),
         connection

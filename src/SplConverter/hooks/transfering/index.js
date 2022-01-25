@@ -1,16 +1,15 @@
 import { useWeb3React } from '@web3-react/core'
-import { useConnectionConfig } from '@/contexts/connection';
+import { useWallet } from '@solana/wallet-adapter-react'
 import {PublicKey, Transaction, TransactionInstruction, SystemProgram, SYSVAR_RENT_PUBKEY} from '@solana/web3.js'
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
-import { useStatesContext } from '@/contexts/states';
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useStatesContext } from '../../../contexts/states';
+import { useConnection } from '../../../contexts/connection';
 
 const NEON_EVM_LOADER_ID = 'eeLSJgWzzxrqKv1UxtRVVH8FX3qCQWUs9QuAjJpETGU'
 const NEON_MINT_TOKEN = '89dre8rZjLNft7HoupGiyxu3MNftR577ZYu8bHe2kK7g'
 
 const web3 = require('web3')
 const ab2str = require('arraybuffer-to-string')
-
 
 export const useTransfering = () => {
   const {amount, splToken, setError,
@@ -19,7 +18,8 @@ export const useTransfering = () => {
     setTransfering} = useStatesContext()
   const { publicKey } = useWallet()
   const { account } = useWeb3React()
-  const { connection } = useConnectionConfig()
+  // TODO show error if mapping not found
+  const connection = useConnection()
   const mergeTypedArraysUnsafe = (a, b) => {
     const c = new a.constructor(a.length + b.length)
     c.set(a)
@@ -234,6 +234,29 @@ export const useTransfering = () => {
       recentBlockhash: recentBlockhash.blockhash,
       feePayer: solanaPubkey
     })
+
+    const mintPubkey = getSolanaPubkey(splToken.address_spl)
+    const assocTokenAccountAddress = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID,
+      mintPubkey,
+      solanaPubkey
+    )
+
+    const associatedTokenAccount = await connection.getAccountInfo(assocTokenAccountAddress)
+    if (!associatedTokenAccount) {
+      // Create token account if it not exists
+      const createAccountInstruction = Token.createAssociatedTokenAccountInstruction(
+        ASSOCIATED_TOKEN_PROGRAM_ID,
+        TOKEN_PROGRAM_ID,
+        mintPubkey,               // token mint
+        assocTokenAccountAddress, // account to create
+        solanaPubkey,             // new account owner
+        solanaPubkey              // payer
+      )
+      transaction.add(createAccountInstruction)
+    }
+
     transaction.add(liquidityInstruction)
     try {
       const signedTransaction = await window.solana.signTransaction(transaction)
