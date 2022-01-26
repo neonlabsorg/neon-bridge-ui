@@ -18,6 +18,7 @@
         left: 0;
         right: 0;
         bottom: 0;
+        background: rgb(139,136,170, 0.55);
     }
 }
 .modal {
@@ -25,18 +26,16 @@
     position: relative;
     z-index: 2;
     display: flex;
+    padding-top: 24px;
     flex-direction: column;
-    background-color: #301539;
-    border-radius: 16px;
-    color: $white;
-    padding: 40px 0;
+    background-color: $white;
     &--cutted-corner {
         clip-path: polygon(100% 0, 100% 95%, 97% 100%, 0 100%, 0 0);
     }
     &__header {
         width: 100%;
         display: flex;
-        align-items: flex-start;
+        align-items: center;
         justify-content: space-between;
         margin-bottom: 20px;
         padding: 0 32px;
@@ -49,9 +48,6 @@
         @extend %title;
         font-weight: 700;
         font-size: 24px;
-    }
-    &__body {
-        padding: 0 32px;
     }
     &__btn-panel {
         display: flex;
