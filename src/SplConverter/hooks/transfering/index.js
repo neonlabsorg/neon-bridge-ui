@@ -1,18 +1,25 @@
 import { useWeb3React } from '@web3-react/core'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useConnection } from '@solana/wallet-adapter-react';
 import {PublicKey, Transaction, TransactionInstruction, SystemProgram, SYSVAR_RENT_PUBKEY} from '@solana/web3.js'
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { useStatesContext } from '../../../contexts/states';
+import { useConnection } from '../../../contexts/connection';
 
 const NEON_EVM_LOADER_ID = 'eeLSJgWzzxrqKv1UxtRVVH8FX3qCQWUs9QuAjJpETGU'
 const NEON_MINT_TOKEN = '89dre8rZjLNft7HoupGiyxu3MNftR577ZYu8bHe2kK7g'
 
 const web3 = require('web3')
+const ab2str = require('arraybuffer-to-string')
 
 export const useTransfering = () => {
+  const {amount, splToken, setError,
+    setSolanaTransferSign,
+    setNeonTransferSign,
+    setTransfering} = useStatesContext()
   const { publicKey } = useWallet()
   const { account } = useWeb3React()
-  const { connection } = useConnection()
+  // TODO show error if mapping not found
+  const connection = useConnection()
   const mergeTypedArraysUnsafe = (a, b) => {
     const c = new a.constructor(a.length + b.length)
     c.set(a)
@@ -48,21 +55,17 @@ export const useTransfering = () => {
     const neonNonce = programAddress[1]
     return {neonAddress, neonNonce}
   }
-  
+
   const getNeonAccount = async () => {
     const {neonAddress} = await getNeonAccountAddress()
     const neonAccount = await connection.getAccountInfo(neonAddress)
     return neonAccount
   }
-  
-  const getERC20WrapperAddress = async (token = {
-    name: '',
-    address: '',
-    address_spl: ''
-  }) => {
+
+  const getERC20WrapperAddress = async () => {
     const enc = new TextEncoder()
-    const tokenPubkey = getSolanaPubkey(token.address_spl)
-    const erc20Seed = getEthSeed(token.address)
+    const tokenPubkey = getSolanaPubkey(splToken.address_spl)
+    const erc20Seed = getEthSeed(splToken.address)
     const accountSeed = getNeonAccountSeed()
     const erc20addr = await PublicKey.findProgramAddress([
       new Uint8Array([1]),
@@ -73,18 +76,13 @@ export const useTransfering = () => {
     ],new PublicKey(NEON_EVM_LOADER_ID))
     return {erc20Address: erc20addr[0], erc20Nonce: erc20addr[1]}
   }
-  
-  const getERC20WrapperAccount = async (token = {
-    name: '',
-    address: '',
-    address_spl: ''
-  }) => {
-    const {erc20Address} = await getERC20WrapperAddress(token)
+
+  const getERC20WrapperAccount = async () => {
+    const {erc20Address} = await getERC20WrapperAddress()
     const ERC20WrapperAccount = await connection.getAccountInfo(erc20Address)
     return ERC20WrapperAccount
   }
-  
-  
+
   const getNeonAccountInstructionKeys = async (neonAddress = '') => {
     const mintTokenPubkey = getNeonMintTokenPubkey()
     const solanaWalletPubkey = getSolanaWalletPubkey()
@@ -107,19 +105,15 @@ export const useTransfering = () => {
     ]
   }
   
-  const createERC20AccountInstruction = async (token = {
-    name: '',
-    address: '',
-    address_spl: ''
-  }) => {
+  const createERC20AccountInstruction = async () => {
     const data = new Uint8Array([0x0f])
     const solanaPubkey = getSolanaWalletPubkey()
-    const mintPublicKey = getSolanaPubkey(token.address_spl)
-    const {erc20Address} = await getERC20WrapperAddress(token)
+    const mintPublicKey = getSolanaPubkey(splToken.address_spl)
+    const {erc20Address} = await getERC20WrapperAddress()
     const {neonAddress} = await getNeonAccountAddress()
     const contractAddress = await PublicKey.findProgramAddress([
       new Uint8Array([1]),
-      getEthSeed(token.address)
+      getEthSeed(splToken.address)
     ], new PublicKey(NEON_EVM_LOADER_ID))
     const keys = [
       { pubkey: solanaPubkey, isSigner: true, isWritable: true },
@@ -152,15 +146,11 @@ export const useTransfering = () => {
     })
   }
   
-  const createTransferInstruction = async (token = {
-    name: '',
-    address: '',
-    address_spl: ''
-  }, amount = 0.0001) => {
-    const mintPubkey = getSolanaPubkey(token.address_spl)
+  const createTransferInstruction = async (toSolana = false) => {
+    const mintPubkey = getSolanaPubkey(splToken.address_spl)
     const solanaPubkey = getSolanaWalletPubkey()
-    const {erc20Address} = await getERC20WrapperAddress(token)
-    const fromTokenAccount = await Token.getAssociatedTokenAddress(
+    const {erc20Address} = await getERC20WrapperAddress()
+    const solanaBalanceAccount = await Token.getAssociatedTokenAddress(
       ASSOCIATED_TOKEN_PROGRAM_ID,
       TOKEN_PROGRAM_ID,
       mintPubkey,
@@ -168,22 +158,20 @@ export const useTransfering = () => {
     )
     return Token.createTransferInstruction(
       TOKEN_PROGRAM_ID,
-      fromTokenAccount,
-      erc20Address,
+      toSolana ? erc20Address : solanaBalanceAccount,
+      toSolana ? solanaBalanceAccount : erc20Address,
       solanaPubkey,
       [],
-      Number(amount)
+      Number(amount) * Math.pow(10, splToken.decimals)
     )
   }
-  
-  const createNeonTransfer = async (token = {
-    name: '',
-    address: '',
-    address_spl: ''
-  },
-  amount = 0.0001,
-  onSign = () => {},
-  onCreateNeonAccount = () => {}) => {
+
+  const createNeonTransfer = async (
+    onSign = () => {},
+    onCreateNeonAccount = () => {}
+  ) => {
+    // required minimum 0.002 sol
+    setTransfering(true)
     const solanaPubkey = getSolanaWalletPubkey()
     const recentBlockhash = await connection.getRecentBlockhash()
     const transaction = new Transaction({
@@ -196,16 +184,91 @@ export const useTransfering = () => {
       transaction.add(neonAccountInstruction)
       onCreateNeonAccount()
     }
-    const ERC20WrapperAccount = await getERC20WrapperAccount(token)
+    const ERC20WrapperAccount = await getERC20WrapperAccount()
     if (!ERC20WrapperAccount) {
-      const ERC20WrapperInstruction = await createERC20AccountInstruction(token)
+      const ERC20WrapperInstruction = await createERC20AccountInstruction()
       transaction.add(ERC20WrapperInstruction)
     }
-    const transferInstruction = await createTransferInstruction(token, amount)
+    const transferInstruction = await createTransferInstruction()
     transaction.add(transferInstruction)
-    const signedTransaction = await window.solana.signTransaction(transaction)
-    const sig = await connection.sendRawTransaction(signedTransaction.serialize())
-    onSign(sig)
+    try {
+      const signedTransaction = await window.solana.signTransaction(transaction)
+      const sig = await connection.sendRawTransaction(signedTransaction.serialize())
+      setSolanaTransferSign(sig)
+      setTransfering(false)
+    } catch (e) {
+      setError(e)
+      setTransfering(false)
+    }
   }
-  return createNeonTransfer
+
+  const computeEthTransactionData = () => {
+    const approveSolanaMethodID = '0x93e29346'
+    const solanaPubkey = getSolanaPubkey()
+    const solanaStr = ab2str(solanaPubkey.toBytes(), 'hex')
+    const amountBuffer = new Uint8Array(32)
+    const view = new DataView(amountBuffer.buffer);
+    view.setUint32(28, Number(amount) * Math.pow(10, splToken.decimals))
+    const amountStr = ab2str(amountBuffer, 'hex')
+    return `${approveSolanaMethodID}${solanaStr}${amountStr}`
+  }
+
+  const createSolanaTransfer = async () => {
+    setTransfering(true)
+    const solanaPubkey = getSolanaPubkey()
+    const recentBlockhash = await connection.getRecentBlockhash()
+    const transactionParameters = {
+      to: splToken.address, // Required except during contract publications.
+      from: account,// must match user's active address.
+      value: '0x00', // Only required to send ether to the recipient from the initiating external account.
+      data: computeEthTransactionData()
+    };
+    // txHash is a hex string
+    // As with any RPC call, it may throw an error
+    const txHash = await window.ethereum.request({
+      method: 'eth_sendTransaction',
+      params: [transactionParameters],
+    });
+    const liquidityInstruction = await createTransferInstruction(true)
+    const transaction = new Transaction({
+      recentBlockhash: recentBlockhash.blockhash,
+      feePayer: solanaPubkey
+    })
+
+    const mintPubkey = getSolanaPubkey(splToken.address_spl)
+    const assocTokenAccountAddress = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID,
+      mintPubkey,
+      solanaPubkey
+    )
+
+    const associatedTokenAccount = await connection.getAccountInfo(assocTokenAccountAddress)
+    if (!associatedTokenAccount) {
+      // Create token account if it not exists
+      const createAccountInstruction = Token.createAssociatedTokenAccountInstruction(
+        ASSOCIATED_TOKEN_PROGRAM_ID,
+        TOKEN_PROGRAM_ID,
+        mintPubkey,               // token mint
+        assocTokenAccountAddress, // account to create
+        solanaPubkey,             // new account owner
+        solanaPubkey              // payer
+      )
+      transaction.add(createAccountInstruction)
+    }
+
+    transaction.add(liquidityInstruction)
+    try {
+      const signedTransaction = await window.solana.signTransaction(transaction)
+      const sig = await connection.sendRawTransaction(signedTransaction.serialize())
+      setSolanaTransferSign(sig)
+      setNeonTransferSign(txHash)
+      setTransfering(false)
+    } catch (e) {
+      setError(e)
+      setTransfering(false)
+    }
+  }
+
+  return {createSolanaTransfer, createNeonTransfer, computeEthTransactionData}
 }

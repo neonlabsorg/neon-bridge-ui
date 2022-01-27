@@ -1,8 +1,7 @@
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { shortenAddress } from '../../utils'
-import Button from '../Button'
 import { injected } from '../../connectors'
-const Web3Status = () => {
+const Web3Status = ({className = ''}) => {
   const { account, error, activate, deactivate, active } = useWeb3React()
   async function connect() {
     try {
@@ -36,11 +35,10 @@ const Web3Status = () => {
     </span>
   }
   if (active && account) {
-    return <div className='flex items-center'>
-      <Button onClick={disconnect}>{shortenAddress(account)}</Button>
-    </div>
+    return <span className={`p-4 text-blue-600 cursor-pointer ${className}`} 
+      onClick={disconnect}>{shortenAddress(account)}</span>
   } else {
-    return <Button onClick={connect}>Connect Metamask</Button>
+    return <span className={`p-4 text-blue-600 cursor-pointer ${className}`} onClick={connect}>Connect Wallet</span>
   }
 
 }
