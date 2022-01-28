@@ -8,6 +8,12 @@ import { useLocalStorageState } from '../utils';
 
 export const ENDPOINTS = [
   {
+    associatedChainId: 245022926,
+    key: 'devnet',
+    name: 'Solana DevNet',
+    endpoint: clusterApiUrl('devnet')
+  },
+  {
     associatedChainId: 245022934,
     key: 'mainnet-beta',
     name: 'Solana Mainnet Beta',
@@ -18,12 +24,6 @@ export const ENDPOINTS = [
     key: 'testnet',
     name: 'Solana TestNet',
     endpoint: clusterApiUrl('testnet')
-  },
-  {
-    associatedChainId: 245022926,
-    key: 'devnet',
-    name: 'Solana DevNet',
-    endpoint: clusterApiUrl('devnet')
   }
   // {
   //   name: 'LocalNet',

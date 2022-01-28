@@ -1,18 +1,38 @@
 import React, { useMemo, useState } from 'react'
+import { useTokensContext } from '../../../../contexts/tokens'
 import { SearchInput } from './components/SearchInput'
+import Modal from 'react-modal';
+import { useStatesContext } from '../../../../contexts/states';
 // import { shortenAddress } from '../../../utils'
-
+import {ReactComponent as PhantomIcon} from '@/assets/phantom.svg'
+import {ReactComponent as MetamaskIcon} from '@/assets/metamask.svg'
+import {ReactComponent as LoaderIcon} from '@/assets/loader.svg'
+import { useWeb3React } from '@web3-react/core';
+import { useWallet } from '@solana/wallet-adapter-react';
+Modal.setAppElement('#root')
 const TokenRow = ({
   token = {
     logoURI: '',
     symbol: '',
     address: '',
     name: '',
+    balances: {}
   },
   onClick = () => {}
 }) => {
-  return <div className='flex px-6 py-2 justify-between cursor-pointer hover:bg-gray-100' onClick={onClick}>
-    <div className='flex items-center w-1/2'>
+  const {account} = useWeb3React()
+  const {publicKey} = useWallet()
+  const {direction} = useStatesContext()
+  const isDisabled = useMemo(() => {
+    return (direction === 'neon' && !token.balances.sol) || (direction === 'solana' && !token.balances.eth)
+    // eslint-disable-next-line
+  }, [account, publicKey])
+  return <div className={`
+      flex px-6 py-2 justify-between 
+      ${!isDisabled ? 'hover:bg-gray-100 cursor-pointer' : 'pointer-events-none'}
+    `}
+    onClick={onClick}>
+    <div className='flex items-center w-1/2 pr-4'>
       <div className='w-1/3 pr-4'>
         <img src={token.logoURI} alt='token logo' />
       </div>
@@ -21,11 +41,26 @@ const TokenRow = ({
         <div className='text-sm text-gray-500'>{token.name}</div>
       </div>
     </div>
-    <div className='w-1/3 text-sm'>{'balances will be coming soon'}</div>
+    <div className='w-1/2 pl-4 text-sm text-gray-400 flex items-center justify-end'>
+      <div className='flex flex-col items-end'>
+      {Object.keys(token.balances).map(netKey => {
+        const balance = token.balances[netKey]
+        if (balance === undefined) return <></>
+        return <div className='py-1 flex items-center' key={netKey}>
+          <span className='mr-2'>{balance}</span>
+          {netKey === 'eth' ? <MetamaskIcon/> : <PhantomIcon/>}
+        </div>
+      })}
+      </div>
+      
+    </div>
   </div>
 }
 
-const TokenManager = ({list = [], loading = false, error = undefined, onClose = () => {}, onChooseToken = () => {}}) => {
+const TokenManager = () => {
+  const {list, pending, error, tokenManagerOpened, setTokenManagerOpened} = useTokensContext()
+  const {setSplToken} = useStatesContext()
+
   const [searchString, setSearchString] = useState('')
   const findBySearch = () => {
     const arr = []
@@ -46,7 +81,11 @@ const TokenManager = ({list = [], loading = false, error = undefined, onClose = 
   }
   const searchList = useMemo(findBySearch, [list, searchString]);
   
-  return <div className='flex flex-col overflow-y-auto flex-grow'>
+  return <div><Modal
+    isOpen={tokenManagerOpened}
+    className='modal'
+    overlayClassName='modal-overlay'
+    onRequestClose={() => setTokenManagerOpened(false)}>
     <SearchInput
       className='mx-4 mb-6'
       placeholder={'Choose or paste token'}
@@ -55,26 +94,32 @@ const TokenManager = ({list = [], loading = false, error = undefined, onClose = 
     <div className='flex-col overflow-y-auto border-t border-gray-300' style={{
       maxHeight: '50vh'
     }}>
-    {list && !error && list.length && !loading && !searchString ?
+    {list && !error && list.length && !pending && !searchString ?
       list.map(token => {
         return <TokenRow token={token} key={token.symbol} onClick={() => {
-          onChooseToken(token)
-          onClose()
+          setSplToken(token)
+          setTokenManagerOpened(false)
         }}/>
       }) :
       searchString ?
         searchList.map((token) => {
           return <TokenRow token={token} key={token.symbol} onClick={() => {
-            onChooseToken(token)
-            onClose()
+            setSplToken(token)
+            setTokenManagerOpened(false)
           }}/>
         }) :
-        loading ?
-          <div className='p-6'>Loading list...</div> :
+        pending ?
+          <div className='p-4 flex items-center'>
+            <div className='loader-icon'><LoaderIcon/></div>
+            <span className='ml-4 text-lg'>Updating token list, please wait...</span>
+          </div> :
           error ?
-            <>Error getting token list</>
+            <div className='flex p-4 flex-col'>
+              <div className='text-lg mb-4'>Error getting token list</div>
+              <div className='text-gray-600'>{error.message}</div>
+            </div>
         : list.length ? <>No tokens has been provided</> : null }
       </div>
-  </div>
+  </Modal></div>
 }
 export default TokenManager
