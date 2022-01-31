@@ -15,7 +15,7 @@ export const Button: FC<ButtonProps> = (props) => {
 
     return (
         <button
-            className={`wallet-adapter-button flex ${props.className || ''}`}
+            className={`wallet-adapter-button ${props.className || ''}`}
             disabled={props.disabled}
             onClick={props.onClick}
             style={{ justifyContent, ...props.style }}

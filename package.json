@@ -22,6 +22,7 @@
     "@web3-react/injected-connector": "^6.0.7",
     "arraybuffer-to-string": "^1.0.2",
     "bip39": "^3.0.4",
+    "bowser": "^2.11.0",
     "buffer-layout": "^1.2.2",
     "classnames": "^2.2.5",
     "react": "^17.0.2",

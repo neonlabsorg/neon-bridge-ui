@@ -41,15 +41,18 @@ const TokenRow = ({
         <div className='text-sm text-gray-500'>{token.name}</div>
       </div>
     </div>
-    <div className='w-1/2 pl-4 text-sm text-gray-400 flex items-center justify-end'>
+    <div className='w-1/2 pl-4 text-sm flex items-center justify-end'>
       <div className='flex flex-col items-end'>
       {Object.keys(token.balances).map(netKey => {
         const balance = token.balances[netKey]
         if (balance === undefined) return <></>
-        return <div className='py-1 flex items-center' key={netKey}>
-          <span className='mr-2'>{balance}</span>
-          {netKey === 'eth' ? <MetamaskIcon/> : <PhantomIcon/>}
-        </div>
+        if ((direction === 'neon' && publicKey && netKey === 'sol') || (direction === 'solana' && account && netKey === 'eth')) {
+          return <div className='py-1 flex items-center' key={netKey}>
+            <span className='mr-2'>{balance}</span>
+            {netKey === 'eth' ? <MetamaskIcon/> : <PhantomIcon/>}
+          </div>
+        }
+        return <></>
       })}
       </div>
       

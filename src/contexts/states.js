@@ -16,6 +16,8 @@ const STEPS = {
 export const StateContext = createContext({
   steps: {},
   transfering: false,
+  splToken: undefined,
+  amount: 0,
   direction: 'neon',
   toggleDirection: () => {},
   finishStep: () => {}
@@ -28,7 +30,7 @@ export function StateProvider({ children = undefined}) {
   const [solanaTransferSign, setSolanaTransferSign] = useState('')
   const [neonTransferSign, setNeonTransferSign] = useState('')
   const [error, setError] = useState(undefined)
-  const [splToken, setSplToken] = useState({})
+  const [splToken, setSplToken] = useState(undefined)
   const [steps, setSteps] = useState(STEPS)
   const [direction, setDirection] = useState('neon')
   const toggleDirection = () => {

@@ -63,7 +63,7 @@ export const WalletMultiButton: FC<ButtonProps> = ({ children, ...props }) => {
         <div className="wallet-adapter-dropdown">
             <Button
                 aria-expanded={active}
-                className="wallet-adapter-button-trigger"
+                className="wallet-adapter-button-trigger w-full text-center"
                 style={{ pointerEvents: active ? 'none' : 'auto', ...props.style }}
                 onClick={openDropdown}
                 startIcon={<WalletIcon wallet={wallet} />}

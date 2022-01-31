@@ -22,7 +22,7 @@ export const CurrencyInput = ({
   return <div className={`inline-flex bg-light-gray px-6 ${className} items-center justify-between`}
     style={{height: '80px'}}>
     <div onClick={openManageTokenModal} className='flex-grow flex items-center text-lg py-6 cursor-pointer'>
-      {splToken.name ? splToken.name : 'Select a token'}
+      {splToken ? splToken.name : 'Select a token'}
       <DropDownIcon className='ml-3'/>
     </div>
     <input type='number'
