@@ -22,7 +22,7 @@ export const Confirm = withNotie((props) => {
   }
 
   useEffect(() => {
-    if(error !== undefined && error.message) props.notie.error(error.message)
+    if(error !== undefined) props.notie.error(error)
   }, [error, props.notie])
 
   return <div className='w-full flex flex-col pt-6'>

@@ -17,7 +17,7 @@ export const ENDPOINTS = [
     associatedChainId: 245022934,
     key: 'mainnet-beta',
     name: 'Solana Mainnet Beta',
-    endpoint:  process.env.REACT_APP_MAINNET_RPC ||  'https://api.mainnet-beta.solana.com'
+    endpoint: 'https://api.mainnet-beta.solana.com'
   },
   {
     associatedChainId: 245022940,

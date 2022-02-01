@@ -115,7 +115,7 @@ export const WalletModal: FC<WalletModalProps> = ({
             <div
                 aria-labelledby="modal-title"
                 aria-modal="true"
-                className={`modals-overlay ${fadeIn && 'wallet-adapter-modal-fade-in'} ${className}`}
+                className={`modal-overlay ${fadeIn && 'wallet-adapter-modal-fade-in'} ${className}`}
                 ref={ref}
                 role="dialog"
             >
@@ -179,7 +179,7 @@ export const WalletModal: FC<WalletModalProps> = ({
                         ) : null}
                     </div>
                 </div>
-                <div className="modals-overlay__bg" onMouseDown={handleClose} />
+                <div className="modal-overlay__bg" onMouseDown={handleClose} />
             </div>,
             portal
         )

@@ -22,7 +22,6 @@ const ResultsView = ({stepKey = ''}) => {
     const { amount, splToken, direction } = useStatesContext()
     const shortNeonKey = useMemo(() => shortenAddress(account), [account])
     const shortSolanaKey = useMemo(() => publicKey ? shortenAddress(publicKey.toString()) : '', [publicKey])
-    console.log(splToken, amount, direction, account, publicKey, shortSolanaKey, shortNeonKey)
     const renderTransferInfo = () => {
         return <div>
             <span>Transfer </span>
@@ -51,8 +50,8 @@ const ResultsView = ({stepKey = ''}) => {
 
 export const SplConverter =  () => {
     const {isFirstTransaction, viewNotify, setViewNotify} = useTransactionHistory()
-    const { steps, transfering, neonTransferSign, solanaTransferSign } = useStatesContext()
-    if (transfering === true || solanaTransferSign || neonTransferSign) {
+    const { steps, pending, neonTransferSign, solanaTransferSign } = useStatesContext()
+    if (pending === true || solanaTransferSign || neonTransferSign) {
         return <Transfering />
     } else {
         return (

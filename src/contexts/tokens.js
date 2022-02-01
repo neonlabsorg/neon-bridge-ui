@@ -41,7 +41,7 @@ export function TokensProvider({ children = undefined}) {
       connection.getTokenAccountBalance(assocTokenAccountAddress),
       timeout(500)
     ]).catch(error => {
-      console.warn(error)
+      console.warn(error.message)
       return [0, undefined]
     })
     const balanceData = completed[0]
@@ -49,7 +49,7 @@ export function TokensProvider({ children = undefined}) {
     if (balanceData && balanceData.value && balanceData.value.uiAmount) {
       return balanceData.value.uiAmount
     }
-    return completed[0]
+    return 0
   }
 
 
@@ -76,7 +76,6 @@ export function TokensProvider({ children = undefined}) {
         console.dir(e)
         // setError(e)
       }
-      console.log(balances)
       const token = Object.assign({}, item, {balances})
       list.push(token)
     }

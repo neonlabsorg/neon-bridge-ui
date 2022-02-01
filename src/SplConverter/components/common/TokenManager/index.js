@@ -48,7 +48,7 @@ const TokenRow = ({
         if (balance === undefined) return <></>
         if ((direction === 'neon' && publicKey && netKey === 'sol') || (direction === 'solana' && account && netKey === 'eth')) {
           return <div className='py-1 flex items-center' key={netKey}>
-            <span className='mr-2'>{balance}</span>
+            <span className='mr-2'>{JSON.stringify(balance)}</span>
             {netKey === 'eth' ? <MetamaskIcon/> : <PhantomIcon/>}
           </div>
         }
@@ -119,7 +119,7 @@ const TokenManager = () => {
           error ?
             <div className='flex p-4 flex-col'>
               <div className='text-lg mb-4'>Error getting token list</div>
-              <div className='text-gray-600'>{error.message}</div>
+              <div className='text-gray-600'>{error}</div>
             </div>
         : list.length ? <>No tokens has been provided</> : null }
       </div>

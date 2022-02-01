@@ -21,7 +21,6 @@ const useTransactionHistory = () => {
     if (transaction.from && transaction.to) {
       const updatedTransactions = transactions.concat([transaction])
       setTransactions(updatedTransactions)
-      console.log(JSON.stringify(updatedTransactions))
       localStorage.setItem('transactions', JSON.stringify(updatedTransactions))
       if (viewNotify) setViewNotify(false)
     }
