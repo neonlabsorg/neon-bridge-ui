@@ -21,15 +21,9 @@ const Web3Status = ({className = ''}) => {
   if (error) {
     return <span>
       {error instanceof UnsupportedChainIdError ? 
-      <div className='flex flex-col'>
-        <div className='text-lg mb-1'>{'Wrong Network'}</div>
-        <div className='flex flex-col'>
-          <span>It seems your network settings configured wrong.</span>
-          <a href='https://docs.neon-labs.org/docs/devportal/metamask_setup'
-            className='underline'
-            target='_blank' rel='noopener noreferrer'>
-            Check out our docs to avoid this error.</a>
-        </div>
+      <div className='flex flex-col py-4 px-6 border border-purple-700 mb-6'>
+        <div className='text-md mb-3'>{'Wrong Network'}</div>
+        <div className='flex flex-col text-sm text-gray-600'>Choose Neon network in your metamask wallet to continue transaction</div>
       </div>
       : 'Error'}
     </span>

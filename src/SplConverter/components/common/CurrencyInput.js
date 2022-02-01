@@ -1,29 +1,16 @@
 import { useEffect, useState } from "react"
-import TokenManager from './TokenManager'
-import {ModalCaller} from '../../../common/Modal'
-import { useTokenList } from '../../hooks/useTokenList'
 import { ReactComponent as DropDownIcon } from '../../../assets/dropdown.svg'
 import { useStatesContext } from "../../../contexts/states"
+import { useTokensContext } from "../../../contexts/tokens"
 
 export const CurrencyInput = ({
   className = ''
 }) => {
-  const {list, error, loading} = useTokenList()
   const [inputAmount, setInputAmount] = useState('0.0')
-  const {amount, setAmount, splToken, setSplToken} = useStatesContext()
-  const setToken = (token) => setSplToken(token)
+  const {amount, setAmount, splToken} = useStatesContext()
+  const {setTokenManagerOpened} = useTokensContext()
   const openManageTokenModal = () => {
-    new ModalCaller({
-      title: 'Choose token',
-      bodyClass: 'max-h-3/4 overflow-auto',
-      className: 'w-2/4 max-w-420px',
-      children: <TokenManager
-        activeToken={splToken}
-        list={list} error={error} loading={loading}
-        onChooseToken={(token) => {
-          setToken(token)
-        }}/>
-    })
+    setTokenManagerOpened(true)
   }
   useEffect(() => {
     if (amount !== 0 && typeof amount === 'number') setInputAmount(`${amount}`)
@@ -35,7 +22,7 @@ export const CurrencyInput = ({
   return <div className={`inline-flex bg-light-gray px-6 ${className} items-center justify-between`}
     style={{height: '80px'}}>
     <div onClick={openManageTokenModal} className='flex-grow flex items-center text-lg py-6 cursor-pointer'>
-      {splToken.name ? splToken.name : 'Select a token'}
+      {splToken ? splToken.name : 'Select a token'}
       <DropDownIcon className='ml-3'/>
     </div>
     <input type='number'

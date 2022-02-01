@@ -8,6 +8,8 @@ import { WalletProvider } from '@solana/wallet-adapter-react';
 import { useSolanaWallet } from './SplConverter/hooks/useSolanaWallet'
 import { NotieProvider } from '@/common/Notifications';
 import Web3 from 'web3'
+import { TokensProvider } from './contexts/tokens';
+import TokenManager from './SplConverter/components/common/TokenManager';
 function getLibrary(provider) {
   return new Web3(provider)
 }
@@ -21,10 +23,14 @@ function App() {
           <NotieProvider>
             <Layout className='flex flex-col w-full px-4'
               bodyClassName='flex flex-col justify-center'>
-              <StateProvider>
-                <SplConverter />
-              </StateProvider>
+              <TokensProvider>
+                <StateProvider>
+                  <SplConverter />
+                  <TokenManager />
+                </StateProvider>
+              </TokensProvider>
             </Layout>
+            <div id='modals'/>
           </NotieProvider>
         </WalletProvider>
       </ConnectionProvider>

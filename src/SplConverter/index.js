@@ -8,6 +8,8 @@ import { useWeb3React } from '@web3-react/core';
 import { useMemo } from 'react'
 import { Transfering } from './components/Transfering';
 import { useWallet } from '@solana/wallet-adapter-react';
+import useTransactionHistory from './hooks/useTransactionHistory';
+import { ReactComponent as CrossIcon } from '@/assets/cross.svg'
 const COMPONENTS_BY_STEPS = {
     source: Source,
     target: Target,
@@ -20,7 +22,6 @@ const ResultsView = ({stepKey = ''}) => {
     const { amount, splToken, direction } = useStatesContext()
     const shortNeonKey = useMemo(() => shortenAddress(account), [account])
     const shortSolanaKey = useMemo(() => publicKey ? shortenAddress(publicKey.toString()) : '', [publicKey])
-    console.log(splToken, amount, direction, account, publicKey, shortSolanaKey, shortNeonKey)
     const renderTransferInfo = () => {
         return <div>
             <span>Transfer </span>
@@ -48,26 +49,34 @@ const ResultsView = ({stepKey = ''}) => {
 
 
 export const SplConverter =  () => {
-    const { steps, transfering, neonTransferSign, solanaTransferSign } = useStatesContext()
-    if (transfering === true || solanaTransferSign || neonTransferSign) {
+    const {isFirstTransaction, viewNotify, setViewNotify} = useTransactionHistory()
+    const { steps, pending, neonTransferSign, solanaTransferSign } = useStatesContext()
+    if (pending === true || solanaTransferSign || neonTransferSign) {
         return <Transfering />
     } else {
         return (
-            <div className='w-full'>
-                {Object.keys(steps).map((stepKey, index) => {
-                    const step = steps[stepKey]
-                    const StepComponent = COMPONENTS_BY_STEPS[stepKey]
-                    return <Accordion className='mb-8' key={stepKey}
-                        title={step.title}
-                        stepKey={stepKey}
-                        stepNumber={index + 1}
-                        active={step.status === 'active'}
-                        finished={step.status === 'finished'}
-                        resultsView={<ResultsView stepKey={stepKey} />}>
-                        <StepComponent/>
-                    </Accordion>
-                })}
-            </div>
+            <>
+                {isFirstTransaction && viewNotify? <div className='bg-white p-6 mb-4 flex flex-col relative'>
+                    <CrossIcon className='absolute right-5 top-5' onClick={() => setViewNotify(false)}/>
+                    <div className='text-lg mb-2'>Airdrop ahead!</div>
+                    <div className='text-sm text-gray-600 leading-relaxed'>When you complete your first Neonpass transaction we will drop to your wallet 1000 additional NEON tokens.</div>
+                </div> : null}
+                <div className='w-full'>
+                    {Object.keys(steps).map((stepKey, index) => {
+                        const step = steps[stepKey]
+                        const StepComponent = COMPONENTS_BY_STEPS[stepKey]
+                        return <Accordion className='mb-8' key={stepKey}
+                            title={step.title}
+                            stepKey={stepKey}
+                            stepNumber={index + 1}
+                            active={step.status === 'active'}
+                            finished={step.status === 'finished'}
+                            resultsView={<ResultsView stepKey={stepKey} />}>
+                            <StepComponent/>
+                        </Accordion>
+                    })}
+                </div>
+            </>
         )
     }
 }

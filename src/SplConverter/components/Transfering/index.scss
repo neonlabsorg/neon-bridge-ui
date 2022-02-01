@@ -7,15 +7,19 @@
   }
 }
 
+.loader-icon {
+  svg {
+    animation-name: rotating;
+    animation-timing-function: linear;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+  }
+}
+
 .loader {
   @apply flex flex-col items-center;
   &__icon {
-    svg {
-      animation-name: rotating;
-      animation-timing-function: linear;
-      animation-duration: 1s;
-      animation-iteration-count: infinite;
-    }
+    @extend .loader-icon;
     margin-bottom: 24px;
   }
   &__title {
