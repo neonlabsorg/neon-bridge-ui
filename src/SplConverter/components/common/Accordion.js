@@ -25,7 +25,7 @@ const Accordion = ({
           minWidth: '27px',
           height: '27px'
         }}>{finished ? <CheckIcon/> : stepNumber}</div>
-        <h3 className={`text-2xl leading-none ${!active ? 'cursor-pointer' : ''}`}
+        <h3 className={`text-2xl leading-none ${finished ? 'cursor-pointer text-blue-900 underline' : ''}`}
           onClick={handleOpenContent}>{title}</h3>
       </div>
       <div className='flex flex-col'>
