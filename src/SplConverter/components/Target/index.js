@@ -8,10 +8,12 @@ import Web3Status from '@/common/Web3Status'
 import { useWeb3React } from "@web3-react/core";
 import Button from "@/common/Button";
 import { TransferInfo } from "../common/TransferInfo";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export const Target = () => {
   const {direction, finishStep} = useStatesContext()
   const {active} = useWeb3React()
+  const { publicKey } = useWallet()
   return <div className='w-full flex flex-col'>
     <SourceCard direction={direction} prefix='To' className='mb-6'/>
     {direction === 'solana' ?
@@ -23,6 +25,10 @@ export const Target = () => {
       </> : null
     }
     {active ? <TransferInfo/> : null}
-    <Button disabled={!active} onClick={() => finishStep('target')}>{'Next'}</Button>
+    <Button
+      disabled={(direction === 'neon' && !active) || (direction ==='solana' && !publicKey)}
+      onClick={() => finishStep('target')}>
+      {'Next'}
+    </Button>
   </div>
 }
