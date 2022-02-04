@@ -59,7 +59,7 @@ export const SplConverter =  () => {
                 {isFirstTransaction && viewNotify? <div className='bg-white p-6 mb-4 flex flex-col relative'>
                     <CrossIcon className='absolute right-5 top-5' onClick={() => setViewNotify(false)}/>
                     <div className='text-lg mb-2'>Airdrop ahead!</div>
-                    <div className='text-sm text-gray-600 leading-relaxed'>When you complete your first Neonpass transaction we will drop to your wallet 1000 additional NEON tokens.</div>
+                    <div className='text-sm text-gray-600 leading-relaxed'>When you complete your first Neonpass transaction we will refund half of a price spent to account creation in NEON tokens</div>
                 </div> : null}
                 <div className='w-full'>
                     {Object.keys(steps).map((stepKey, index) => {
