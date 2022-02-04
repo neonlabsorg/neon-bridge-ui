@@ -1,4 +1,6 @@
+import { useWallet } from "@solana/wallet-adapter-react";
 import { createContext, useContext, useEffect, useState, useRef } from "react";
+import { useConnection } from "./connection";
 const STEPS = {
   source: {
     title: 'Source',
@@ -18,6 +20,7 @@ export const StateContext = createContext({
   transfering: false,
   splToken: undefined,
   amount: 0,
+  fee: 0,
   direction: 'neon',
   toggleDirection: () => {},
   finishStep: () => {}
@@ -25,7 +28,11 @@ export const StateContext = createContext({
 
 
 export function StateProvider({ children = undefined}) {
+  const connection = useConnection()
+  const { publicKey } = useWallet()
   const [amount, setAmount] = useState(0.0)
+  const [fee, setFee] = useState(0)
+  const [solBalance, setSolBalance] = useState(0)
   const [pending, setPending] = useState(false)
   const [transfering, setTransfering] = useState(false)
   const [solanaTransferSign, setSolanaTransferSign] = useState('')
@@ -104,6 +111,19 @@ export function StateProvider({ children = undefined}) {
     setAmount(0)
     setSplToken(undefined)
   }
+  const calculatingFee = async () => {
+    const { feeCalculator } = await connection.getRecentBlockhash()
+    const currentFee = feeCalculator.lamportsPerSignature * Math.pow(10, -9)
+    setFee(currentFee)
+    const lamportBalance = await connection.getBalance(publicKey)
+    const currentBalance = lamportBalance * Math.pow(10, -9)
+    setSolBalance(currentBalance)
+  }
+  useEffect(() => {
+    if (publicKey) calculatingFee()
+    // eslint-disable-next-line
+  }, [publicKey])
+
   useEffect(() => {
     if (error !== undefined) setError(undefined)
   // eslint-disable-next-line
@@ -132,7 +152,8 @@ export function StateProvider({ children = undefined}) {
       solanaTransferSign, setSolanaTransferSign,
       neonTransferSign, setNeonTransferSign,
       rejected, resetStates,
-      pending, setPending
+      pending, setPending,
+      fee, solBalance
     }}>
     {children}
   </StateContext.Provider>

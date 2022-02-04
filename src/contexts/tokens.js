@@ -40,8 +40,8 @@ export function TokensProvider({ children = undefined}) {
     const completed = await Promise.all([
       connection.getTokenAccountBalance(assocTokenAccountAddress),
       timeout(500)
-    ]).catch(error => {
-      console.warn(error.message)
+    ]).catch(e => {
+      console.warn(e)
       return [0, undefined]
     })
     const balanceData = completed[0]
@@ -73,8 +73,7 @@ export function TokensProvider({ children = undefined}) {
         if (publicKey) balances.sol = await getSplBalance(item)
         if (account) balances.eth = await getEthBalance(item)
       } catch (e) {
-        console.dir(e)
-        // setError(e)
+        console.warn(e)
       }
       const token = Object.assign({}, item, {balances})
       list.push(token)
