@@ -9,6 +9,7 @@ import {ReactComponent as MetamaskIcon} from '@/assets/metamask.svg'
 import {ReactComponent as LoaderIcon} from '@/assets/loader.svg'
 import { useWeb3React } from '@web3-react/core';
 import { useWallet } from '@solana/wallet-adapter-react';
+import TokenSymbol from './components/TokenSymbol';
 Modal.setAppElement('#root')
 const TokenRow = ({
   token = {
@@ -34,7 +35,7 @@ const TokenRow = ({
     onClick={onClick}>
     <div className='flex items-center w-1/2 pr-4'>
       <div className='w-1/3 pr-4'>
-        <img src={token.logoURI} alt='token logo' />
+        <TokenSymbol src={token.logoURI} alt={token.name} />
       </div>
       <div className='w-2/3 flex flex-col'>
         <div className='text-lg mb-2'>{token.symbol}</div>
@@ -98,8 +99,8 @@ const TokenManager = () => {
       maxHeight: '50vh'
     }}>
     {list && !error && list.length && !pending && !searchString ?
-      list.map(token => {
-        return <TokenRow token={token} key={token.symbol} onClick={() => {
+      list.map((token) => {
+        return <TokenRow token={token} key={token.name} onClick={() => {
           setSplToken(token)
           setTokenManagerOpened(false)
         }}/>
