@@ -23,7 +23,9 @@ const Web3Status = ({className = ''}) => {
       {error instanceof UnsupportedChainIdError ? 
       <div className='flex flex-col py-4 px-6 border border-purple-700 mb-6'>
         <div className='text-md mb-3'>{'Wrong Network'}</div>
-        <div className='flex flex-col text-sm text-gray-600'>Choose Neon network in your metamask wallet to continue transaction</div>
+        <div className='flex flex-col text-sm text-gray-600'>
+          {`Choose ${process.env.REACT_APP_NETWORK || 'Neon'} network in your metamask wallet to continue transaction`}
+          </div>
       </div>
       : 'Error'}
     </span>
