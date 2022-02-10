@@ -42,11 +42,11 @@ export const Transfering = () => {
         onClick={handleRepeatScript}/>
       <DoneIcon className='mb-10'/>
       <div className='font-medium text-xl mb-6'>Transfer complete</div>
-      {neonTransferSign ?
+      {/*neonTransferSign ?
         <a href={`https://etherscan.io/tx/${neonTransferSign}`}
           target='_blank'
           rel='noopener noreferrer'
-          className='text-blue-500 mb-4'>View on Etherscan</a> : null}
+      className='text-blue-500 mb-4'>View on Etherscan</a> : null*/}
       {solanaTransferSign ? 
         <a href={`https://solscan.io/tx/${solanaTransferSign}?cluster=devnet`}
           target='_blank'
