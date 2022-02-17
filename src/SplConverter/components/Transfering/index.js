@@ -32,8 +32,8 @@ export const Transfering = () => {
         Usually takes 1-30 seconds to complete,<br/>
         don’t close browser window just yet</div>
       <div className='flex justify-center'>
-        {!transfering ? <Button className='mt-10 ml-4' onClick={() => rejected.current = true}>Reject Transaction</Button> : null}
-        {reset ? <Button className='mt-10 mr-4' onClick={handleRepeatScript}>Stop Processing</Button>: null}
+        {!transfering ? <Button className='mt-10 mr-4' onClick={() => rejected.current = true}>Reject Transaction</Button> : null}
+        {reset ? <Button className='mt-10 ml-4' onClick={handleRepeatScript}>Stop Processing</Button>: null}
       </div>
     </div>
   } else if (solanaTransferSign || neonTransferSign) {
