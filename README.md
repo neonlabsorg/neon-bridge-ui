@@ -9,20 +9,33 @@ Deployment process delimeted on other solana web3 networks. One type of network 
 ### `npm run start`
 Metamask Chain Id: 245022926
 
-Runs the app in the development mode for devnet RPC network by default.\
+Runs the app in the development mode for **devnet** RPC network by default.
 Other start scripts runs the same, but for other networks.
+
 
 ### `npm run start-testnet`
 Metamask Chain Id: 245022940
 
+Runs the app in the development mode for **testnet** RPC network.
+
+
 ### `npm run start-mainnet`
 Metamask Chain Id: 245022934
+
+Runs the app in the development mode for **mainnet** RPC network.
 
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder with the same network configuration
+Builds the app in the production mode for **devnet** RPC network
+
 
 ### `npm run build-testnet`
 
+Builds the app in the production mode for **testnet** RPC network
+
+
 ### `npm run build-mainnet`
+
+Builds the app in the production mode for **mainnet** RPC network
+
