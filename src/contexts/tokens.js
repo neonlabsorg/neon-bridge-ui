@@ -12,7 +12,8 @@ export const TokensContext = createContext({
   error: '',
   pending: false,
   tokenManagerOpened: false,
-  setTokenManagerOpened: () => {}
+  setTokenManagerOpened: () => {},
+  updateTokenList: () => {}
 });
 
 export function TokensProvider({ children = undefined}) {
@@ -21,7 +22,7 @@ export function TokensProvider({ children = undefined}) {
   const {library, account} = useWeb3React()
   const connection = useConnection()
   const [error, setError] = useState('')
-  const [sourceList, setSourceList] = useState([])
+  const [tokenList, setTokenList] = useState([])
   const [pending, setPending] = useState(false)
   const [tokenManagerOpened, setTokenManagerOpened] = useState(false)
 
@@ -62,27 +63,36 @@ export function TokensProvider({ children = undefined}) {
 
 
   const mergeTokenList = async (source = []) => {
-    const list = []
-    setPending(true)
-    for (const item of source) {
+    if (tokenList.length) setTokenList([])
+    source.forEach((item) => {
       let balances = {
-        eth: undefined,
-        sol: undefined
+        eth: null,
+        sol: null
       }
+      item['balances'] = balances
+    })
+    setTokenList(source)
+    for (const [index, item] of source.entries()) {
       try {
-        if (publicKey) balances.sol = await getSplBalance(item)
-        if (account) balances.eth = await getEthBalance(item)
+        if (publicKey) {
+          item.balances.sol = await getSplBalance(item)
+        } else {
+          item.balances.sol = undefined
+        }
+        if (account) {
+          item.balances.eth = await getEthBalance(item)
+        } else {
+          item.balances.eth = undefined
+        }
       } catch (e) {
         console.warn(e)
       }
-      const token = Object.assign({}, item, {balances})
-      list.push(token)
+      const sourceCopy = [...source]
+      sourceCopy.splice(index, 1, item)
+      setTokenList(sourceCopy)
     }
-    setSourceList(list)
-    setPending(false)
   }
-  useEffect(() => {
-    if (sourceList.length) setSourceList([])
+  const updateTokenList = () => {
     setPending(true)
     fetch(`https://raw.githubusercontent.com/neonlabsorg/token-list/main/tokenlist.json`)
     .then((resp) => {
@@ -96,6 +106,9 @@ export function TokensProvider({ children = undefined}) {
     .catch(err => {
       setError(`Failed to fetch neon transfer token list: ${err.message}`)
     }).finally(() => setPending(false))
+  }
+  useEffect(() => {
+    updateTokenList()
   // eslint-disable-next-line
   }, [chainId, account, publicKey])
   const filteringChainId = useMemo(() => {
@@ -103,13 +116,13 @@ export function TokensProvider({ children = undefined}) {
     else return chainId
   }, [chainId])
   const list = useMemo(() => {
-    const filtered = sourceList.filter(token => {
+    const filtered = tokenList.filter(token => {
       return token.chainId === filteringChainId
     })
     return filtered
-  }, [filteringChainId, sourceList])
+  }, [filteringChainId, tokenList])
   return <TokensContext.Provider
-    value={{list, pending, error, tokenManagerOpened, setTokenManagerOpened}}>
+    value={{list, pending, error, tokenManagerOpened, setTokenManagerOpened, updateTokenList}}>
     {children}
   </TokensContext.Provider>
 }
