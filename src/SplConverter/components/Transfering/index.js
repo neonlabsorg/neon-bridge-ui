@@ -4,6 +4,13 @@ import {ReactComponent as CloseIcon} from '@/assets/close.svg'
 import {ReactComponent as DoneIcon} from '@/assets/done.svg'
 import Button from "@/common/Button"
 import { useRef, useEffect, useState } from "react"
+const { REACT_APP_NETWORK } = process.env
+
+const ASSOC_TX_EXPLORERS = {
+  'devnet': 'http://neonqltest.aleph.cloud:8004',
+  'testnet': 'http://neonqltest.aleph.cloud:8004',
+  'mainnet-beta': 'https://neonscan.io'
+}
 export const Transfering = () => {
   const {transfering, pending,
     solanaTransferSign, rejected,
@@ -42,13 +49,13 @@ export const Transfering = () => {
         onClick={handleRepeatScript}/>
       <DoneIcon className='mb-10'/>
       <div className='font-medium text-xl mb-6'>Transfer complete</div>
-      {/*neonTransferSign ?
-        <a href={`https://etherscan.io/tx/${neonTransferSign}`}
+      {neonTransferSign ?
+        <a href={`${ASSOC_TX_EXPLORERS[REACT_APP_NETWORK]}/tx/${neonTransferSign}?network=${REACT_APP_NETWORK}`}
           target='_blank'
           rel='noopener noreferrer'
-      className='text-blue-500 mb-4'>View on Etherscan</a> : null*/}
+      className='text-blue-500 mb-4'>View on Neonscan</a> : null}
       {solanaTransferSign ? 
-        <a href={`https://solscan.io/tx/${solanaTransferSign}?cluster=devnet`}
+        <a href={`https://solscan.io/tx/${solanaTransferSign}?cluster=${REACT_APP_NETWORK}`}
           target='_blank'
           rel='noopener noreferrer'
           className='text-blue-500'>View on Solana Explorer</a> : null}
