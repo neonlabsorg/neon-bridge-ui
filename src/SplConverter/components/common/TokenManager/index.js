@@ -45,6 +45,7 @@ const TokenRow = ({
       {Object.keys(token.balances).map(netKey => {
         const balance = token.balances[netKey]
         const Icon = netKey === 'eth' ? MetamaskIcon : PhantomIcon
+        if ((direction === 'neon' && netKey === 'eth') || (direction === 'solana' && netKey === 'sol')) return <></>
         if (balance === null) return <div className='py-1 flex items-center' key={netKey}>
           <span className='mr-2'>
             <div className='loader-icon'>
