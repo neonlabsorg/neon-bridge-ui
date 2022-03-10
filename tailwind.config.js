@@ -17,6 +17,9 @@ module.exports = {
       // => @media (min-width: 1280px) { ... }
     },
     extend: {
+      width: {
+        '18px': '18px'
+      },
       maxWidth: {
         '420px': '420px'
       },
@@ -24,6 +27,7 @@ module.exports = {
         '3/4': '75%'
       },
       height: {
+        '18px': '18px',
         '64px': '64px'
       },
       colors: {

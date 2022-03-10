@@ -1,6 +1,7 @@
 import { useWallet } from "@solana/wallet-adapter-react";
 import { createContext, useContext, useEffect, useState, useRef } from "react";
 import { useConnection } from "./connection";
+import { useTokensContext } from "./tokens";
 const STEPS = {
   source: {
     title: 'Source',
@@ -29,6 +30,7 @@ export const StateContext = createContext({
 
 export function StateProvider({ children = undefined}) {
   const connection = useConnection()
+  const { updateTokenList } = useTokensContext()
   const { publicKey } = useWallet()
   const [amount, setAmount] = useState(0.0)
   const [fee, setFee] = useState(0)
@@ -105,11 +107,12 @@ export function StateProvider({ children = undefined}) {
     setNeonTransferSign('')
     resetSteps()
     rejected.current = false
-    console.log('pending false by reset')
     setPending(false)
     setTransfering(false)
     setAmount(0)
     setSplToken(undefined)
+    // for autoupdate balances after transfering
+    setTimeout(() => updateTokenList(), 5000)
   }
   const calculatingFee = async () => {
     const { feeCalculator } = await connection.getRecentBlockhash()

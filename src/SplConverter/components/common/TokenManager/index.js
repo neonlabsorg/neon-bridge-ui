@@ -10,6 +10,7 @@ import {ReactComponent as LoaderIcon} from '@/assets/loader.svg'
 import { useWeb3React } from '@web3-react/core';
 import { useWallet } from '@solana/wallet-adapter-react';
 import TokenSymbol from './components/TokenSymbol';
+import Button from '../../../../common/Button';
 Modal.setAppElement('#root')
 const TokenRow = ({
   token = {
@@ -24,10 +25,7 @@ const TokenRow = ({
   const {account} = useWeb3React()
   const {publicKey} = useWallet()
   const {direction} = useStatesContext()
-  const isDisabled = useMemo(() => {
-    return (direction === 'neon' && !token.balances.sol) || (direction === 'solana' && !token.balances.eth)
-    // eslint-disable-next-line
-  }, [account, publicKey])
+  const isDisabled = (direction === 'neon' && !token.balances.sol) || (direction === 'solana' && !token.balances.eth)
   return <div className={`
       flex px-6 py-2 justify-between 
       ${!isDisabled ? 'hover:bg-gray-100 cursor-pointer' : 'pointer-events-none'}
@@ -46,6 +44,16 @@ const TokenRow = ({
       <div className='flex flex-col items-end'>
       {Object.keys(token.balances).map(netKey => {
         const balance = token.balances[netKey]
+        const Icon = netKey === 'eth' ? MetamaskIcon : PhantomIcon
+        if ((direction === 'neon' && netKey === 'eth') || (direction === 'solana' && netKey === 'sol')) return <></>
+        if (balance === null) return <div className='py-1 flex items-center' key={netKey}>
+          <span className='mr-2'>
+            <div className='loader-icon'>
+              <LoaderIcon className='w-18px h-18px'/>
+            </div>
+          </span>
+          <Icon/>
+        </div>
         if (balance === undefined) return <></>
         if ((direction === 'neon' && publicKey && netKey === 'sol') || (direction === 'solana' && account && netKey === 'eth')) {
           return <div className='py-1 flex items-center' key={netKey}>
@@ -62,7 +70,7 @@ const TokenRow = ({
 }
 
 const TokenManager = () => {
-  const {list, pending, error, tokenManagerOpened, setTokenManagerOpened} = useTokensContext()
+  const {list, pending, error, tokenManagerOpened, setTokenManagerOpened, updateTokenList} = useTokensContext()
   const {setSplToken} = useStatesContext()
 
   const [searchString, setSearchString] = useState('')
@@ -124,6 +132,7 @@ const TokenManager = () => {
             </div>
         : list.length ? <>No tokens has been provided</> : null }
       </div>
+      <Button className='mx-4 mt-6 mb-4' onClick={() => updateTokenList()}>Update List</Button>
   </Modal></div>
 }
 export default TokenManager
