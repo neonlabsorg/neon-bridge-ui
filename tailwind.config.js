@@ -1,6 +1,6 @@
 module.exports = {
   purge: [],
-  darkMode: false, // or 'media' or 'class'
+  darkMode: 'class',
   theme: {
     screens: {
       'xs': {
@@ -34,9 +34,20 @@ module.exports = {
         'ocean-blue': 'rgba(94,118,153, 0.15)',
         'light-gray': '#F3F6FD',
         'pinky-white': '#F7F8FF',
-        'light-blue': 'rgba(67, 85, 249, 0.35)'
+        'light-blue': 'rgba(67, 85, 249, 0.35)',
+        'black': '#151515',
+        'snowy': 'rgba(216, 236, 255, 0.72)',
+        'light-100': '#E2E6EA',
+        'dark-600': '#242424',
+        'dark-500': '#303030',
+        'dark-300': '#616163',
+        'dark-200': '#5B5B5B'
       }
     },
+    fill: {
+      'white': '#fff',
+      'black': '#151515'
+    }
   },
   variants: {
     extend: {},

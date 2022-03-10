@@ -11,6 +11,7 @@ import Web3 from 'web3'
 import { TokensProvider } from './contexts/tokens';
 import IssueReporter from './SplConverter/components/IssueReporter';
 import TokenManager from './SplConverter/components/common/TokenManager';
+import ThemeSwitcher from './SplConverter/components/ThemeSwitcher';
 function getLibrary(provider) {
   return new Web3(provider)
 }
@@ -22,16 +23,19 @@ function App() {
       <ConnectionProvider>
         <WalletProvider wallets={wallets}>
           <NotieProvider>
-            <Layout className='flex flex-col w-full px-4 relative'
-              bodyClassName='flex flex-col justify-center '>
-              <TokensProvider>
-                <StateProvider>
-                  <SplConverter />
-                  <TokenManager />
-                  <IssueReporter />
-                </StateProvider>
-              </TokensProvider>
-            </Layout>
+            <StateProvider>
+              <Layout className='flex flex-col w-full px-4 relative'
+                bodyClassName='flex flex-col justify-center '>
+                  <TokensProvider>
+                    <SplConverter />
+                    <TokenManager />
+                    <div className='absolute z-10 right-10 bottom-10 flex flex-col items-end'>
+                      <ThemeSwitcher />
+                      <IssueReporter className='mt-10' />
+                    </div>
+                  </TokensProvider>
+              </Layout>
+            </StateProvider>
             <div id='modals'/>
           </NotieProvider>
         </WalletProvider>

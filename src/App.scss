@@ -31,6 +31,7 @@ $plate_width: 1120px;
 @import './styles/vendor/notifications.scss';
 @import './SplConverter/components/common/TokenManager/components/SearchInput/index.scss';
 @import './SplConverter/components/Transfering/index.scss';
+@import './SplConverter/components/ThemeSwitcher/index.scss';
 
 body {
   margin: 0;
@@ -44,6 +45,12 @@ body {
 .react-notie {
   position: relative;
   z-index: 100;
+}
+.svg-fill {
+  @apply fill-black;
+}
+.dark .svg-fill {
+  @apply fill-white;
 }
 input {
   &::-webkit-outer-spin-button,
