@@ -9,7 +9,7 @@ import ERC20_ABI from '../SplConverter/hooks/abi/erc20.json'
 
 export const TokensContext = createContext({
   list: [],
-  error: '',
+  tokenErrors: {},
   pending: false,
   tokenManagerOpened: false,
   setTokenManagerOpened: () => {},
@@ -21,14 +21,51 @@ export function TokensProvider({ children = undefined}) {
   const {publicKey} = useWallet()
   const {library, account} = useWeb3React()
   const connection = useConnection()
-  const [error, setError] = useState('')
-  const [tokenList, setTokenList] = useState([])
+  const [list, setTokenList] = useState([])
   const [pending, setPending] = useState(false)
   const [tokenManagerOpened, setTokenManagerOpened] = useState(false)
+  const [tokenErrors, setTokenErrors] = useState({})
+
+  const [error, setError] = useState('')
+  const setNewTokenError = (symbol, message) => {
+    tokenErrors[symbol] = message
+    const newTokenErrors = Object.assign({}, tokenErrors)
+    setTokenErrors(newTokenErrors)
+  }
+
+  const [balances, setBalances] = useState({})
+  const addBalance = (symbol, balance) => {
+    balances[symbol] = balance
+    const newBalances = Object.assign({}, balances)
+    setBalances(newBalances)
+  }
+  const initBalancesState = () => {
+    if (!list.length) return setBalances({})
+    for (const item of list) {
+      const balance = {
+        sol: null,
+        eth: null
+      }
+      addBalance(item.symbol, balance)
+    }
+  }
 
   const timeout = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
+
+  const filteringChainId = useMemo(() => {
+    if (isNaN(chainId)) return 111
+    else return chainId
+  }, [chainId])
+
+  useEffect( () => {
+    async function fetch () {
+      await requestListBalances()
+    }
+    if (list.length > 0) fetch()
+     // eslint-disable-next-line
+  }, [list])
 
   const getSplBalance = async (token) => {
     const pubkey = new PublicKey(token.address_spl)
@@ -43,6 +80,7 @@ export function TokensProvider({ children = undefined}) {
       timeout(500)
     ]).catch(e => {
       console.warn(e)
+      setNewTokenError(token.symbol, e.message)
       return [0, undefined]
     })
     const balanceData = completed[0]
@@ -53,7 +91,6 @@ export function TokensProvider({ children = undefined}) {
     return 0
   }
 
-
   const getEthBalance = async (token) => {
     const tokenInstance = new library.eth.Contract(ERC20_ABI, token.address)
     let balance = await tokenInstance.methods.balanceOf(account).call()
@@ -61,36 +98,39 @@ export function TokensProvider({ children = undefined}) {
     return balance
   }
 
+  const requestListBalances = async () => {
 
-  const mergeTokenList = async (source = []) => {
-    if (tokenList.length) setTokenList([])
-    source.forEach((item) => {
-      let balances = {
-        eth: null,
-        sol: null
-      }
-      item['balances'] = balances
-    })
-    setTokenList(source)
-    for (const [index, item] of source.entries()) {
+    for (const item of list) {
+      const balance = balances[item.symbol]
       try {
         if (publicKey) {
-          item.balances.sol = await getSplBalance(item)
+          balance.sol = await getSplBalance(item)
         } else {
-          item.balances.sol = undefined
+          balance.sol = undefined
         }
         if (account) {
-          item.balances.eth = await getEthBalance(item)
+          balance.eth = await getEthBalance(item)
         } else {
-          item.balances.eth = undefined
+          balance.eth = undefined
         }
+        addBalance(item.symbol, balance)
       } catch (e) {
         console.warn(e)
       }
-      const sourceCopy = [...source]
-      sourceCopy.splice(index, 1, item)
-      setTokenList(sourceCopy)
     }
+  }
+
+  const mergeTokenList = async (source = []) => {
+    if (list.length) {
+      setTokenList([])
+      setTokenErrors({})
+    }
+    const newList = []
+    source.forEach((item) => {
+      if (item.chainId !== filteringChainId) return
+      newList.push(item)
+    })
+    setTokenList(newList)
   }
   const updateTokenList = () => {
     setPending(true)
@@ -107,22 +147,15 @@ export function TokensProvider({ children = undefined}) {
       setError(`Failed to fetch neon transfer token list: ${err.message}`)
     }).finally(() => setPending(false))
   }
+
   useEffect(() => {
+    initBalancesState()
     updateTokenList()
   // eslint-disable-next-line
   }, [chainId, account, publicKey])
-  const filteringChainId = useMemo(() => {
-    if (isNaN(chainId)) return 111
-    else return chainId
-  }, [chainId])
-  const list = useMemo(() => {
-    const filtered = tokenList.filter(token => {
-      return token.chainId === filteringChainId
-    })
-    return filtered
-  }, [filteringChainId, tokenList])
+
   return <TokensContext.Provider
-    value={{list, pending, error, tokenManagerOpened, setTokenManagerOpened, updateTokenList}}>
+    value={{list, pending, error, tokenErrors, balances, tokenManagerOpened, setTokenManagerOpened, updateTokenList}}>
     {children}
   </TokensContext.Provider>
 }
