@@ -1,6 +1,6 @@
 # Neon Bridge UI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). For installing and manipulating packages and processes, please use **yarn**!
 
 Deployment process delimeted on other solana web3 networks. One type of network connected with preconfigured chainID in metamask ethereum wallet.
 

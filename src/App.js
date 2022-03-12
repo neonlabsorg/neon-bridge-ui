@@ -9,6 +9,7 @@ import { useSolanaWallet } from './SplConverter/hooks/useSolanaWallet'
 import { NotieProvider } from '@/common/Notifications';
 import Web3 from 'web3'
 import { TokensProvider } from './contexts/tokens';
+import IssueReporter from './SplConverter/components/IssueReporter';
 import TokenManager from './SplConverter/components/common/TokenManager';
 function getLibrary(provider) {
   return new Web3(provider)
@@ -21,12 +22,13 @@ function App() {
       <ConnectionProvider>
         <WalletProvider wallets={wallets}>
           <NotieProvider>
-            <Layout className='flex flex-col w-full px-4'
-              bodyClassName='flex flex-col justify-center'>
+            <Layout className='flex flex-col w-full px-4 relative'
+              bodyClassName='flex flex-col justify-center '>
               <TokensProvider>
                 <StateProvider>
                   <SplConverter />
                   <TokenManager />
+                  <IssueReporter />
                 </StateProvider>
               </TokensProvider>
             </Layout>

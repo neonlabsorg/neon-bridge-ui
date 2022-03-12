@@ -11,14 +11,8 @@ export const Confirm = withNotie((props) => {
   const {createNeonTransfer, createSolanaTransfer} = useTransfering()
 
   const handleConfirmTransfer = () => {
-    if (direction === 'neon') createNeonTransfer(() => {
-      props.notie.success('Transfering Complete')
-    }, () => {
-      props.notie.info(`Neon account don't find on this address. We will create new one and recieve you 1000 test tokens.`)
-    })
-    else if (direction === 'solana') createSolanaTransfer(() => {
-      props.notie.success('Transfering Complete')
-    })
+    if (direction === 'neon') createNeonTransfer(amount, splToken)
+    else if (direction === 'solana') createSolanaTransfer(amount, splToken)
   }
 
   useEffect(() => {
