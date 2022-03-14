@@ -29,25 +29,13 @@ export function TokensProvider({ children = undefined}) {
   const [error, setError] = useState('')
   const setNewTokenError = (symbol, message) => {
     tokenErrors[symbol] = message
-    const newTokenErrors = Object.assign({}, tokenErrors)
-    setTokenErrors(newTokenErrors)
+    setTokenErrors({...tokenErrors})
   }
 
   const [balances, setBalances] = useState({})
   const addBalance = (symbol, balance) => {
     balances[symbol] = balance
-    const newBalances = Object.assign({}, balances)
-    setBalances(newBalances)
-  }
-  const initBalancesState = () => {
-    if (!list.length) return setBalances({})
-    for (const item of list) {
-      const balance = {
-        sol: null,
-        eth: null
-      }
-      addBalance(item.symbol, balance)
-    }
+    setBalances({...balances})
   }
 
   const timeout = (ms) => {
@@ -55,17 +43,10 @@ export function TokensProvider({ children = undefined}) {
   }
 
   const filteringChainId = useMemo(() => {
-    if (isNaN(chainId)) return 111
-    else return chainId
+    if (Number.isNaN(chainId)) return 111
+    return chainId
   }, [chainId])
 
-  useEffect( () => {
-    async function fetch () {
-      await requestListBalances()
-    }
-    if (list.length > 0) fetch()
-     // eslint-disable-next-line
-  }, [list])
 
   const getSplBalance = async (token) => {
     const pubkey = new PublicKey(token.address_spl)
@@ -99,21 +80,20 @@ export function TokensProvider({ children = undefined}) {
   }
 
   const requestListBalances = async () => {
-
     for (const item of list) {
-      const balance = balances[item.symbol]
+      let sol, eth
       try {
         if (publicKey) {
-          balance.sol = await getSplBalance(item)
+          sol = await getSplBalance(item)
         } else {
-          balance.sol = undefined
+          sol = undefined
         }
         if (account) {
-          balance.eth = await getEthBalance(item)
+          eth = await getEthBalance(item)
         } else {
-          balance.eth = undefined
+          eth = undefined
         }
-        addBalance(item.symbol, balance)
+        setTimeout(() => addBalance(item.symbol, {sol, eth}))
       } catch (e) {
         console.warn(e)
       }
@@ -125,12 +105,11 @@ export function TokensProvider({ children = undefined}) {
       setTokenList([])
       setTokenErrors({})
     }
-    const newList = []
-    source.forEach((item) => {
-      if (item.chainId !== filteringChainId) return
-      newList.push(item)
-    })
+    const newList = source.filter((item) => item.chainId === filteringChainId)
     setTokenList(newList)
+    setTimeout(async () => {
+      await requestListBalances()
+    })
   }
   const updateTokenList = () => {
     setPending(true)
@@ -148,11 +127,14 @@ export function TokensProvider({ children = undefined}) {
     }).finally(() => setPending(false))
   }
 
+
   useEffect(() => {
-    initBalancesState()
     updateTokenList()
+    
   // eslint-disable-next-line
   }, [chainId, account, publicKey])
+
+  
 
   return <TokensContext.Provider
     value={{list, pending, error, tokenErrors, balances, tokenManagerOpened, setTokenManagerOpened, updateTokenList}}>
