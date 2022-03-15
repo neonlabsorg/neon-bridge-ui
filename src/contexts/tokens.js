@@ -27,9 +27,10 @@ export function TokensProvider({ children = undefined}) {
   const [tokenErrors, setTokenErrors] = useState({})
 
   const [error, setError] = useState('')
-  const setNewTokenError = (symbol, message) => {
-    tokenErrors[symbol] = message
+  const setNewTokenError = (symbol, message, type = 'sol') => {
+    tokenErrors[symbol] = {message, type}
     setTokenErrors({...tokenErrors})
+    console.log(tokenErrors)
   }
 
   const [balances, setBalances] = useState({})
@@ -75,6 +76,10 @@ export function TokensProvider({ children = undefined}) {
   const getEthBalance = async (token) => {
     const tokenInstance = new library.eth.Contract(ERC20_ABI, token.address)
     let balance = await tokenInstance.methods.balanceOf(account).call()
+    if (balance instanceof Error) {
+      setNewTokenError(token.symbol, balance.message, 'eth')
+      return 0
+    }
     balance = balance / Math.pow(10, token.decimals)
     return balance
   }
@@ -101,10 +106,6 @@ export function TokensProvider({ children = undefined}) {
   }
 
   const mergeTokenList = async (source = []) => {
-    if (list.length) {
-      setTokenList([])
-      setTokenErrors({})
-    }
     const newList = source.filter((item) => item.chainId === filteringChainId)
     setTokenList(newList)
     setTimeout(async () => {
@@ -112,6 +113,10 @@ export function TokensProvider({ children = undefined}) {
     })
   }
   const updateTokenList = () => {
+    console.log('upd list')
+    setTokenErrors({})
+    setTokenList([])
+    setBalances({})
     setPending(true)
     fetch(`https://raw.githubusercontent.com/neonlabsorg/token-list/main/tokenlist.json`)
     .then((resp) => {

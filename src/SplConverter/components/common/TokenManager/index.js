@@ -47,11 +47,13 @@ const TokenRow = ({
       <div className='flex flex-col items-end'>
       {balance ? Object.keys(balance).map(netKey => {
         const currencyBalance = balance[netKey]
+
+        const tokenError = tokenErrors[token.symbol]
         const Icon = netKey === 'eth' ? MetamaskIcon : PhantomIcon
         if ((direction === 'neon' && netKey === 'eth') || (direction === 'solana' && netKey === 'sol')) return <></>
-        if (tokenErrors[token.symbol] !== undefined) {
+        if (tokenError !== undefined && ( (direction === 'neon' && tokenError.type === 'sol') || (direction === 'solana' && tokenError.type === 'eth')) ) {
           return <div className={'py-1 text-red-400 text-xs'} key={netKey}>
-            {tokenErrors[token.symbol]}
+            {tokenError.message}
           </div>
         }
         if (currencyBalance === undefined) return <div className='py-1 flex items-center' key={netKey}>
