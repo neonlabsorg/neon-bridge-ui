@@ -24,14 +24,10 @@ export function TokensProvider({ children = undefined}) {
   const [list, setTokenList] = useState([])
   const [pending, setPending] = useState(false)
   const [tokenManagerOpened, setTokenManagerOpened] = useState(false)
-  const [tokenErrors, setTokenErrors] = useState({})
 
   const [error, setError] = useState('')
-  const setNewTokenError = (symbol, message, type = 'sol') => {
-    tokenErrors[symbol] = {message, type}
-    setTokenErrors({...tokenErrors})
-    console.log(tokenErrors)
-  }
+
+  const [tokenErrors, setTokenErrors] = useState({})
 
   const [balances, setBalances] = useState({})
   const addBalance = (symbol, balance) => {
@@ -62,7 +58,6 @@ export function TokensProvider({ children = undefined}) {
       timeout(500)
     ]).catch(e => {
       console.warn(e)
-      setNewTokenError(token.symbol, e.message)
       return [0, undefined]
     })
     const balanceData = completed[0]
@@ -76,10 +71,6 @@ export function TokensProvider({ children = undefined}) {
   const getEthBalance = async (token) => {
     const tokenInstance = new library.eth.Contract(ERC20_ABI, token.address)
     let balance = await tokenInstance.methods.balanceOf(account).call()
-    if (balance instanceof Error) {
-      setNewTokenError(token.symbol, balance.message, 'eth')
-      return 0
-    }
     balance = balance / Math.pow(10, token.decimals)
     return balance
   }
