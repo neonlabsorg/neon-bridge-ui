@@ -6,6 +6,7 @@ import { useConnection } from "./connection";
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { PublicKey } from '@solana/web3.js'
 import ERC20_ABI from '../SplConverter/hooks/abi/erc20.json'
+import {NEON_TOKEN_MINT, NEON_TOKEN_MINT_DECIMALS} from 'neon-portal/src/constants'
 
 export const TokensContext = createContext({
   list: [],
@@ -16,12 +17,22 @@ export const TokensContext = createContext({
   updateTokenList: () => {}
 });
 
+const initialTokenListState = [{
+  "chainId": 111,
+  "address_spl": NEON_TOKEN_MINT,
+  "address": "",
+  "decimals": NEON_TOKEN_MINT_DECIMALS,
+  "name": "Neon",
+  "symbol": "NEON",
+  "logoURI": "https://neonpass.live/fav_192.png"
+}]
+
 export function TokensProvider({ children = undefined}) {
   const {chainId} = useNetworkType()
   const {publicKey} = useWallet()
   const {library, account} = useWeb3React()
   const connection = useConnection()
-  const [list, setTokenList] = useState([])
+  const [list, setTokenList] = useState(initialTokenListState)
   const [pending, setPending] = useState(false)
   const [tokenManagerOpened, setTokenManagerOpened] = useState(false)
 
@@ -69,10 +80,14 @@ export function TokensProvider({ children = undefined}) {
   }
 
   const getEthBalance = async (token) => {
+    if (token.address_spl === NEON_TOKEN_MINT) {
+      const balance = await library.eth.getBalance(account)
+      return +(balance / Math.pow(10, token.decimals)).toFixed(4)
+    }
+
     const tokenInstance = new library.eth.Contract(ERC20_ABI, token.address)
-    let balance = await tokenInstance.methods.balanceOf(account).call()
-    balance = balance / Math.pow(10, token.decimals)
-    return balance
+    const balance = await tokenInstance.methods.balanceOf(account).call()
+    return balance / Math.pow(10, token.decimals)
   }
 
   const requestListBalances = async () => {
@@ -98,15 +113,14 @@ export function TokensProvider({ children = undefined}) {
 
   const mergeTokenList = async (source = []) => {
     const newList = source.filter((item) => item.chainId === filteringChainId)
-    setTokenList(newList)
+    setTokenList(initialTokenListState.concat(newList))
     setTimeout(async () => {
       await requestListBalances()
     })
   }
   const updateTokenList = () => {
-    console.log('upd list')
     setTokenErrors({})
-    setTokenList([])
+    setTokenList(initialTokenListState)
     setBalances({})
     setPending(true)
     fetch(`https://raw.githubusercontent.com/neonlabsorg/token-list/main/tokenlist.json`)

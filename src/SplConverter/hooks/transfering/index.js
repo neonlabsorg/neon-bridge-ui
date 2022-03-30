@@ -11,7 +11,7 @@ export const useTransfering = () => {
   const connection = useConnection()
   const {publicKey} = useWallet()
   const {account} = useWeb3React()
-  const { createNeonTransfer, createSolanaTransfer } = useNeonTransfer({
+  const { deposit, withdraw } = useNeonTransfer({
     onBeforeCreateInstruction: () => {
       setPending(true)
     },
@@ -36,6 +36,6 @@ export const useTransfering = () => {
       setPending(false)
     }
   }, connection)
-  return { createNeonTransfer, createSolanaTransfer }
+  return { deposit, withdraw }
 }
 

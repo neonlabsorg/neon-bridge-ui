@@ -6,13 +6,13 @@ import Button from "../../../common/Button";
 import { useTransfering } from "../../hooks/transfering"
 import { withNotie } from '@/common/Notifications';
 import { ErrorHandler } from "../common/ErrorHandler";
+
 export const Confirm = withNotie((props) => {
   const { amount, splToken, direction, error } = useStatesContext()
-  const {createNeonTransfer, createSolanaTransfer} = useTransfering()
-
+  const { deposit, withdraw } = useTransfering()
   const handleConfirmTransfer = () => {
-    if (direction === 'neon') createNeonTransfer(amount, splToken)
-    else if (direction === 'solana') createSolanaTransfer(amount, splToken)
+    if (direction === 'neon') deposit(amount, splToken)
+    if (direction === 'solana') withdraw(amount, splToken)
   }
 
   useEffect(() => {
