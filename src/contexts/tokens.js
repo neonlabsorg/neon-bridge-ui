@@ -23,7 +23,8 @@ const initialTokenListState = [{
   "address": "",
   "decimals": NEON_TOKEN_MINT_DECIMALS,
   "name": "Neon",
-  "symbol": "NEON"
+  "symbol": "NEON",
+  "logoURI": "https://neonpass.live/fav_192.png"
 }]
 
 export function TokensProvider({ children = undefined}) {
@@ -81,7 +82,7 @@ export function TokensProvider({ children = undefined}) {
   const getEthBalance = async (token) => {
     if (token.address_spl === NEON_TOKEN_MINT) {
       const balance = await library.eth.getBalance(account)
-      return balance
+      return +(balance / Math.pow(10, token.decimals)).toFixed(4)
     }
 
     const tokenInstance = new library.eth.Contract(ERC20_ABI, token.address)
