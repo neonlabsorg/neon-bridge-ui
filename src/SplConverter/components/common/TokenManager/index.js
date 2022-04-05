@@ -1,4 +1,4 @@
-import React, { Fragment, useMemo, useState } from 'react'
+import React, { Fragment, useCallback, useMemo, useState } from 'react'
 import { useTokensContext } from '../../../../contexts/tokens'
 import { SearchInput } from './components/SearchInput'
 import Modal from 'react-modal';
@@ -28,7 +28,43 @@ const TokenRow = ({
   const balance = useMemo(() => {
     return balances[token.symbol]
   }, [token, balances])
-  const isDisabled = balance && ( (direction === 'neon' && !balance.sol) || (direction === 'solana' && !balance.eth) )
+  const activeNetkey = useMemo(() => {
+    if (direction === 'neon') return 'sol'
+    else return 'eth'
+  }, [direction])
+  const isDisabled = useMemo(() => balance && ( (direction === 'neon' && !balance.sol) || (direction === 'solana' && !balance.eth) ), [direction, balance])
+  const Icon = useMemo(() => {
+    return activeNetkey === 'eth' ? MetamaskIcon : PhantomIcon
+  }, [activeNetkey])
+  const currencyBalance = useMemo(() => {
+    if (balance === undefined) return undefined
+    return balance[activeNetkey]
+  }, [balance, activeNetkey])
+  const tokenError = useMemo(() => tokenErrors[token.symbol], [tokenErrors, token])
+
+  const renderCurrencyBalance = useCallback(() => {
+    if ((direction === 'neon' && activeNetkey === 'eth') || (direction === 'solana' && activeNetkey === 'sol')) return <></>
+    if (tokenError !== undefined && ( (direction === 'neon' && tokenError.type === 'sol') || (direction === 'solana' && tokenError.type === 'eth')) ) {
+      return <div className={'py-1 text-red-400 text-xs'}>
+        {tokenError.message}
+      </div>
+    }
+    if (currencyBalance === undefined) return <div className='py-1 flex items-center'>
+      <span className='mr-2'>
+        <div className='loader-icon'>
+          <LoaderIcon className='w-18px h-18px'/>
+        </div>
+      </span>
+      <Icon/>
+    </div>
+    if ((direction === 'neon' && publicKey && activeNetkey === 'sol') || (direction === 'solana' && account && activeNetkey === 'eth')) {
+      return <div className='py-1 flex items-center'>
+        <span className='mr-2'>{JSON.stringify(currencyBalance)}</span>
+        <Icon/>
+      </div>
+    }
+  }, [currencyBalance, direction, activeNetkey, tokenError, account, publicKey])
+
   return <div className={`
       flex px-6 py-2 justify-between 
       ${!isDisabled ? 'hover:bg-gray-100 cursor-pointer' : 'pointer-events-none'}
@@ -45,39 +81,7 @@ const TokenRow = ({
     </div>
     <div className='w-1/2 pl-4 text-sm flex items-center justify-end'>
       <div className='flex flex-col items-end'>
-      {balance ? Object.keys(balance).map(netKey => {
-        const currencyBalance = balance[netKey]
-
-        const tokenError = tokenErrors[token.symbol]
-        const Icon = netKey === 'eth' ? MetamaskIcon : PhantomIcon
-        if ((direction === 'neon' && netKey === 'eth') || (direction === 'solana' && netKey === 'sol')) return <></>
-        if (tokenError !== undefined && ( (direction === 'neon' && tokenError.type === 'sol') || (direction === 'solana' && tokenError.type === 'eth')) ) {
-          return <div className={'py-1 text-red-400 text-xs'} key={netKey}>
-            {tokenError.message}
-          </div>
-        }
-        if (currencyBalance === undefined) return <div className='py-1 flex items-center' key={netKey}>
-          <span className='mr-2'>
-            <div className='loader-icon'>
-              <LoaderIcon className='w-18px h-18px'/>
-            </div>
-          </span>
-          <Icon/>
-        </div>
-        if ((direction === 'neon' && publicKey && netKey === 'sol') || (direction === 'solana' && account && netKey === 'eth')) {
-          return <div className='py-1 flex items-center' key={netKey}>
-            <span className='mr-2'>{JSON.stringify(currencyBalance)}</span>
-            {netKey === 'eth' ? <MetamaskIcon/> : <PhantomIcon/>}
-          </div>
-        }
-        return <></>
-      }) : 
-      <div className='py-1 flex items-center'>
-        <div className='loader-icon'>
-          <LoaderIcon className='w-18px h-18px'/>
-        </div>
-      </div>
-      }
+        {renderCurrencyBalance()}
       </div>
     </div>
   </div>
