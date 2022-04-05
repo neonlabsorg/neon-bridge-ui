@@ -1,6 +1,6 @@
 {
-  "short_name": "Neon Bridge",
-  "name": "UI for transfering tokens from solana to neon",
+  "short_name": "Neon Pass",
+  "name": "UI for transfering tokens from Solana to Neon",
   "icons": [
     {
       "src": "fav_32.png",
