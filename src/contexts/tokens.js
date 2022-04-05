@@ -25,7 +25,7 @@ const NEON_TOKEN_MODEL = {
   decimals: NEON_TOKEN_MINT_DECIMALS,
   name: "Neon",
   symbol: "NEON",
-  logoURI: "https://neonpass.live/fav_192.png"
+  logoURI: "https://raw.githubusercontent.com/neonlabsorg/token-list/main/neon_token_md.png"
 }
 
 export function TokensProvider({ children = undefined}) {
