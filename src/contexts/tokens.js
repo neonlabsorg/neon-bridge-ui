@@ -79,9 +79,13 @@ export function TokensProvider({ children = undefined}) {
       return [0, undefined]
     })
     const balanceData = completed[0]
+    console.log(token, assocTokenAccountAddress.toBase58(), balanceData)
     if (balanceData === 0) return 0
-    if (balanceData && balanceData.value && balanceData.value.uiAmount) {
-      return balanceData.value.uiAmount
+    if (balanceData && balanceData.value) {
+      return typeof balanceData.value === 'object' && balanceData.value.uiAmount ? 
+        balanceData.value.uiAmount :
+          typeof balanceData.value === 'number' ?
+            balanceData.value / Math.pow(10, token.decimals) : 0
     }
     return 0
   }

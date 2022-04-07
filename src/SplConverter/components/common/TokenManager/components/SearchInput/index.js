@@ -1,11 +1,14 @@
+import { useStatesContext } from "@/contexts/states"
+
 export const SearchInput = ({
   className = '',
   value = '',
   onChange = () => {},
   placeholder = ''
 }) => {
+  const { theme } = useStatesContext()
   return <><input
-    className={`${className} search-input`}
+    className={`search-input ${className} ${theme === 'light' ? 'bg-light-gray' : 'bg-op04-white border-none' }  dark:text-white outline-none`}
     value={value} placeholder={placeholder}
     onChange={(e) => onChange(e.target.value)}/></>
 }

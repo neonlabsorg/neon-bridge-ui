@@ -22,7 +22,7 @@
     display: flex;
     padding-top: 24px;
     flex-direction: column;
-    @apply bg-white dark:bg-dark-600;
+    @apply bg-white dark:bg-black;
     &--cutted-corner {
         clip-path: polygon(100% 0, 100% 95%, 97% 100%, 0 100%, 0 0);
     }

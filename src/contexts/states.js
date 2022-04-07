@@ -133,6 +133,7 @@ export function StateProvider({ children = undefined}) {
     setFee(currentFee)
     const lamportBalance = await connection.getBalance(publicKey)
     const currentBalance = lamportBalance * Math.pow(10, -9)
+    console.log(currentBalance)
     setSolBalance(currentBalance)
   }
   useEffect(() => {

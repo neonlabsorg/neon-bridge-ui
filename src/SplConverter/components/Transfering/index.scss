@@ -24,7 +24,7 @@
   }
   &__title {
     font-size: 24px;
-    @apply mb-8 text-gray-900;
+    @apply mb-8 text-gray-900 dark:text-white;
   }
   &__summary {
     text-align: center;
