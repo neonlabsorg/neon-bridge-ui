@@ -48,7 +48,7 @@ const ResultsView = ({stepKey = ''}) => {
 }
 
 
-export const SplConverter =  () => {
+export const SplConverter = () => {
     const {isFirstTransaction, viewNotify, setViewNotify} = useTransactionHistory()
     const { steps, pending, neonTransferSign, solanaTransferSign } = useStatesContext()
     if (pending === true || solanaTransferSign || neonTransferSign) {
@@ -56,11 +56,7 @@ export const SplConverter =  () => {
     } else {
         return (
             <>
-                <div className='bg-white p-6 mb-4 flex flex-col'>
-                    <div className='text-lg mb-2'>Evm transfer Core is in construction!</div>
-                    <div className='text-sm text-gray-600 leading-relaxed'>Main deposit functions may be broken. We are working with it and will migrate on new version as soon as we can.</div>
-                </div>
-                {isFirstTransaction && viewNotify? <div className='bg-white p-6 mb-4 flex flex-col relative'>
+                {isFirstTransaction && viewNotify? <div className='bg-white dark:bg-dark-600 p-6 mb-4 flex flex-col relative'>
                     <CrossIcon className='absolute right-5 top-5' onClick={() => setViewNotify(false)}/>
                     <div className='text-lg mb-2'>Airdrop ahead!</div>
                     <div className='text-sm text-gray-600 leading-relaxed'>When you complete your first Neonpass transaction we will refund half of a price spent to account creation in NEON tokens</div>

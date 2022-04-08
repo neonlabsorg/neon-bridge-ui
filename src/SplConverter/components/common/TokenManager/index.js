@@ -1,95 +1,17 @@
-import React, { Fragment, useCallback, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTokensContext } from '../../../../contexts/tokens'
 import { SearchInput } from './components/SearchInput'
-import Modal from 'react-modal';
-import { useStatesContext } from '../../../../contexts/states';
-// import { shortenAddress } from '../../../utils'
-import {ReactComponent as PhantomIcon} from '@/assets/phantom.svg'
-import {ReactComponent as MetamaskIcon} from '@/assets/metamask.svg'
-import {ReactComponent as LoaderIcon} from '@/assets/loader.svg'
-import { useWeb3React } from '@web3-react/core';
-import { useWallet } from '@solana/wallet-adapter-react';
-import TokenSymbol from './components/TokenSymbol';
-import Button from '../../../../common/Button';
+import Modal from 'react-modal'
+import { useStatesContext } from '../../../../contexts/states'
+import { ReactComponent as LoaderIcon } from '@/assets/loader.svg'
+import { TokenRow } from './components/TokenRow'
+import Button from '../../../../common/Button'
 Modal.setAppElement('#root')
-const TokenRow = ({
-  token = {
-    logoURI: '',
-    symbol: '',
-    address: '',
-    name: ''
-  },
-  onClick = () => {}
-}) => {
-  const { account } = useWeb3React()
-  const { publicKey } = useWallet()
-  const { direction } = useStatesContext()
-  const { tokenErrors, balances } = useTokensContext()
-  const balance = useMemo(() => {
-    return balances[token.symbol]
-  }, [token, balances])
-  const activeNetkey = useMemo(() => {
-    if (direction === 'neon') return 'sol'
-    else return 'eth'
-  }, [direction])
-  const isDisabled = useMemo(() => balance && ( (direction === 'neon' && !balance.sol) || (direction === 'solana' && !balance.eth) ), [direction, balance])
-  const Icon = useMemo(() => {
-    return activeNetkey === 'eth' ? MetamaskIcon : PhantomIcon
-  }, [activeNetkey])
-  const currencyBalance = useMemo(() => {
-    if (balance === undefined) return undefined
-    return balance[activeNetkey]
-  }, [balance, activeNetkey])
-  const tokenError = useMemo(() => tokenErrors[token.symbol], [tokenErrors, token])
 
-  const renderCurrencyBalance = useCallback(() => {
-    if ((direction === 'neon' && activeNetkey === 'eth') || (direction === 'solana' && activeNetkey === 'sol')) return <></>
-    if (tokenError !== undefined && ( (direction === 'neon' && tokenError.type === 'sol') || (direction === 'solana' && tokenError.type === 'eth')) ) {
-      return <div className={'py-1 text-red-400 text-xs'}>
-        {tokenError.message}
-      </div>
-    }
-    if (currencyBalance === undefined) return <div className='py-1 flex items-center'>
-      <span className='mr-2'>
-        <div className='loader-icon'>
-          <LoaderIcon className='w-18px h-18px'/>
-        </div>
-      </span>
-      <Icon/>
-    </div>
-    if ((direction === 'neon' && publicKey && activeNetkey === 'sol') || (direction === 'solana' && account && activeNetkey === 'eth')) {
-      return <div className='py-1 flex items-center'>
-        <span className='mr-2'>{JSON.stringify(currencyBalance)}</span>
-        <Icon/>
-      </div>
-    }
-  }, [currencyBalance, direction, activeNetkey, tokenError, account, publicKey])
 
-  return <div className={`
-      flex px-6 py-2 justify-between 
-      ${!isDisabled ? 'hover:bg-gray-100 cursor-pointer' : 'pointer-events-none'}
-    `}
-    onClick={onClick}>
-    <div className='flex items-center w-1/2 pr-4'>
-      <div className='w-1/3 pr-4'>
-        <TokenSymbol src={token.logoURI} alt={token.name} />
-      </div>
-      <div className='w-2/3 flex flex-col'>
-        <div className='text-lg mb-2'>{token.symbol}</div>
-        <div className='text-sm text-gray-500'>{token.name}</div>
-      </div>
-    </div>
-    <div className='w-1/2 pl-4 text-sm flex items-center justify-end'>
-      <div className='flex flex-col items-end'>
-        {renderCurrencyBalance()}
-      </div>
-    </div>
-  </div>
-}
-
-const TokenManager = () => {
+export const TokenManager = () => {
   const {list, pending, error, tokenManagerOpened, setTokenManagerOpened, updateTokenList} = useTokensContext()
-  const {setSplToken} = useStatesContext()
+  const {setSplToken, theme} = useStatesContext()
 
   const [searchString, setSearchString] = useState('')
   const findBySearch = () => {
@@ -110,6 +32,7 @@ const TokenManager = () => {
     return arr
   }
   const searchList = useMemo(findBySearch, [list, searchString]);
+
   
   return <div><Modal
     isOpen={tokenManagerOpened}
@@ -121,7 +44,7 @@ const TokenManager = () => {
       placeholder={'Choose or paste token'}
       value={searchString}
       onChange={setSearchString}/>
-    <div className='flex-col overflow-y-auto border-t border-gray-300' style={{
+    <div className={`flex-col overflow-y-auto ${theme === 'light' ? 'border-gray-300' : 'border-dark-600'} border-t`} style={{
       maxHeight: '50vh'
     }}>
     {list && !error && list.length && !pending && !searchString ?

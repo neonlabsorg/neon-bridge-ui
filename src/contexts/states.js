@@ -23,6 +23,8 @@ export const StateContext = createContext({
   amount: 0,
   fee: 0,
   direction: 'neon',
+  theme: 'light',
+  toggleTheme: () => {},
   toggleDirection: () => {},
   finishStep: () => {}
 });
@@ -43,6 +45,7 @@ export function StateProvider({ children = undefined}) {
   const [splToken, setSplToken] = useState(undefined)
   const [steps, setSteps] = useState(STEPS)
   const [direction, setDirection] = useState('neon')
+  const [theme, setTheme] = useState('light')
   const rejected = useRef(false)
   const toggleDirection = () => {
     if (direction === 'neon') setDirection('solana')
@@ -102,6 +105,16 @@ export function StateProvider({ children = undefined}) {
     })
     setSteps(currentSteps)
   }
+  const toggleTheme = () => {
+    const {classList} = document.documentElement
+    if (theme === 'light') {
+      classList.add('dark')
+      setTheme('dark')
+    } else {
+      classList.remove('dark')
+      setTheme('light')
+    }
+  }
   const resetStates = () => {
     setSolanaTransferSign('')
     setNeonTransferSign('')
@@ -120,6 +133,7 @@ export function StateProvider({ children = undefined}) {
     setFee(currentFee)
     const lamportBalance = await connection.getBalance(publicKey)
     const currentBalance = lamportBalance * Math.pow(10, -9)
+    console.log(currentBalance)
     setSolBalance(currentBalance)
   }
   useEffect(() => {
@@ -147,6 +161,7 @@ export function StateProvider({ children = undefined}) {
       setStepActive,
       resetSteps,
       direction,
+      theme, toggleTheme,
       toggleDirection,
       amount, setAmount,
       splToken, setSplToken,
