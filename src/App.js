@@ -22,22 +22,22 @@ function App() {
     <Web3ReactProvider getLibrary={getLibrary}>
       <ConnectionProvider>
         <WalletProvider wallets={wallets}>
+        <TokensProvider>
           <StateProvider>
             <ToastProvider>
               <Layout className='flex flex-col w-full px-4 relative'
                 bodyClassName='flex flex-col justify-center'>
-                  <TokensProvider>
-                    <SplConverter />
-                    <TokenManager />
-                    <div className='absolute z-10 right-10 bottom-10 flex flex-col items-end'>
-                      <ThemeSwitcher />
-                      <IssueReporter className='mt-10' />
-                    </div>
-                  </TokensProvider>
+                <SplConverter />
+                <TokenManager />
+                <div className='absolute z-10 right-10 bottom-10 flex flex-col items-end'>
+                  <ThemeSwitcher />
+                  <IssueReporter className='mt-10' />
+                </div>
               </Layout>
               <div id='modals'/>
             </ToastProvider>
           </StateProvider>
+          </TokensProvider>
         </WalletProvider>
       </ConnectionProvider>
     </Web3ReactProvider>

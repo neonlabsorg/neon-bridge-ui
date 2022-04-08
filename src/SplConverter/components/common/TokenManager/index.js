@@ -11,7 +11,7 @@ Modal.setAppElement('#root')
 
 export const TokenManager = () => {
   const {list, pending, error, tokenManagerOpened, setTokenManagerOpened, updateTokenList} = useTokensContext()
-  const {setSplToken, theme} = useStatesContext()
+  const {setToken, theme} = useStatesContext()
 
   const [searchString, setSearchString] = useState('')
   const findBySearch = () => {
@@ -50,14 +50,14 @@ export const TokenManager = () => {
     {list && !error && list.length && !pending && !searchString ?
       list.map((token) => {
         return <TokenRow token={token} key={token.name} onClick={() => {
-          setSplToken(token)
+          setToken(token)
           setTokenManagerOpened(false)
         }}/>
       }) :
       searchString ?
         searchList.map((token) => {
           return <TokenRow token={token} key={token.symbol} onClick={() => {
-            setSplToken(token)
+            setToken(token)
             setTokenManagerOpened(false)
           }}/>
         }) :
