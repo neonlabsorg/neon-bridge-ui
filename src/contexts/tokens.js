@@ -58,7 +58,7 @@ export function TokensProvider({ children = undefined}) {
   }
 
   const filteringChainId = useMemo(() => {
-    if (Number.isNaN(chainId)) return CHAIN_IDS['mainnet-beta']
+    if (Number.isNaN(chainId)) return CHAIN_IDS['devnet']
     return chainId
   }, [chainId])
 
