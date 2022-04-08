@@ -148,11 +148,8 @@ export function TokensProvider({ children = undefined}) {
 
   useEffect(() => {
     updateTokenList()
-    
   // eslint-disable-next-line
   }, [chainId, account, publicKey])
-
-  
 
   return <TokensContext.Provider
     value={{list, pending, error, tokenErrors, balances, tokenManagerOpened, setTokenManagerOpened, updateTokenList}}>

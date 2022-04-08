@@ -1,5 +1,5 @@
 import { useWallet } from "@solana/wallet-adapter-react";
-import { createContext, useContext, useEffect, useState, useRef } from "react";
+import { createContext, useContext, useEffect, useState, useRef, useMemo } from "react";
 import { useConnection } from "./connection";
 import { useTokensContext } from "./tokens";
 const STEPS = {
@@ -19,7 +19,7 @@ const STEPS = {
 export const StateContext = createContext({
   steps: {},
   transfering: false,
-  splToken: undefined,
+  token: undefined,
   amount: 0,
   fee: 0,
   direction: 'neon',
@@ -30,7 +30,7 @@ export const StateContext = createContext({
 
 export function StateProvider({ children = undefined}) {
   const connection = useConnection()
-  const { updateTokenList } = useTokensContext()
+  const { updateTokenList, balances } = useTokensContext()
   const { publicKey } = useWallet()
   const [amount, setAmount] = useState(0.0)
   const [fee, setFee] = useState(0)
@@ -40,7 +40,7 @@ export function StateProvider({ children = undefined}) {
   const [solanaTransferSign, setSolanaTransferSign] = useState('')
   const [neonTransferSign, setNeonTransferSign] = useState('')
   const [error, setError] = useState(undefined)
-  const [splToken, setSplToken] = useState(undefined)
+  const [token, setToken] = useState(undefined)
   const [steps, setSteps] = useState(STEPS)
   const [direction, setDirection] = useState('neon')
   const rejected = useRef(false)
@@ -64,6 +64,14 @@ export function StateProvider({ children = undefined}) {
       }
     })
   }
+
+  const maxBalance = useMemo(() => {
+    if (balances && token && balances[token.symbol]) {
+      const netKey = direction === 'neon' ? 'sol' : 'eth'
+      return balances[token.symbol][netKey]
+    } else return 0
+  }, [token, balances, direction])
+
   const finishStep = (stepKey = '') => {
     let activeIndex = null
     const currentSteps = Object.assign({}, steps);
@@ -110,7 +118,7 @@ export function StateProvider({ children = undefined}) {
     setPending(false)
     setTransfering(false)
     setAmount(0)
-    setSplToken(undefined)
+    setToken(undefined)
     // for autoupdate balances after transfering
     setTimeout(() => updateTokenList(), 5000)
   }
@@ -130,7 +138,7 @@ export function StateProvider({ children = undefined}) {
   useEffect(() => {
     if (error !== undefined) setError(undefined)
   // eslint-disable-next-line
-  }, [amount, splToken])
+  }, [amount, token])
 
   useEffect(() => {
     if (rejected.current === true && pending === true) {
@@ -149,14 +157,15 @@ export function StateProvider({ children = undefined}) {
       direction,
       toggleDirection,
       amount, setAmount,
-      splToken, setSplToken,
+      token, setToken,
       error, setError,
       transfering, setTransfering,
       solanaTransferSign, setSolanaTransferSign,
       neonTransferSign, setNeonTransferSign,
       rejected, resetStates,
       pending, setPending,
-      fee, solBalance
+      fee, solBalance,
+      maxBalance
     }}>
     {children}
   </StateContext.Provider>

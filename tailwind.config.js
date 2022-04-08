@@ -34,7 +34,9 @@ module.exports = {
         'ocean-blue': 'rgba(94,118,153, 0.15)',
         'light-gray': '#F3F6FD',
         'pinky-white': '#F7F8FF',
-        'light-blue': 'rgba(67, 85, 249, 0.35)'
+        'blue-main': "#4355F9",
+        'light-blue': 'rgba(67, 85, 249, 0.35)',
+        'grey': '#8B88AA'
       }
     },
   },

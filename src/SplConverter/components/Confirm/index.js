@@ -8,11 +8,11 @@ import { withNotie } from '@/common/Notifications';
 import { ErrorHandler } from "../common/ErrorHandler";
 
 export const Confirm = withNotie((props) => {
-  const { amount, splToken, direction, error } = useStatesContext()
+  const { amount, token, direction, error } = useStatesContext()
   const { deposit, withdraw } = useTransfering()
   const handleConfirmTransfer = () => {
-    if (direction === 'neon') deposit(amount, splToken)
-    if (direction === 'solana') withdraw(amount, splToken)
+    if (direction === 'neon') deposit(amount, token)
+    if (direction === 'solana') withdraw(amount, token)
   }
 
   useEffect(() => {
@@ -24,9 +24,9 @@ export const Confirm = withNotie((props) => {
       <img style={{
         width: '56px',
         height: '56px'
-      }} src={splToken.logoURI} className='mb-4' alt={splToken.symbol}/>
+      }} src={token.logoURI} className='mb-4' alt={token.symbol}/>
       <div className='text-2xl font-medium mb-8'>
-        {`${amount} ${splToken.symbol}`}
+        {`${amount} ${token.symbol}`}
       </div>
     </div>
     <div className='flex justify-between mb-8'>

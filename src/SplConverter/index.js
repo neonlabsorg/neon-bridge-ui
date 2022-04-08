@@ -19,14 +19,14 @@ const COMPONENTS_BY_STEPS = {
 const ResultsView = ({stepKey = ''}) => {
     const { publicKey } = useWallet()
     const { account } = useWeb3React()
-    const { amount, splToken, direction } = useStatesContext()
+    const { amount, token, direction } = useStatesContext()
     const shortNeonKey = useMemo(() => shortenAddress(account), [account])
     const shortSolanaKey = useMemo(() => publicKey ? shortenAddress(publicKey.toString()) : '', [publicKey])
     const renderTransferInfo = () => {
         return <div>
             <span>Transfer </span>
             <span>{`${amount} `}</span>
-            <span className='text-blue-500'>{`${splToken.symbol} `}</span>
+            <span className='text-blue-500'>{`${token.symbol} `}</span>
             <span>from </span>
             <span className='text-blue-500'>{`${direction === 'neon' ? 
                 shortSolanaKey :
@@ -37,7 +37,7 @@ const ResultsView = ({stepKey = ''}) => {
     const renderRecieveInfo = () => {
         return <div>
             <span>Recieve </span>
-            <span className='text-blue-500'>{`${splToken.symbol} `}</span>
+            <span className='text-blue-500'>{`${token.symbol} `}</span>
             <span>to </span>
             <span className='text-blue-500'>{`${direction === 'neon' ? shortNeonKey : shortSolanaKey} `}</span>
             <span>{`on ${direction === 'neon' ? 'Neon' : 'Solana'}`}</span>

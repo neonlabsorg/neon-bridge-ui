@@ -89,7 +89,7 @@ const TokenRow = ({
 
 const TokenManager = () => {
   const {list, pending, error, tokenManagerOpened, setTokenManagerOpened, updateTokenList} = useTokensContext()
-  const {setSplToken} = useStatesContext()
+  const {setToken} = useStatesContext()
 
   const [searchString, setSearchString] = useState('')
   const findBySearch = () => {
@@ -127,14 +127,14 @@ const TokenManager = () => {
     {list && !error && list.length && !pending && !searchString ?
       list.map((token) => {
         return <TokenRow token={token} key={token.name} onClick={() => {
-          setSplToken(token)
+          setToken(token)
           setTokenManagerOpened(false)
         }}/>
       }) :
       searchString ?
         searchList.map((token) => {
           return <TokenRow token={token} key={token.symbol} onClick={() => {
-            setSplToken(token)
+            setToken(token)
             setTokenManagerOpened(false)
           }}/>
         }) :

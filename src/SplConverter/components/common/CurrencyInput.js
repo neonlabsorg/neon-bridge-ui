@@ -7,7 +7,7 @@ export const CurrencyInput = ({
   className = ''
 }) => {
   const [inputAmount, setInputAmount] = useState('0.0')
-  const {amount, setAmount, splToken} = useStatesContext()
+  const {amount, setAmount, token, maxBalance} = useStatesContext()
   const {setTokenManagerOpened} = useTokensContext()
   const openManageTokenModal = () => {
     setTokenManagerOpened(true)
@@ -21,10 +21,18 @@ export const CurrencyInput = ({
   }, [inputAmount, setAmount])
   return <div className={`inline-flex bg-light-gray px-6 ${className} items-center justify-between`}
     style={{height: '80px'}}>
-    <div onClick={openManageTokenModal} className='flex-grow flex items-center text-lg py-6 cursor-pointer'>
-      {splToken ? splToken.name : 'Select a token'}
-      <DropDownIcon className='ml-3'/>
+    <div className="flex flex-col justify-center">
+      <div onClick={openManageTokenModal} className='flex-grow flex items-center text-lg pb-1 cursor-pointer'>
+        {token ? token.name : 'Select a token'}
+        <DropDownIcon className='ml-3'/>
+      </div>
+      {token ? <div className="flex items-center pt-1">
+        <span className='text-sm text-grey'>{`Balance: ${maxBalance} ${token.symbol}`}</span>
+        <span className="text-blue-main text-sm ml-2 p-1 cursor-pointer"
+          onClick={() => setInputAmount(`${maxBalance}`)}>MAX</span>
+      </div>: null}
     </div>
+    
     <input type='number'
       className='w-1/4 py-6 text-lg bg-transparent inline-flex border-none outline-none text-right flex-shrink'
       value={inputAmount}

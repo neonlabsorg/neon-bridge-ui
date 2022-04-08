@@ -15,7 +15,7 @@ export const Source = ({
   className = ''
 }) => {
 
-  const {direction, toggleDirection, finishStep, amount, splToken} = useStatesContext()
+  const {direction, toggleDirection, finishStep, amount, token, maxBalance} = useStatesContext()
   const { connected } = useWallet()
   const { active } = useWeb3React()
   return <div className={`flex flex-col w-full ${className}`}>
@@ -47,6 +47,6 @@ export const Source = ({
     </div>
     {(direction === 'neon' && connected) || (direction === 'solana' && active) ?
       <CurrencyInput className='mb-2'/> : null}
-    <Button disabled={amount === 0 || !splToken} onClick={() => finishStep('source')}>Next</Button>
+    <Button disabled={amount === 0 || amount > maxBalance || !token} onClick={() => finishStep('source')}>Next</Button>
   </div>
 }
