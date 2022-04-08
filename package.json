@@ -25,11 +25,12 @@
     "bowser": "^2.11.0",
     "buffer-layout": "^1.2.2",
     "classnames": "^2.2.5",
-    "neon-portal": "^1.2.0",
+    "neon-portal": "1.2.2",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-modal": "^3.14.4",
     "react-scripts": "4.0.3",
+    "react-spring": "8.0.27",
     "typescript": "^4.5.4",
     "web-vitals": "^1.0.1",
     "web3": "^1.6.1"

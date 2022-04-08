@@ -1,10 +1,10 @@
 .layout {
   width: 100%;
   min-height: 100vh;
-  color: #252525;
   position: relative;
   display: flex;
   flex-direction: column;
+  @apply text-black dark:text-white;
   &:before {
     position: absolute;
     content: '';
@@ -13,9 +13,8 @@
     bottom: 0;
     right: 0;
     margin: auto;
-    filter: blur(300px);
     z-index: 0;
-    background: linear-gradient(340.24deg, rgba(255, 255, 255, 0) -7.1%, rgba(216, 236, 255, 0.72) 25.45%, rgba(246, 227, 255, 0.68) 110.19%, #F9E2FF 119.13%);
+    @apply bg-snowy dark:bg-black;
   }
   &__body {
     z-index: 2;

@@ -31,12 +31,12 @@ $plate_width: 1120px;
 @import './styles/vendor/notifications.scss';
 @import './SplConverter/components/common/TokenManager/components/SearchInput/index.scss';
 @import './SplConverter/components/Transfering/index.scss';
+@import './SplConverter/components/ThemeSwitcher/index.scss';
 
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Inter', 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 *, *:before, *:after {
   box-sizing: border-box;
@@ -44,6 +44,12 @@ body {
 .react-notie {
   position: relative;
   z-index: 100;
+}
+.svg-fill {
+  @apply fill-black;
+}
+.dark .svg-fill {
+  @apply fill-white;
 }
 input {
   &::-webkit-outer-spin-button,

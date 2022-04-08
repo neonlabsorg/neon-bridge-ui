@@ -4,10 +4,11 @@ import { TransferInfo } from "../common/TransferInfo";
 import {ReactComponent as ArrowIcon} from '@/assets/arrow-right.svg'
 import Button from "../../../common/Button";
 import { useTransfering } from "../../hooks/transfering"
-import { withNotie } from '@/common/Notifications';
 import { ErrorHandler } from "../common/ErrorHandler";
+import { useToast } from "@/common/Notifications";
 
-export const Confirm = withNotie((props) => {
+export const Confirm = () => {
+  const {addToast} = useToast()
   const { amount, token, direction, error } = useStatesContext()
   const { deposit, withdraw } = useTransfering()
   const handleConfirmTransfer = () => {
@@ -15,9 +16,11 @@ export const Confirm = withNotie((props) => {
     if (direction === 'solana') withdraw(amount, token)
   }
 
+
   useEffect(() => {
-    if(error !== undefined) props.notie.error(error)
-  }, [error, props.notie])
+    if (error !== undefined) addToast(error, 'ERROR')
+  // eslint-disable-next-line
+  }, [error])
 
   return <div className='w-full flex flex-col pt-6'>
     <div className='flex flex-col items-center'>
@@ -30,13 +33,13 @@ export const Confirm = withNotie((props) => {
       </div>
     </div>
     <div className='flex justify-between mb-8'>
-      <div className='w-5/12 p-6 flex items-center justify-center bg-pinky-white'>
+      <div className='w-5/12 p-6 flex items-center justify-center bg-pinky-white border border-transparent dark:bg-dark-600 dark:border-op15-white'>
         {direction === 'neon' ? 'Solana' : 'Neon'}
       </div>
       <div className='w-1/6 flex items-center justify-center'>
         <ArrowIcon />
       </div>
-      <div className='w-5/12 p-6 flex items-center justify-center bg-pinky-white'>
+      <div className='w-5/12 p-6 flex items-center justify-center bg-pinky-white border border-transparent dark:bg-dark-600 dark:border-op15-white'>
       {direction === 'neon' ? 'Neon' : 'Solana'}
       </div>
     </div>
@@ -44,4 +47,4 @@ export const Confirm = withNotie((props) => {
     <Button onClick={handleConfirmTransfer}>Confirm</Button>
     <ErrorHandler className='mt-8 text-red-500'/>
   </div>
-})
+}

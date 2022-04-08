@@ -57,7 +57,7 @@
     box-shadow: 0 0 5px $light-gray !important;
   }
   &--disabled {
-    background: #E2E6EA !important;
+    @apply bg-light-100 dark:bg-dark-500 #{!important};
     pointer-events: none;
   }
 }

@@ -24,8 +24,8 @@ export const useTransfering = () => {
       setTransfering(true)
     },
     onSuccessSign: (sig, txHash) => {
-      setSolanaTransferSign(sig)
-      setNeonTransferSign(txHash)
+      if (sig) setSolanaTransferSign(sig)
+      if (txHash) setNeonTransferSign(txHash)
       setTransfering(false)
       addTransaction({from: publicKey.toBase58(), to: account})
       setPending(false)
