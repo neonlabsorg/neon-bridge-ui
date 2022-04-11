@@ -6,6 +6,11 @@ import { useTokensContext } from "../../../contexts/tokens"
 export const CurrencyInput = ({
   className = ''
 }) => {
+  const INVALID_CHARS = [
+    "-",
+    "+",
+    "e",
+  ];
   const [inputAmount, setInputAmount] = useState('0.0')
   const {amount, setAmount, token, maxBalance} = useStatesContext()
   const {setTokenManagerOpened} = useTokensContext()
@@ -16,7 +21,15 @@ export const CurrencyInput = ({
     if (amount !== 0 && typeof amount === 'number') setInputAmount(`${amount}`)
   }, [amount])
   useEffect(() => {
-    if (isNaN(inputAmount)) return
+    let isValidSymbol = true
+    for (let i = 0; i < inputAmount.length; i++) {
+      const letter = inputAmount.charAt(i)
+      if (INVALID_CHARS.includes(letter)) isValidSymbol = false
+    }
+    if (isNaN(inputAmount) || !isValidSymbol) {
+      setInputAmount(amount)
+      return
+    }
     setAmount(Number(inputAmount))
   }, [inputAmount, setAmount])
   return <div className={`inline-flex bg-light-gray dark:bg-dark-500 px-6 ${className} items-center justify-between`}
