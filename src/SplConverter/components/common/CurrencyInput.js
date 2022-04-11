@@ -12,33 +12,20 @@ export const CurrencyInput = ({
     "e",
   ];
   const [inputAmount, setInputAmount] = useState('0.0')
-  const {amount, setAmount, token, maxBalance} = useStatesContext()
+  const {setAmount, token, maxBalance} = useStatesContext()
   const {setTokenManagerOpened} = useTokensContext()
   const openManageTokenModal = () => {
     setTokenManagerOpened(true)
   }
-  useEffect(() => {
-    if (amount !== 0 && typeof amount === 'number') setInputAmount(`${amount}`)
-  }, [amount])
+  // useEffect(() => {
+  //   if (amount !== 0 && typeof amount === 'number') setInputAmount(`${amount}`)
+  // }, [amount])
 
-  const isValidNumber = () => {
-    let isValidSymbol = true
-    for (let i = 0; i < inputAmount.length; i++) {
-      const letter = inputAmount.charAt(i)
-      if (INVALID_CHARS.includes(letter)) isValidSymbol = false
-    }
+
+  useEffect(() => {
     const num = Number(inputAmount)
-    return Number.isFinite(num) 
-    && Number.isSafeInteger(num) 
-    && num > 0
-    && isValidSymbol
-  }
-
-  useEffect(() => {
-    if (isValidNumber()) {
-      setAmount(Number(inputAmount))
-    } else {
-      setInputAmount(amount)
+    if (Number.isFinite(num) && num <= Number.MAX_SAFE_INTEGER) {
+      setAmount(num)
     }
   // eslint-disable-next-line 
   }, [inputAmount, setAmount])
@@ -59,6 +46,9 @@ export const CurrencyInput = ({
     <input type='number'
       className='w-1/4 py-6 text-lg bg-transparent inline-flex border-none outline-none text-right flex-shrink'
       value={inputAmount}
+      onKeyDown={(e) => {
+        if (INVALID_CHARS.includes(e.key)) e.preventDefault()
+      }}
       onChange={(e) => {
         setInputAmount(e.target.value)
       }}/>
