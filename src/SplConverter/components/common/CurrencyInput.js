@@ -20,17 +20,27 @@ export const CurrencyInput = ({
   useEffect(() => {
     if (amount !== 0 && typeof amount === 'number') setInputAmount(`${amount}`)
   }, [amount])
-  useEffect(() => {
+
+  const isValidNumber = () => {
     let isValidSymbol = true
     for (let i = 0; i < inputAmount.length; i++) {
       const letter = inputAmount.charAt(i)
       if (INVALID_CHARS.includes(letter)) isValidSymbol = false
     }
-    if (isNaN(inputAmount) || !isValidSymbol) {
+    const num = Number(inputAmount)
+    return Number.isFinite(num) 
+    && Number.isSafeInteger(num) 
+    && num > 0
+    && isValidSymbol
+  }
+
+  useEffect(() => {
+    if (isValidNumber()) {
+      setAmount(Number(inputAmount))
+    } else {
       setInputAmount(amount)
-      return
     }
-    setAmount(Number(inputAmount))
+  // eslint-disable-next-line 
   }, [inputAmount, setAmount])
   return <div className={`inline-flex bg-light-gray dark:bg-dark-500 px-6 ${className} items-center justify-between`}
     style={{height: '80px'}}>
