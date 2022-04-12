@@ -6,36 +6,29 @@ import useTransactionHistory from '../useTransactionHistory'
 import { useConnection } from '../../../contexts/connection'
 
 export const useTransfering = () => {
-  const {setPending, setTransfering, rejected, setSolanaTransferSign, setNeonTransferSign, setError} = useStatesContext()
+  const {setPending, setSolanaTransferSign, setNeonTransferSign, setError} = useStatesContext()
   const {addTransaction} = useTransactionHistory()
   const connection = useConnection()
   const {publicKey} = useWallet()
   const {account} = useWeb3React()
-  const { deposit, withdraw } = useNeonTransfer({
+  const { deposit, withdraw, getEthereumTransactionParams } = useNeonTransfer({
     onBeforeCreateInstruction: () => {
       setPending(true)
     },
     onBeforeSignTransaction: () => {
-      if (rejected.current === true) {
-        setPending(false)
-        rejected.current = false
-        return
-      }
-      setTransfering(true)
+      setPending(true)
     },
     onSuccessSign: (sig, txHash) => {
       if (sig) setSolanaTransferSign(sig)
       if (txHash) setNeonTransferSign(txHash)
-      setTransfering(false)
       addTransaction({from: publicKey.toBase58(), to: account})
       setPending(false)
     },
     onErrorSign: (e) => {
       setError(e.message)
-      setTransfering(false)
       setPending(false)
     }
   }, connection)
-  return { deposit, withdraw }
+  return { deposit, withdraw, getEthereumTransactionParams }
 }
 

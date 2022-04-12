@@ -9096,10 +9096,10 @@ neo-async@^2.5.0, neo-async@^2.6.1, neo-async@^2.6.2:
   resolved "https://registry.npmjs.org/neo-async/-/neo-async-2.6.2.tgz"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-neon-portal@1.2.2:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/neon-portal/-/neon-portal-1.2.2.tgz#27e4470ab3772eb008299142a1b6d5988826a8ae"
-  integrity sha512-EGFS0ysTtfhqqT9ttuTD1LZasrIz7v86XIGvHSr/zo0HW68jKu3gAI0fIzqrFmq0xyajqvX3C/oNQzgdJpf5sA==
+neon-portal@1.3.4:
+  version "1.3.4"
+  resolved "https://registry.yarnpkg.com/neon-portal/-/neon-portal-1.3.4.tgz#d446e38f90feef2be5f7d534ea4e214b7d6439fc"
+  integrity sha512-lYRdpS4V2bJCjkTMGs+BzkX3lh2+vlJ6sw5MzvLLL/PPLJwo03+cgqw32BYg7tUYiC+C8u0+06QJNW+0yWX0Qw==
   dependencies:
     "@solana/spl-token" "^0.1.8"
     "@solana/wallet-adapter-base" "^0.7.0"
