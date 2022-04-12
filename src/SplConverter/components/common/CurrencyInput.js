@@ -46,6 +46,7 @@ export const CurrencyInput = ({
     <input type='number'
       className='w-1/4 py-6 text-lg bg-transparent inline-flex border-none outline-none text-right flex-shrink'
       value={inputAmount}
+      onPaste={(e) => e.preventDefault()}
       onKeyDown={(e) => {
         if (INVALID_CHARS.includes(e.key)) e.preventDefault()
       }}
