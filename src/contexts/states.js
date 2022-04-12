@@ -2,6 +2,8 @@ import { useWallet } from "@solana/wallet-adapter-react";
 import { createContext, useContext, useEffect, useState, useRef, useMemo } from "react";
 import { useConnection } from "./connection";
 import { useTokensContext } from "./tokens";
+import { NEON_TOKEN_DECIMALS } from 'neon-portal/src/constants'
+import { useWeb3React } from "@web3-react/core";
 const STEPS = {
   source: {
     title: 'Source',
@@ -16,12 +18,13 @@ const STEPS = {
     status: 'next'
   }
 }
+const ERC20_GAS_DECIMALS = 18
 export const StateContext = createContext({
   steps: {},
   transfering: false,
   token: undefined,
   amount: 0,
-  fee: 0,
+  depositFee: 0,
   direction: 'neon',
   theme: 'light',
   toggleTheme: () => {},
@@ -34,9 +37,15 @@ export function StateProvider({ children = undefined}) {
   const connection = useConnection()
   const { updateTokenList, balances } = useTokensContext()
   const { publicKey } = useWallet()
+  const { account, library } = useWeb3React()
   const [amount, setAmount] = useState(0.0)
-  const [fee, setFee] = useState(0)
+  const [depositFee, setDepositFee] = useState(0)
+  const [withdrawFee, setWithdrawFee] = useState(0)
   const [solBalance, setSolBalance] = useState(0)
+  const neonBalance = useMemo(() => {
+    if (!balances.NEON || !balances.NEON.eth ) return 0
+    else return balances.NEON.eth
+  }, [balances])
   const [pending, setPending] = useState(false)
   const [transfering, setTransfering] = useState(false)
   const [solanaTransferSign, setSolanaTransferSign] = useState('')
@@ -47,6 +56,7 @@ export function StateProvider({ children = undefined}) {
   const [direction, setDirection] = useState('neon')
   const [theme, setTheme] = useState('light')
   const rejected = useRef(false)
+
   const toggleDirection = () => {
     if (direction === 'neon') setDirection('solana')
     else setDirection('neon')
@@ -136,19 +146,29 @@ export function StateProvider({ children = undefined}) {
     // for autoupdate balances after transfering
     setTimeout(() => updateTokenList(), 5000)
   }
-  const calculatingFee = async () => {
+  const calculatingSolBalances = async () => {
     const { feeCalculator } = await connection.getRecentBlockhash()
-    const currentFee = feeCalculator.lamportsPerSignature * Math.pow(10, -9)
-    setFee(currentFee)
-    const lamportBalance = await connection.getBalance(publicKey)
-    const currentBalance = lamportBalance * Math.pow(10, -9)
-    console.log(currentBalance)
-    setSolBalance(currentBalance)
+    setDepositFee(feeCalculator.lamportsPerSignature / Math.pow(10, NEON_TOKEN_DECIMALS))
+    const balance = await connection.getBalance(publicKey)
+    setSolBalance((Number(balance) / Math.pow(10, NEON_TOKEN_DECIMALS)).toFixed(9))
+  }
+  const calculatingEthBalances = async () => {
+    const res = await library.eth.getGasPrice()
+    setWithdrawFee((Number(res) / Math.pow(10, ERC20_GAS_DECIMALS)).toFixed(9))
   }
   useEffect(() => {
-    if (publicKey) calculatingFee()
+    (async () => {
+      if (publicKey) await calculatingSolBalances()
+    })()
     // eslint-disable-next-line
   }, [publicKey])
+
+  useEffect(() => {
+    (async () => {
+      if (account) await calculatingEthBalances()
+    })()
+    // eslint-disable-next-line
+  }, [account])
 
   useEffect(() => {
     if (error !== undefined) setError(undefined)
@@ -180,7 +200,8 @@ export function StateProvider({ children = undefined}) {
       neonTransferSign, setNeonTransferSign,
       rejected, resetStates,
       pending, setPending,
-      fee, solBalance,
+      depositFee, solBalance,
+      withdrawFee, neonBalance,
       maxBalance
     }}>
     {children}

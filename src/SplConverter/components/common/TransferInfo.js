@@ -1,6 +1,7 @@
 import { useStatesContext } from "../../../contexts/states"
+
 export const TransferInfo = ({className = ''}) => {
-  const { amount, token, fee, solBalance } = useStatesContext()
+  const {direction, amount, token, depositFee, withdrawFee, solBalance } = useStatesContext()
   return <div className={`w-full flex flex-col mb-8 ${className}`}>
   <div className='flex w-full justify-between mb-2'>
     <div>Expected Output</div>
@@ -8,9 +9,12 @@ export const TransferInfo = ({className = ''}) => {
   </div>
   <div className='flex w-full justify-between mb-2'>
     <div>Network Fee</div>
-    <div className='text-gray-500'>{`${fee} SOL`}</div>
+    <div className='text-gray-500 text-right'>
+      { direction === 'neon' ? `${depositFee} SOL`
+        : `${withdrawFee} GAS`}
+    </div>
   </div>
-  {fee > solBalance ?
+  { direction === 'neon' && depositFee > solBalance ?
     <div className='text-red-600 my-4'>You haven't got enough SOL tokens for paying transaction fee.<br/> Please refill your SOL balance</div>
   : null}
 </div>

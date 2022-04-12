@@ -11,7 +11,7 @@ import { TransferInfo } from "../common/TransferInfo";
 import { useWallet } from "@solana/wallet-adapter-react";
 
 export const Target = () => {
-  const {direction, finishStep, fee, solBalance} = useStatesContext()
+  const {direction, finishStep, depositFee, solBalance} = useStatesContext()
   const {active} = useWeb3React()
   const { publicKey } = useWallet()
   return <div className='w-full flex flex-col'>
@@ -27,9 +27,9 @@ export const Target = () => {
     {active ? <TransferInfo/> : null}
     <Button
       disabled={
-        (direction === 'neon' && !active) ||
-        (direction ==='solana' && !publicKey) ||
-        fee > solBalance}
+        ( (direction === 'neon' && !active) && depositFee > solBalance ) ||
+        (direction ==='solana' && !publicKey)
+      }
       onClick={() => finishStep('target')}>
       {'Next'}
     </Button>
