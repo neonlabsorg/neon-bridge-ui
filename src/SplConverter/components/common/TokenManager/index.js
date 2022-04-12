@@ -17,14 +17,13 @@ export const TokenManager = () => {
   const findBySearch = () => {
     const arr = []
     if (!searchString.length) return arr
-    // founding string
     const fs = searchString.toLowerCase()
     list.forEach(item => {
       if (
         item.name.toLowerCase().includes(fs) ||
         item.symbol.toLowerCase().includes(fs) ||
-        item.address.toLowerCase().includes(fs) ||
-        item.address_spl.toLowerCase().includes(fs)
+        item.address.toLowerCase() === fs ||
+        item.address_spl.toLowerCase() === fs
         ) {
         arr.push(item)
       }
@@ -33,7 +32,6 @@ export const TokenManager = () => {
   }
   const searchList = useMemo(findBySearch, [list, searchString]);
 
-  
   return <div><Modal
     isOpen={tokenManagerOpened}
     className='modal'
