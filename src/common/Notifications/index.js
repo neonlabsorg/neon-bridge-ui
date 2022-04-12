@@ -56,7 +56,6 @@ const ToastProvider = ({ children }) => {
 
 const useToast = () => {
   const context = useContext(ToastContext)
-  console.log(context)
   return context
 }
 
