@@ -4,6 +4,7 @@ import { useConnection } from "./connection";
 import { useTokensContext } from "./tokens";
 import { NEON_TOKEN_DECIMALS } from 'neon-portal/src/constants'
 import { useWeb3React } from "@web3-react/core";
+import { useTransfering } from "../SplConverter/hooks/transfering";
 const STEPS = {
   source: {
     title: 'Source',
@@ -21,7 +22,6 @@ const STEPS = {
 const ERC20_GAS_DECIMALS = 18
 export const StateContext = createContext({
   steps: {},
-  transfering: false,
   token: undefined,
   amount: 0,
   depositFee: 0,
@@ -47,7 +47,6 @@ export function StateProvider({ children = undefined}) {
     else return balances.NEON.eth
   }, [balances])
   const [pending, setPending] = useState(false)
-  const [transfering, setTransfering] = useState(false)
   const [solanaTransferSign, setSolanaTransferSign] = useState('')
   const [neonTransferSign, setNeonTransferSign] = useState('')
   const [error, setError] = useState(undefined)
@@ -56,6 +55,7 @@ export function StateProvider({ children = undefined}) {
   const [direction, setDirection] = useState('neon')
   const [theme, setTheme] = useState('light')
   const rejected = useRef(false)
+  const { getEthereumTransactionParams } = useTransfering()
 
   const toggleDirection = () => {
     if (direction === 'neon') setDirection('solana')
@@ -140,7 +140,6 @@ export function StateProvider({ children = undefined}) {
     resetSteps()
     rejected.current = false
     setPending(false)
-    setTransfering(false)
     setAmount(0)
     setToken(undefined)
     // for autoupdate balances after transfering
@@ -153,8 +152,10 @@ export function StateProvider({ children = undefined}) {
     setSolBalance((Number(balance) / Math.pow(10, NEON_TOKEN_DECIMALS)).toFixed(9))
   }
   const calculatingEthBalances = async () => {
-    const res = await library.eth.getGasPrice()
-    setWithdrawFee((Number(res) / Math.pow(10, ERC20_GAS_DECIMALS)).toFixed(9))
+    const instruction = getEthereumTransactionParams(amount, token)
+    const gasPriceStr = await library.eth.getGasPrice()
+    const res = await library.eth.estimateGas(instruction)
+    setWithdrawFee(( ( res * Number(gasPriceStr) ) / Math.pow(10, ERC20_GAS_DECIMALS) ).toFixed(9))
   }
   useEffect(() => {
     (async () => {
@@ -165,10 +166,10 @@ export function StateProvider({ children = undefined}) {
 
   useEffect(() => {
     (async () => {
-      if (account) await calculatingEthBalances()
+      if (account && token && amount && publicKey) await calculatingEthBalances()
     })()
     // eslint-disable-next-line
-  }, [account])
+  }, [account, token, amount, publicKey])
 
   useEffect(() => {
     if (error !== undefined) setError(undefined)
@@ -195,7 +196,6 @@ export function StateProvider({ children = undefined}) {
       amount, setAmount,
       token, setToken,
       error, setError,
-      transfering, setTransfering,
       solanaTransferSign, setSolanaTransferSign,
       neonTransferSign, setNeonTransferSign,
       rejected, resetStates,

@@ -11,7 +11,7 @@ export const TransferInfo = ({className = ''}) => {
     <div>Network Fee</div>
     <div className='text-gray-500 text-right'>
       { direction === 'neon' ? `${depositFee} SOL`
-        : `${withdrawFee} GAS`}
+        : `${withdrawFee} NEON`}
     </div>
   </div>
   { direction === 'neon' && depositFee > solBalance ?
