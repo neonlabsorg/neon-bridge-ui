@@ -49,7 +49,7 @@ export const CurrencyInput = ({
     <input
       className='w-1/4 py-6 text-lg bg-transparent inline-flex border-none outline-none text-right flex-shrink'
       value={inputAmount}
-      maxLength={10}
+      maxLength={7}
       minLength={1}
       inputMode="decimal"
       autoComplete="off"
