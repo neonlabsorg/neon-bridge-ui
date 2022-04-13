@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v1
-      - name: Use Node ${{ martrix.node-version}}
+      - name: Use Node ${{ matrix.node-version}}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version}}
