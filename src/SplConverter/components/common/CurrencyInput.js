@@ -2,15 +2,18 @@ import { useEffect, useState } from "react"
 import { ReactComponent as DropDownIcon } from '../../../assets/dropdown.svg'
 import { useStatesContext } from "../../../contexts/states"
 import { useTokensContext } from "../../../contexts/tokens"
+import { escapeRegExp } from '@/utils'
+
+const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`)
 
 export const CurrencyInput = ({
   className = ''
 }) => {
-  const INVALID_CHARS = [
-    "-",
-    "+",
-    "e",
-  ];
+  const enforcer = (nextUserInput) => {
+    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+      setInputAmount(nextUserInput)
+    }
+  }
   const [inputAmount, setInputAmount] = useState('0.0')
   const {setAmount, token, maxBalance} = useStatesContext()
   const {setTokenManagerOpened} = useTokensContext()
@@ -43,15 +46,18 @@ export const CurrencyInput = ({
       </div>: null}
     </div>
     
-    <input type='number'
+    <input
       className='w-1/4 py-6 text-lg bg-transparent inline-flex border-none outline-none text-right flex-shrink'
       value={inputAmount}
-      onPaste={(e) => e.preventDefault()}
-      onKeyDown={(e) => {
-        if (INVALID_CHARS.includes(e.key)) e.preventDefault()
-      }}
+      maxLength={10}
+      minLength={1}
+      inputMode="decimal"
+      autoComplete="off"
+      autoCorrect="off"
+      type="text"
+      pattern="^[0-9]*[.,]?[0-9]*$"
       onChange={(e) => {
-        setInputAmount(e.target.value)
+        enforcer(e.target.value.replace(/,/g, '.'))
       }}/>
   </div>
 }
