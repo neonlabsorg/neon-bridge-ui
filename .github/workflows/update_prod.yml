@@ -1,8 +1,6 @@
 name: Update Prod
 on:
-  push:
-    branches:
-      - cicd-implementation
+  workflow_dispatch:
 
 jobs:
   deploy:
