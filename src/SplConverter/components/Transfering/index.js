@@ -43,8 +43,8 @@ export const Transfering = () => {
       </div>
     </div>
   } else if (solanaTransferSign || neonTransferSign) {
-    return <div className='flex flex-col items-center min-w-420px p-6 bg-white'>
-      <CloseIcon className='self-end mb-10 cursor-pointer'
+    return <div className='flex flex-col items-center min-w-420px p-6 bg-white dark:bg-dark-600'>
+      <CloseIcon className='self-end mb-10 cursor-pointer fill-black dark:fill-white'
         onClick={handleRepeatScript}/>
       <DoneIcon className='mb-10'/>
       <div className='font-medium text-xl mb-6'>Transfer complete</div>
