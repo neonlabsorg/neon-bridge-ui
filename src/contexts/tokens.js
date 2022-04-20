@@ -8,6 +8,7 @@ import { PublicKey } from '@solana/web3.js'
 import ERC20_ABI from '../SplConverter/hooks/abi/erc20.json'
 import {NEON_TOKEN_MINT, NEON_TOKEN_MINT_DECIMALS} from 'neon-portal/src/constants'
 import { CHAIN_IDS } from "../connectors";
+import { usePrevious } from "../utils";
 
 export const TokensContext = createContext({
   list: [],
@@ -15,7 +16,7 @@ export const TokensContext = createContext({
   pending: false,
   tokenManagerOpened: false,
   setTokenManagerOpened: () => {},
-  updateTokenList: () => {}
+  refreshTokenList: () => {}
 });
 
 const NEON_TOKEN_MODEL = {
@@ -29,17 +30,23 @@ const NEON_TOKEN_MODEL = {
 }
 
 export function TokensProvider({ children = undefined}) {
-  const initialTokenListState = useMemo(() => Object.keys(CHAIN_IDS).map(key => {
-    const chainId = CHAIN_IDS[key]
-    const model = Object.assign({}, NEON_TOKEN_MODEL)
-    model.chainId = chainId
-    return model
-  }), [])
   const {chainId} = useNetworkType()
+  const filteringChainId = useMemo(() => {
+    if (Number.isNaN(chainId)) return CHAIN_IDS['devnet']
+    return chainId
+  }, [chainId])
+  const initialTokenListState = useMemo(() => {
+    const model = Object.assign({}, NEON_TOKEN_MODEL)
+    model.chainId = filteringChainId
+    return [model]
+  }, [filteringChainId])
   const {publicKey} = useWallet()
   const {library, account} = useWeb3React()
+  const prevAccountState = usePrevious(account)
+  const prevPublicKeyState = usePrevious(publicKey)
   const connection = useConnection()
   const [list, setTokenList] = useState(initialTokenListState)
+  const prevList = usePrevious(list)
   const [pending, setPending] = useState(false)
   const [tokenManagerOpened, setTokenManagerOpened] = useState(false)
 
@@ -57,10 +64,7 @@ export function TokensProvider({ children = undefined}) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  const filteringChainId = useMemo(() => {
-    if (Number.isNaN(chainId)) return CHAIN_IDS['devnet']
-    return chainId
-  }, [chainId])
+  
 
 
   const getSplBalance = async (token) => {
@@ -79,7 +83,6 @@ export function TokensProvider({ children = undefined}) {
       return [0, undefined]
     })
     const balanceData = completed[0]
-    console.log(token, assocTokenAccountAddress.toBase58(), balanceData)
     if (balanceData === 0) return 0
     if (balanceData && balanceData.value) {
       return typeof balanceData.value === 'object' && balanceData.value.uiAmount ? 
@@ -103,37 +106,47 @@ export function TokensProvider({ children = undefined}) {
 
   const requestListBalances = async () => {
     for (const item of list) {
-      let sol, eth
+      let currencies = {sol: undefined, eth: undefined}
       try {
         if (publicKey) {
-          sol = await getSplBalance(item)
-        } else {
-          sol = undefined
+          currencies.sol = await getSplBalance(item)
         }
         if (account) {
-          eth = await getEthBalance(item)
-        } else {
-          eth = undefined
+          currencies.eth = await getEthBalance(item)
         }
-        setTimeout(() => addBalance(item.symbol, {sol, eth}))
+        setTimeout(() => addBalance(item.symbol, currencies))
       } catch (e) {
         console.warn(e)
       }
     }
   }
 
+  useEffect(() => {
+    if (list) requestListBalances()
+    else setBalances({})
+  // eslint-disable-next-line
+  }, [list])
+
   const mergeTokenList = async (source = []) => {
     const fullList = [...initialTokenListState].concat(source)
     const newList = fullList.filter((item) => item.chainId === filteringChainId)
     setTokenList(newList)
-    setTimeout(async () => {
-      await requestListBalances()
+  }
+
+
+  const refreshTokenList = async () => {
+    await Promise.all([
+      setTokenList(initialTokenListState),
+      timeout(20),
+      updateTokenList()
+    ]).catch(e => {
+      console.warn(e)
+      return e
     })
   }
+
   const updateTokenList = () => {
     setTokenErrors({})
-    setTokenList([])
-    setBalances({})
     setPending(true)
     fetch(`https://raw.githubusercontent.com/neonlabsorg/token-list/main/tokenlist.json`)
     .then((resp) => {
@@ -149,14 +162,17 @@ export function TokensProvider({ children = undefined}) {
     }).finally(() => setPending(false))
   }
 
-
   useEffect(() => {
-    updateTokenList()
+    if ( (account && !prevAccountState) || (publicKey && !prevPublicKeyState) ) {
+      updateTokenList()
+    } else {
+      setTokenList(initialTokenListState)
+    }
   // eslint-disable-next-line
-  }, [chainId, account, publicKey])
+  }, [account, publicKey])
 
   return <TokensContext.Provider
-    value={{list, pending, error, tokenErrors, balances, tokenManagerOpened, setTokenManagerOpened, updateTokenList}}>
+    value={{list, pending, error, tokenErrors, balances, tokenManagerOpened, setTokenManagerOpened, refreshTokenList}}>
     {children}
   </TokensContext.Provider>
 }

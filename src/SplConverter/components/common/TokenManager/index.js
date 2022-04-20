@@ -10,7 +10,7 @@ Modal.setAppElement('#root')
 
 
 export const TokenManager = () => {
-  const {list, pending, error, tokenManagerOpened, setTokenManagerOpened, updateTokenList} = useTokensContext()
+  const {list, pending, error, tokenManagerOpened, setTokenManagerOpened, refreshTokenList} = useTokensContext()
   const {setToken, theme} = useStatesContext()
 
   const [searchString, setSearchString] = useState('')
@@ -71,7 +71,7 @@ export const TokenManager = () => {
             </div>
         : list.length ? <>No tokens has been provided</> : null }
       </div>
-      <Button className='mx-4 mt-6 mb-4' onClick={() => updateTokenList()}>Update List</Button>
+      <Button className='mx-4 mt-6 mb-4' onClick={() => refreshTokenList()}>Update List</Button>
   </Modal></div>
 }
 export default TokenManager
