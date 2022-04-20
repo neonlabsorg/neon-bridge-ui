@@ -1,4 +1,5 @@
 import Button from "@/common/Button"
+import { useMemo } from 'react'
 import { SourceCard } from '../common/SourceCard'
 import {ReactComponent as ReverseIcon} from '@/assets/reverse.svg'
 import Web3Status from '@/common/Web3Status'
@@ -18,6 +19,7 @@ export const Source = ({
   const {direction, toggleDirection, finishStep, amount, token, maxBalance} = useStatesContext()
   const { connected } = useWallet()
   const { active } = useWeb3React()
+  const enabled = useMemo(() => (direction === 'neon' && connected) || (direction === 'solana' && active), [active, connected, direction])
   return <div className={`flex flex-col w-full ${className}`}>
     <div className='flex justify-between items-center mb-6'>
       <div className='sm:w-1/3 xs:w-full flex flex-col'>
@@ -45,8 +47,7 @@ export const Source = ({
         </> : null
       }
     </div>
-    {(direction === 'neon' && connected) || (direction === 'solana' && active) ?
-      <CurrencyInput className='mb-2'/> : null}
-    <Button disabled={amount === 0 || amount > maxBalance || !token} onClick={() => finishStep('source')}>Next</Button>
+    {enabled ? <CurrencyInput className='mb-2'/> : null}
+    <Button disabled={!enabled || amount === 0 || amount > maxBalance || !token} onClick={() => finishStep('source')}>Next</Button>
   </div>
 }
