@@ -46,7 +46,6 @@ export function TokensProvider({ children = undefined}) {
   const prevPublicKeyState = usePrevious(publicKey)
   const connection = useConnection()
   const [list, setTokenList] = useState(initialTokenListState)
-  const prevList = usePrevious(list)
   const [pending, setPending] = useState(false)
   const [tokenManagerOpened, setTokenManagerOpened] = useState(false)
 
