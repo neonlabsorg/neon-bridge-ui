@@ -17,9 +17,7 @@ export const WalletConnectButton: FC<ButtonProps> = ({ children, disabled, onCli
 
     useEffect(() => {
         if (!wallet) {
-            wallets.forEach((item, idx) => {
-                if (idx === 0) select(item.name)
-            })
+            select(wallets[0].name)
         }
     // eslint-disable-next-line
     }, [])
