@@ -1,14 +1,11 @@
 import { useWallet } from '@solana/wallet-adapter-react';
-import React, { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, ButtonProps } from './Button';
-import { useWalletModal } from './useWalletModal';
 import { WalletConnectButton } from './WalletConnectButton';
 import { WalletIcon } from './WalletIcon';
-import { WalletModalButton } from './WalletModalButton';
 
 export const WalletMultiButton: FC<ButtonProps> = ({ children, ...props }) => {
     const { publicKey, wallet, disconnect } = useWallet();
-    const { setVisible } = useWalletModal();
     const [copied, setCopied] = useState(false);
     const [active, setActive] = useState(false);
     const ref = useRef<HTMLUListElement>(null);
@@ -32,11 +29,6 @@ export const WalletMultiButton: FC<ButtonProps> = ({ children, ...props }) => {
 
     const closeDropdown = useCallback(() => setActive(false), [setActive]);
 
-    const openModal = useCallback(() => {
-        setVisible(true);
-        closeDropdown();
-    }, [setVisible, closeDropdown]);
-
     useEffect(() => {
         const listener = (event: MouseEvent | TouchEvent) => {
             const node = ref.current;
@@ -55,8 +47,6 @@ export const WalletMultiButton: FC<ButtonProps> = ({ children, ...props }) => {
             document.removeEventListener('touchstart', listener);
         };
     }, [ref, closeDropdown]);
-
-    if (!wallet) return <WalletModalButton {...props}>{children}</WalletModalButton>;
     if (!base58) return <WalletConnectButton {...props}>{children}</WalletConnectButton>;
 
     return (
@@ -79,9 +69,6 @@ export const WalletMultiButton: FC<ButtonProps> = ({ children, ...props }) => {
             >
                 <li onClick={copyAddress} className="wallet-adapter-dropdown-list-item" role="menuitem">
                     {copied ? 'Copied' : 'Copy address'}
-                </li>
-                <li onClick={openModal} className="wallet-adapter-dropdown-list-item" role="menuitem">
-                    Connect a different wallet
                 </li>
                 <li onClick={disconnect} className="wallet-adapter-dropdown-list-item" role="menuitem">
                     Disconnect
