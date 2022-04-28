@@ -45,7 +45,8 @@ module.exports = {
         'dark-300': '#616163',
         'dark-200': '#5B5B5B',
         'op04-white': 'rgba(255, 255, 255, 0.04)',
-        'op15-white': 'rgba(255, 255, 255, 0.15)'
+        'op15-white': 'rgba(255, 255, 255, 0.15)',
+        'op15-black': 'rgba(0, 0, 0, 0.15)'
       }
     },
     fill: {

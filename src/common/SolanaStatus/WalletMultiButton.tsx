@@ -1,14 +1,13 @@
 import { useWallet } from '@solana/wallet-adapter-react';
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
+import { Dropdown } from '../Dropdown';
 import { Button, ButtonProps } from './Button';
 import { WalletConnectButton } from './WalletConnectButton';
-import { WalletIcon } from './WalletIcon';
+
 
 export const WalletMultiButton: FC<ButtonProps> = ({ children, ...props }) => {
     const { publicKey, wallet, disconnect } = useWallet();
     const [copied, setCopied] = useState(false);
-    const [active, setActive] = useState(false);
-    const ref = useRef<HTMLUListElement>(null);
 
     const base58 = useMemo(() => publicKey?.toBase58(), [publicKey]);
     const content = useMemo(() => {
@@ -21,59 +20,29 @@ export const WalletMultiButton: FC<ButtonProps> = ({ children, ...props }) => {
         if (base58) {
             await navigator.clipboard.writeText(base58);
             setCopied(true);
-            setTimeout(() => setCopied(false), 400);
+            setTimeout(() => setCopied(false), 1000);
         }
     }, [base58]);
 
-    const openDropdown = useCallback(() => setActive(true), [setActive]);
-
-    const closeDropdown = useCallback(() => setActive(false), [setActive]);
-
-    useEffect(() => {
-        const listener = (event: MouseEvent | TouchEvent) => {
-            const node = ref.current;
-
-            // Do nothing if clicking dropdown or its descendants
-            if (!node || node.contains(event.target as Node)) return;
-
-            closeDropdown();
-        };
-
-        document.addEventListener('mousedown', listener);
-        document.addEventListener('touchstart', listener);
-
-        return () => {
-            document.removeEventListener('mousedown', listener);
-            document.removeEventListener('touchstart', listener);
-        };
-    }, [ref, closeDropdown]);
     if (!base58) return <WalletConnectButton {...props}>{children}</WalletConnectButton>;
 
     return (
-        <div className="wallet-adapter-dropdown">
+        <Dropdown trigger={
             <Button
-                aria-expanded={active}
                 className="wallet-adapter-button-trigger w-full"
-                style={{ pointerEvents: active ? 'none' : 'auto', ...props.style }}
-                onClick={openDropdown}
-                startIcon={<WalletIcon wallet={wallet} />}
-                {...props}
-            >
+                {...props}>
                 {content}
             </Button>
-            <ul
-                aria-label="dropdown-list"
-                className={`wallet-adapter-dropdown-list ${active && 'wallet-adapter-dropdown-list-active'}`}
-                ref={ref}
-                role="menu"
-            >
-                <li onClick={copyAddress} className="wallet-adapter-dropdown-list-item" role="menuitem">
+        }>
+            <ul aria-label="dropdown-list"
+                role="menu">
+                <li onClick={copyAddress} className="dropdown__item" role="menuitem">
                     {copied ? 'Copied' : 'Copy address'}
                 </li>
-                <li onClick={disconnect} className="wallet-adapter-dropdown-list-item" role="menuitem">
+                <li onClick={disconnect} className="dropdown__item" role="menuitem">
                     Disconnect
                 </li>
             </ul>
-        </div>
+        </Dropdown>
     );
 };
