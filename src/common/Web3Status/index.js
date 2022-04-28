@@ -1,7 +1,10 @@
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
 import { shortenAddress } from '../../utils'
 import { injected } from '../../connectors'
+import { Dropdown } from '../Dropdown'
+import { useState, useCallback } from 'react'
 const Web3Status = ({className = ''}) => {
+  const [copied, setCopied] = useState(false);
   const { account, error, activate, deactivate, active } = useWeb3React()
   async function connect() {
     try {
@@ -18,6 +21,13 @@ const Web3Status = ({className = ''}) => {
       console.log(ex)
     }
   }
+  const copyAddress = useCallback(async () => {
+    if (account) {
+      await navigator.clipboard.writeText(account);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1000);
+    }
+  }, [account]);
   if (error) {
     return <span>
       {error instanceof UnsupportedChainIdError ? 
@@ -31,10 +41,21 @@ const Web3Status = ({className = ''}) => {
     </span>
   }
   if (active && account) {
-    return <span className={`p-4 text-blue-600 cursor-pointer ${className}`} 
-      onClick={disconnect}>{shortenAddress(account)}</span>
+    return <Dropdown trigger={
+      <div className={`p-4 text-blue-600 cursor-pointer ${className}`}>{shortenAddress(account)}</div>
+    }>
+      <ul aria-label="dropdown-list"
+        role="menu">
+        <li onClick={copyAddress} className="dropdown__item" role="menuitem">
+            {copied ? 'Copied' : 'Copy address'}
+        </li>
+        <li onClick={disconnect} className="dropdown__item" role="menuitem">
+            Disconnect
+        </li>
+      </ul>
+    </Dropdown>
   } else {
-    return <span className={`p-4 text-blue-600 cursor-pointer ${className}`} onClick={connect}>Connect Wallet</span>
+    return <div className={`p-4 text-blue-600 cursor-pointer ${className}`} onClick={connect}>Connect Wallet</div>
   }
 
 }
