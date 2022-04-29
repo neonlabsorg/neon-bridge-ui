@@ -1,6 +1,6 @@
 import { useEffect, useCallback, useState, useRef } from "react";
 
-export const Dropdown = ({trigger, children}) => {
+export const Dropdown = ({className = '', trigger, children}) => {
   const ref = useRef(null)
   const [active, setActive] = useState(false);
   const openDropdown = useCallback(() => setActive(true), [setActive]);
@@ -26,7 +26,7 @@ export const Dropdown = ({trigger, children}) => {
         document.removeEventListener('touchstart', listener);
     };
 }, [ref, closeDropdown]);
-  return <div className="dropdown" ref={ref}>
+  return <div className={`dropdown ${className}`} ref={ref}>
     <div onClick={openDropdown} >{trigger}</div>
     <div className={`dropdown__list ${active && 'dropdown__list--active'}`}>
       {children}
