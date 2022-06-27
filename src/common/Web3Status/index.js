@@ -41,8 +41,8 @@ const Web3Status = ({className = ''}) => {
     </span>
   }
   if (active && account) {
-    return <Dropdown trigger={
-      <div className={`p-4 text-blue-600 cursor-pointer ${className}`}>{shortenAddress(account)}</div>
+    return <Dropdown className={className} trigger={
+      <div className={`p-4 text-blue-600 cursor-pointer`}>{shortenAddress(account)}</div>
     }>
       <ul aria-label="dropdown-list"
         role="menu">
