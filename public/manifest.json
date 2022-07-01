@@ -3,18 +3,26 @@
   "name": "UI for transfering tokens from Solana to Neon",
   "icons": [
     {
-      "src": "fav_32.png",
+      "src": "favicons/favicon-32x32.png",
       "sizes": "32x32",
       "type": "image/png"
     },
     {
-      "src": "fav_64.png",
-      "sizes": "64x64",
+      "src": "favicons/favicon-16x16.png",
+      "sizes": "16x16",
       "type": "image/png"
     },
     {
-      "src": "fav_192.png",
-      "sizes": "192x192",
+      "src": "favicons/android-chrome-192x192.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },{
+      "src": "favicons/android-chrome-512x512.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },{
+      "src": "favicons/apple-touch-icon.png",
+      "sizes": "180x180",
       "type": "image/png"
     }
   ],
