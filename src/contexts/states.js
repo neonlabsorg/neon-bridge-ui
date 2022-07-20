@@ -143,7 +143,7 @@ export function StateProvider({ children = undefined}) {
     setAmount(0)
     setToken(undefined)
     // for autoupdate balances after transfering
-    setTimeout(() => updateTokenList(), 5000)
+    setTimeout(() => updateTokenList?.(), 5000)
   }
   const calculatingSolBalances = async () => {
     const { feeCalculator } = await connection.getRecentBlockhash()

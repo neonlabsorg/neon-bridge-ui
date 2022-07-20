@@ -1,7 +1,7 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useWeb3React } from '@web3-react/core'
 import { useStatesContext } from '../../../contexts/states'
-import useNeonTransfer from 'neon-portal/src/react'
+import { useNeonTransfer } from 'neon-portal/src/react'
 import useTransactionHistory from '../useTransactionHistory'
 import { useConnection } from '../../../contexts/connection'
 

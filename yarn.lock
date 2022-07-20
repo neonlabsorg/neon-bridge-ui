@@ -7178,7 +7178,7 @@ inflight@^1.0.4:
     once "^1.3.0"
     wrappy "1"
 
-inherits@2, inherits@^2.0.1, inherits@^2.0.3, inherits@^2.0.4, inherits@~2.0.1, inherits@~2.0.3:
+inherits@2, inherits@^2.0.1, inherits@^2.0.3, inherits@^2.0.4, inherits@~2.0.1, inherits@~2.0.3, inherits@~2.0.4:
   version "2.0.4"
   resolved "https://registry.npmjs.org/inherits/-/inherits-2.0.4.tgz"
   integrity sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==
@@ -9096,20 +9096,17 @@ neo-async@^2.5.0, neo-async@^2.6.1, neo-async@^2.6.2:
   resolved "https://registry.npmjs.org/neo-async/-/neo-async-2.6.2.tgz"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-neon-portal@1.3.4:
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/neon-portal/-/neon-portal-1.3.4.tgz#d446e38f90feef2be5f7d534ea4e214b7d6439fc"
-  integrity sha512-lYRdpS4V2bJCjkTMGs+BzkX3lh2+vlJ6sw5MzvLLL/PPLJwo03+cgqw32BYg7tUYiC+C8u0+06QJNW+0yWX0Qw==
+neon-portal@1.5.0:
+  version "1.5.0"
+  resolved "https://registry.yarnpkg.com/neon-portal/-/neon-portal-1.5.0.tgz#5bae59b491fbf92e7f9266f83ced33beb53e096a"
+  integrity sha512-4NDo2AVaPeCIEWwkFbGwq+V2tFc7WGXtycOaSGy8okWH+NQZs/8O7w6cPRVIf5oMsXzwqwF6D1kPhQ71GA/yXw==
   dependencies:
     "@solana/spl-token" "^0.1.8"
-    "@solana/wallet-adapter-base" "^0.7.0"
     "@solana/wallet-adapter-react" "^0.13.1"
-    "@solana/wallet-adapter-react-ui" "^0.6.1"
-    "@solana/wallet-adapter-wallets" "^0.11.3"
     "@solana/web3.js" "^1.31.0"
     "@web3-react/core" "^6.1.9"
-    arraybuffer-to-string "^1.0.2"
-    web3 "^1.7.0"
+    process "^0.11.10"
+    stream-browserify "^3.0.0"
 
 next-tick@~1.0.0:
   version "1.0.0"
@@ -11089,7 +11086,7 @@ read-pkg@^5.2.0:
     string_decoder "~1.1.1"
     util-deprecate "~1.0.1"
 
-readable-stream@^3.0.6, readable-stream@^3.6.0:
+readable-stream@^3.0.6, readable-stream@^3.5.0, readable-stream@^3.6.0:
   version "3.6.0"
   resolved "https://registry.npmjs.org/readable-stream/-/readable-stream-3.6.0.tgz"
   integrity sha512-BViHy7LKeTz4oNnkcLJ+lVSL6vpiFeX6/d3oSH8zCW7UxP2onchk+vTGB143xuFjHS3deTgkKoXXymXqymiIdA==
@@ -12127,6 +12124,14 @@ stream-browserify@^2.0.1:
   dependencies:
     inherits "~2.0.1"
     readable-stream "^2.0.2"
+
+stream-browserify@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/stream-browserify/-/stream-browserify-3.0.0.tgz#22b0a2850cdf6503e73085da1fc7b7d0c2122f2f"
+  integrity sha512-H73RAHsVBapbim0tU2JwwOiXUj+fikfiaoYAKHF3VJfA0pe2BCzkhAHBlLG6REzE+2WNZcxOXjK7lkso+9euLA==
+  dependencies:
+    inherits "~2.0.4"
+    readable-stream "^3.5.0"
 
 stream-each@^1.1.0:
   version "1.2.3"
@@ -13432,7 +13437,7 @@ web3-utils@1.7.1:
     randombytes "^2.1.0"
     utf8 "3.0.0"
 
-web3@^1.6.1, web3@^1.7.0:
+web3@^1.6.1:
   version "1.7.1"
   resolved "https://registry.npmjs.org/web3/-/web3-1.7.1.tgz"
   integrity sha512-RKVdyZ5FuVEykj62C1o2tc0teJciSOh61jpVB9yb344dBHO3ZV4XPPP24s/PPqIMXmVFN00g2GD9M/v1SoHO/A==
