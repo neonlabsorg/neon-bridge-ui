@@ -10,6 +10,8 @@ import {NEON_TOKEN_MINT, NEON_TOKEN_MINT_DECIMALS} from 'neon-portal/src/constan
 import { CHAIN_IDS } from "../connectors";
 import { usePrevious } from "../utils";
 
+const { REACT_APP_TOKEN_LIST_VER } = process.env;
+
 export const TokensContext = createContext({
   list: [],
   tokenErrors: {},
@@ -147,7 +149,9 @@ export function TokensProvider({ children = undefined}) {
   const updateTokenList = () => {
     setTokenErrors({})
     setPending(true)
-    fetch(`https://raw.githubusercontent.com/neonlabsorg/token-list/main/tokenlist.json`)
+    fetch(
+      `https://raw.githubusercontent.com/neonlabsorg/token-list/v${REACT_APP_TOKEN_LIST_VER}/tokenlist.json`
+    )
     .then((resp) => {
       if (resp.ok) {
         resp.json().then(data => {

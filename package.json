@@ -36,12 +36,8 @@
     "web3": "^1.6.1"
   },
   "scripts": {
-    "start": "REACT_APP_NETWORK=devnet craco start",
-    "build": "REACT_APP_NETWORK=devnet craco build",
-    "start-testnet": "REACT_APP_NETWORK=testnet craco start",
-    "build-testnet": "REACT_APP_NETWORK=testnet craco build",
-    "start-mainnet": "REACT_APP_NETWORK=mainnet-beta craco start",
-    "build-mainnet": "REACT_APP_NETWORK=mainnet-beta craco build"
+    "start": "craco start",
+    "build": "craco build"
   },
   "eslintConfig": {
     "extends": [
