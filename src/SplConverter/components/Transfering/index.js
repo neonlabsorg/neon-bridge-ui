@@ -7,10 +7,11 @@ import { useRef, useEffect, useState } from "react"
 const { REACT_APP_NETWORK } = process.env
 
 const ASSOC_TX_EXPLORERS = {
-  'devnet': 'http://neonqltest.aleph.cloud:8004',
-  'testnet': 'http://neonqltest.aleph.cloud:8004',
-  'mainnet-beta': 'https://neonscan.io'
+  'devnet': 'https://neonscan.org',
+  'testnet': 'https://neonscan.org',
+  'mainnet-beta': 'https://neonscan.org'
 }
+
 export const Transfering = () => {
   const {pending,
     solanaTransferSign,
