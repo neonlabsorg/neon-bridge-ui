@@ -1,5 +1,4 @@
 {
-  "extends": "./node_modules/@tsconfig/recommended/tsconfig.json",
   "compilerOptions": {
     "target": "ES2015",
     "module": "esnext",
@@ -22,7 +21,6 @@
     "jsx": "react-jsx"
   },
   "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Recommended",
   "include": [
     "src"
   ]

@@ -5,36 +5,45 @@
   "engines": {
     "node": ">=16.14.0"
   },
-  "dependencies": {
-    "@craco/craco": "^6.4.2",
-    "@solana/spl-token": "^0.1.8",
-    "@solana/wallet-adapter-base": "^0.7.0",
-    "@solana/wallet-adapter-react": "^0.13.1",
-    "@solana/wallet-adapter-wallets": "^0.11.3",
-    "@solana/web3.js": "^1.31.0",
-    "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^11.1.0",
-    "@testing-library/user-event": "^12.1.10",
-    "@types/jest": "^27.4.0",
-    "@types/node": "^17.0.9",
-    "@types/react": "^17.0.38",
-    "@types/react-dom": "^17.0.11",
-    "@web3-react/core": "^6.1.9",
-    "@web3-react/injected-connector": "^6.0.7",
-    "bowser": "^2.11.0",
-    "classnames": "^2.2.5",
-    "neon-portal": "1.5.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-modal": "^3.14.4",
-    "react-scripts": "4.0.3",
-    "react-spring": "8.0.27",
-    "typescript": "^4.5.4",
-    "web3": "^1.6.1"
-  },
   "scripts": {
     "start": "craco start",
     "build": "craco build"
+  },
+  "dependencies": {
+    "@solana/spl-token": "0.1.8",
+    "@solana/wallet-adapter-base": "0.7.0",
+    "@solana/wallet-adapter-react": "0.13.1",
+    "@solana/wallet-adapter-wallets": "0.11.3",
+    "@solana/web3.js": "1.31.0",
+    "@web3-react/core": "6.1.9",
+    "@web3-react/injected-connector": "6.0.7",
+    "bowser": "2.11.0",
+    "classnames": "2.2.5",
+    "neon-portal": "1.5.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-modal": "3.14.4",
+    "react-spring": "8.0.27",
+    "typescript": "4.5.4",
+    "web3": "1.6.1"
+  },
+  "devDependencies": {
+    "react-scripts": "4.0.3",
+    "@testing-library/jest-dom": "5.11.4",
+    "@testing-library/react": "11.1.0",
+    "@testing-library/user-event": "12.1.10",
+    "@types/jest": "27.4.0",
+    "@types/node": "17.0.9",
+    "@types/react": "17.0.38",
+    "@types/react-dom": "17.0.11",
+    "@craco/craco": "6.4.2",
+    "autoprefixer": "9.8.8",
+    "postcss": "7.0.39",
+    "sass": "1.44.0",
+    "style-loader": "3.3.1",
+    "tailwindcss": "npm:@tailwindcss/postcss7-compat@2.2.17",
+    "webpack-bundle-analyzer": "4.5.0",
+    "webpack-version-file": "0.1.7"
   },
   "eslintConfig": {
     "extends": [
@@ -52,14 +61,5 @@
       "last 1 chrome version",
       "last 1 firefox version"
     ]
-  },
-  "devDependencies": {
-    "@tsconfig/recommended": "^1.0.1",
-    "autoprefixer": "^9.8.8",
-    "postcss": "^7.0.39",
-    "sass": "^1.44.0",
-    "style-loader": "^3.3.1",
-    "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.2.17",
-    "webpack-version-file": "0.1.7"
   }
 }
