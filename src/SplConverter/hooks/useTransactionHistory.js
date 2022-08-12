@@ -1,6 +1,6 @@
-import { useWeb3React } from '@web3-react/core';
+import { useWeb3React } from '@web3-react/core'
 import { useState, useEffect, useMemo } from 'react'
-import { useWallet } from '@solana/wallet-adapter-react';
+import { useWallet } from '@solana/wallet-adapter-react'
 
 const useTransactionHistory = () => {
   const { publicKey } = useWallet()
@@ -17,7 +17,7 @@ const useTransactionHistory = () => {
       console.warn('error parsing transaction history roll')
     }
   }, [])
-  const addTransaction = (transaction = {from: '', to: ''}) => {
+  const addTransaction = (transaction = { from: '', to: '' }) => {
     if (transaction.from && transaction.to) {
       const updatedTransactions = transactions.concat([transaction])
       setTransactions(updatedTransactions)
@@ -29,8 +29,8 @@ const useTransactionHistory = () => {
     if (!account && !publicKey) return false
     if ((publicKey || account) && !transactions.length) return true
     let status = true
-    transactions.forEach(transaction => {
-      Object.keys(transaction).forEach(dirKey => {
+    transactions.forEach((transaction) => {
+      Object.keys(transaction).forEach((dirKey) => {
         let addr = transaction[dirKey]
         if (account === addr || (publicKey && publicKey.toBase58() === addr)) status = false
       })
@@ -38,7 +38,7 @@ const useTransactionHistory = () => {
     return status
   }, [account, publicKey, transactions])
 
-  return {addTransaction, isFirstTransaction, viewNotify, setViewNotify}
+  return { addTransaction, isFirstTransaction, viewNotify, setViewNotify }
 }
 
 export default useTransactionHistory

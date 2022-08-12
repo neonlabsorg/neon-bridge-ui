@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, useMemo } from "react"
+import { useEffect, useRef, useState, useMemo } from 'react'
 import stub from '@/assets/no_symbol.svg'
 
-export const TokenSymbol = ({src = '', alt = ''}) => {
+export const TokenSymbol = ({ src = '', alt = '' }) => {
   const imgRef = useRef(null)
 
   const [failed, setFailed] = useState(false)
@@ -24,11 +24,12 @@ export const TokenSymbol = ({src = '', alt = ''}) => {
     if (!imgRef.current) return
     const { current } = imgRef
     current.onerror = handleError
-    return () => current.onerror = null
+    return () => (current.onerror = null)
   }, [])
 
-  return <>
-    <img ref={imgRef} src={currentSource} alt={alt} />
-  </>
+  return (
+    <>
+      <img ref={imgRef} src={currentSource} alt={alt} />
+    </>
+  )
 }
-

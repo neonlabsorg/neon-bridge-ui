@@ -6,29 +6,31 @@ import useTransactionHistory from '../useTransactionHistory'
 import { useConnection } from '../../../contexts/connection'
 
 export const useTransfering = () => {
-  const {setPending, setSolanaTransferSign, setNeonTransferSign, setError} = useStatesContext()
-  const {addTransaction} = useTransactionHistory()
+  const { setPending, setSolanaTransferSign, setNeonTransferSign, setError } = useStatesContext()
+  const { addTransaction } = useTransactionHistory()
   const connection = useConnection()
-  const {publicKey} = useWallet()
-  const {account} = useWeb3React()
-  const { deposit, withdraw, getEthereumTransactionParams } = useNeonTransfer({
-    onBeforeCreateInstruction: () => {
-      setPending(true)
+  const { publicKey } = useWallet()
+  const { account } = useWeb3React()
+  const { deposit, withdraw, getEthereumTransactionParams } = useNeonTransfer(
+    {
+      onBeforeCreateInstruction: () => {
+        setPending(true)
+      },
+      onBeforeSignTransaction: () => {
+        setPending(true)
+      },
+      onSuccessSign: (sig, txHash) => {
+        if (sig) setSolanaTransferSign(sig)
+        if (txHash) setNeonTransferSign(txHash)
+        addTransaction({ from: publicKey.toBase58(), to: account })
+        setPending(false)
+      },
+      onErrorSign: (e) => {
+        setError(e.message)
+        setPending(false)
+      },
     },
-    onBeforeSignTransaction: () => {
-      setPending(true)
-    },
-    onSuccessSign: (sig, txHash) => {
-      if (sig) setSolanaTransferSign(sig)
-      if (txHash) setNeonTransferSign(txHash)
-      addTransaction({from: publicKey.toBase58(), to: account})
-      setPending(false)
-    },
-    onErrorSign: (e) => {
-      setError(e.message)
-      setPending(false)
-    }
-  }, connection)
+    connection,
+  )
   return { deposit, withdraw, getEthereumTransactionParams }
 }
-

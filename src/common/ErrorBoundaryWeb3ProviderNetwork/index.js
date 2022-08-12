@@ -1,4 +1,4 @@
-import getLibrary from '@utils/getLibrary';
+import getLibrary from '@utils/getLibrary'
 import { Component } from 'react'
 import { createWeb3ReactRoot } from '@web3-react/core'
 

@@ -1,12 +1,14 @@
-import { createContext, useContext } from 'react';
+import { createContext, useContext } from 'react'
 
 export interface WalletModalContextState {
-    visible: boolean;
-    setVisible: (_: boolean) => void;
+  visible: boolean
+  setVisible: (_: boolean) => void
 }
 
-export const WalletModalContext = createContext<WalletModalContextState>({} as WalletModalContextState);
+export const WalletModalContext = createContext<WalletModalContextState>(
+  {} as WalletModalContextState,
+)
 
 export function useWalletModal(): WalletModalContextState {
-    return useContext(WalletModalContext);
+  return useContext(WalletModalContext)
 }

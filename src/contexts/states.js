@@ -1,23 +1,23 @@
-import { useWallet } from "@solana/wallet-adapter-react";
-import { createContext, useContext, useEffect, useState, useRef, useMemo } from "react";
-import { useConnection } from "./connection";
-import { useTokensContext } from "./tokens";
+import { useWallet } from '@solana/wallet-adapter-react'
+import { createContext, useContext, useEffect, useState, useRef, useMemo } from 'react'
+import { useConnection } from './connection'
+import { useTokensContext } from './tokens'
 import { NEON_TOKEN_DECIMALS } from 'neon-portal/src/constants'
-import { useWeb3React } from "@web3-react/core";
-import { useTransfering } from "../SplConverter/hooks/transfering";
+import { useWeb3React } from '@web3-react/core'
+import { useTransfering } from '../SplConverter/hooks/transfering'
 const STEPS = {
   source: {
     title: 'Source',
-    status: 'active'
+    status: 'active',
   },
   target: {
     title: 'Target',
-    status: 'next'
+    status: 'next',
   },
   confirm: {
     title: 'Confirmation',
-    status: 'next'
-  }
+    status: 'next',
+  },
 }
 const ERC20_GAS_DECIMALS = 18
 export const StateContext = createContext({
@@ -29,11 +29,10 @@ export const StateContext = createContext({
   theme: 'light',
   toggleTheme: () => {},
   toggleDirection: () => {},
-  finishStep: () => {}
-});
+  finishStep: () => {},
+})
 
-
-export function StateProvider({ children = undefined}) {
+export function StateProvider({ children = undefined }) {
   const connection = useConnection()
   const { updateTokenList, balances } = useTokensContext()
   const { publicKey } = useWallet()
@@ -43,7 +42,7 @@ export function StateProvider({ children = undefined}) {
   const [withdrawFee, setWithdrawFee] = useState(0)
   const [solBalance, setSolBalance] = useState(0)
   const neonBalance = useMemo(() => {
-    if (!balances.NEON || !balances.NEON.eth ) return 0
+    if (!balances.NEON || !balances.NEON.eth) return 0
     else return balances.NEON.eth
   }, [balances])
   const [pending, setPending] = useState(false)
@@ -65,22 +64,21 @@ export function StateProvider({ children = undefined}) {
     setSteps({
       source: {
         title: 'Source',
-        status: 'active'
+        status: 'active',
       },
       target: {
         title: 'Target',
-        status: 'next'
+        status: 'next',
       },
       confirm: {
         title: 'Confirmation',
-        status: 'next'
-      }
+        status: 'next',
+      },
     })
   }
 
   const maxBalance = useMemo(() => {
     if (balances && token && balances[token.symbol]) {
-      
       const netKey = direction === 'neon' ? 'sol' : 'eth'
       return balances[token.symbol][netKey]
     } else return 0
@@ -88,7 +86,7 @@ export function StateProvider({ children = undefined}) {
 
   const finishStep = (stepKey = '') => {
     let activeIndex = null
-    const currentSteps = Object.assign({}, steps);
+    const currentSteps = Object.assign({}, steps)
     Object.keys(currentSteps).forEach((curKey, index) => {
       if (curKey === stepKey && currentSteps[curKey].status === 'active') {
         activeIndex = index
@@ -108,14 +106,14 @@ export function StateProvider({ children = undefined}) {
   }
   const setStepActive = (stepKey = '') => {
     let activeIndex = null
-    const currentSteps = Object.assign({}, steps);
+    const currentSteps = Object.assign({}, steps)
     Object.keys(currentSteps).forEach((curKey, index) => {
       if (curKey === stepKey) {
-        const step = currentSteps[curKey];
-        if (step.status === 'next' || step.status === 'active') return;
+        const step = currentSteps[curKey]
+        if (step.status === 'next' || step.status === 'active') return
         else {
           activeIndex = index
-          step.status = 'active';
+          step.status = 'active'
         }
       }
     })
@@ -125,7 +123,7 @@ export function StateProvider({ children = undefined}) {
     setSteps(currentSteps)
   }
   const toggleTheme = () => {
-    const {classList} = document.documentElement
+    const { classList } = document.documentElement
     if (theme === 'light') {
       classList.add('dark')
       setTheme('dark')
@@ -155,25 +153,25 @@ export function StateProvider({ children = undefined}) {
     const instruction = getEthereumTransactionParams(amount, token)
     const gasPriceStr = await library.eth.getGasPrice()
     const res = await library.eth.estimateGas(instruction)
-    setWithdrawFee(( ( res * Number(gasPriceStr) ) / Math.pow(10, ERC20_GAS_DECIMALS) ).toFixed(9))
+    setWithdrawFee(((res * Number(gasPriceStr)) / Math.pow(10, ERC20_GAS_DECIMALS)).toFixed(9))
   }
   useEffect(() => {
-    (async () => {
+    async function main() {
       if (publicKey) await calculatingSolBalances()
-    })()
-    // eslint-disable-next-line
+    }
+    main()
   }, [publicKey])
 
   useEffect(() => {
-    (async () => {
+    async function main() {
       if (account && token && amount && publicKey) await calculatingEthBalances()
-    })()
-    // eslint-disable-next-line
+    }
+    main()
   }, [account, token, amount, publicKey])
 
   useEffect(() => {
     if (error !== undefined) setError(undefined)
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [amount, token])
 
   useEffect(() => {
@@ -181,31 +179,44 @@ export function StateProvider({ children = undefined}) {
       console.log('pending false by reject')
       setPending(false)
     }
-  // eslint-disable-next-line
+    // eslint-disable-next-line
   }, [rejected.current])
 
-  return <StateContext.Provider
-    value={{
-      steps,
-      finishStep,
-      setStepActive,
-      resetSteps,
-      direction,
-      theme, toggleTheme,
-      toggleDirection,
-      amount, setAmount,
-      token, setToken,
-      error, setError,
-      solanaTransferSign, setSolanaTransferSign,
-      neonTransferSign, setNeonTransferSign,
-      rejected, resetStates,
-      pending, setPending,
-      depositFee, solBalance,
-      withdrawFee, neonBalance,
-      maxBalance
-    }}>
-    {children}
-  </StateContext.Provider>
+  return (
+    <StateContext.Provider
+      value={{
+        steps,
+        finishStep,
+        setStepActive,
+        resetSteps,
+        direction,
+        theme,
+        toggleTheme,
+        toggleDirection,
+        amount,
+        setAmount,
+        token,
+        setToken,
+        error,
+        setError,
+        solanaTransferSign,
+        setSolanaTransferSign,
+        neonTransferSign,
+        setNeonTransferSign,
+        rejected,
+        resetStates,
+        pending,
+        setPending,
+        depositFee,
+        solBalance,
+        withdrawFee,
+        neonBalance,
+        maxBalance,
+      }}
+    >
+      {children}
+    </StateContext.Provider>
+  )
 }
 
 export function useStatesContext() {

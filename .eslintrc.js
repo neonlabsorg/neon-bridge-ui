@@ -8,11 +8,11 @@ module.exports = {
   globals: {
     globalThis: false,
   },
-  extends: ["eslint:recommended"],
-  plugins: ["prettier"],
-  parser: "@typescript-eslint/parser",
+  extends: ['eslint:recommended'],
+  plugins: ['prettier'],
+  parser: '@typescript-eslint/parser',
   rules: {
-    "prettier/prettier": "warn",
-    "no-unused-vars": ["error", { argsIgnorePattern: "^_|e$" }],
+    'prettier/prettier': 'error',
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_|e$' }],
   },
 }

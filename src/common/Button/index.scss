@@ -12,39 +12,39 @@
   font-weight: 700;
   transition: all 0.15s ease-in-out;
   &--transparent {
-      background-color: transparent;
-      &#{$parent}--dark {
-          border: 1px solid $white;
-          color: $white;
-      }
-      &#{$parent}--light {
-          border: 1px solid $blue;
-          color: $blue;
-      }
+    background-color: transparent;
+    &#{$parent}--dark {
+      border: 1px solid $white;
+      color: $white;
+    }
+    &#{$parent}--light {
+      border: 1px solid $blue;
+      color: $blue;
+    }
   }
   &--gradient {
-      color: $white;
-      background-image: linear-gradient(269.64deg, #52ECC7 -25.46%, #218EF3 23.78%, #B721DD 94.7%)
+    color: $white;
+    background-image: linear-gradient(269.64deg, #52ecc7 -25.46%, #218ef3 23.78%, #b721dd 94.7%);
   }
   &--light {
-      &:not(#{$parent}--transparent) {
-          background-color: $blue;
-      }
-      color: $white;
+    &:not(#{$parent}--transparent) {
+      background-color: $blue;
+    }
+    color: $white;
   }
   &--dark {
-      &:not(#{$parent}--transparent) {
-          background-color: $white;
-      }
-      color: $dark_background;
+    &:not(#{$parent}--transparent) {
+      background-color: $white;
+    }
+    color: $dark_background;
   }
   &:hover {
-      &#{$parent}--light {
-          box-shadow: 0 0 5px $blue;
-      }
-      &#{$parent}--dark {
-          box-shadow: 0 0 5px $white;
-      }
+    &#{$parent}--light {
+      box-shadow: 0 0 5px $blue;
+    }
+    &#{$parent}--dark {
+      box-shadow: 0 0 5px $white;
+    }
   }
   &--iconed {
     padding: 12px 12px;
