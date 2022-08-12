@@ -1,0 +1,11 @@
+version: v1.25.0
+ignore:
+  SNYK-JS-GOT-2932019:
+    - '*':
+        created: 2022-08-12T21:19:36.878Z
+  SNYK-JS-WEB3-174533:
+    - '*':
+        created: 2022-08-12T21:19:36.878Z
+  SNYK-JS-WS-1296835:
+    - '*':
+        created: 2022-08-12T21:19:36.878Z
