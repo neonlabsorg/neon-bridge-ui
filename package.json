@@ -53,9 +53,8 @@
     "webpack-version-file": "0.1.7"
   },
   "resolutions": {
-    "@solana/wallet-adapter-wallets/**/node-fetch": "^2.6.7",
-    "@solana/spl-token/**/node-fetch": "^2.6.7",
-    "@solana/web3.js/**/node-fetch": "^2.6.7",
+    "**/node-fetch": "^2.6.7",
+    "**/bn.js": "^5.2.0",
     "@solana/wallet-adapter-wallets/**/follow-redirects": "^1.14.7"
   },
   "browserslist": {
