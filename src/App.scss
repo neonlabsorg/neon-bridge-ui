@@ -1,15 +1,3 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
-    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-}
-
 $dark_background: #0e0e0e;
 $pink: #ce3a8b;
 $blue: #4355f9;
@@ -29,9 +17,11 @@ $plate_width: 1120px;
     font-weight: inherit;
   }
 }
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 @import './common/Button/index.scss';
 @import './common/Switcher/index.scss';
 @import './common/Button/index.scss';
@@ -49,23 +39,31 @@ $plate_width: 1120px;
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
 *,
 *:before,
 *:after {
   box-sizing: border-box;
 }
+
 .react-notie {
   position: relative;
   z-index: 100;
 }
+
 .svg-fill {
   @apply fill-black;
 }
+
 .dark .svg-fill {
   @apply fill-white;
 }
+
 input {
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
@@ -75,4 +73,8 @@ input {
   &[type='number'] {
     -moz-appearance: textfield;
   }
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
