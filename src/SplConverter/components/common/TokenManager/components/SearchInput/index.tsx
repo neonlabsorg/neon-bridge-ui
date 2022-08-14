@@ -5,7 +5,7 @@ export const SearchInput = ({
   value = '',
   onChange = () => {},
   placeholder = '',
-}) => {
+}: any) => {
   const { theme } = useStatesContext()
   return (
     <>

@@ -1,8 +1,9 @@
 {
+  "extends": "./tsconfig.path.json",
   "compilerOptions": {
     "target": "ES2015",
     "module": "esnext",
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,

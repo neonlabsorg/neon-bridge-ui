@@ -13,7 +13,7 @@ const Button = ({
   iconed = false,
   disabled = false,
   onClick = () => {},
-}) => {
+}: any) => {
   const classNames = `${className} button
         ${big ? 'button--big' : ''}
         ${crumpled ? 'button--crumpled' : ''}

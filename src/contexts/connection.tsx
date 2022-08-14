@@ -2,7 +2,7 @@ import { clusterApiUrl, Connection } from '@solana/web3.js'
 import { createContext, useMemo, useEffect, useContext } from 'react'
 import { useLocalStorageState } from '../utils'
 
-const DEFAULT = clusterApiUrl(process.env.REACT_APP_NETWORK || 'mainnet-beta')
+const DEFAULT = clusterApiUrl(process.env.REACT_APP_NETWORK || ('mainnet-beta' as any))
 const DEFAULT_SLIPPAGE = 0.25
 const ConnectionContext = createContext({
   endpoint: DEFAULT,
@@ -29,6 +29,7 @@ export function ConnectionProvider({ children = undefined }) {
       value={{
         endpoint,
         slippage: parseFloat(slippage),
+        // @ts-ignore
         setSlippage: (val) => setSlippage(val.toString()),
         connection,
       }}

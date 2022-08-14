@@ -82,11 +82,16 @@ export function TokensProvider({ children = undefined }) {
     })
     const balanceData = completed[0]
     if (balanceData === 0) return 0
+    // @ts-ignore
     if (balanceData && balanceData.value) {
+      // @ts-ignore
       return typeof balanceData.value === 'object' && balanceData.value.uiAmount
-        ? balanceData.value.uiAmount
-        : typeof balanceData.value === 'number'
-        ? balanceData.value / Math.pow(10, token.decimals)
+        ? // @ts-ignore
+          balanceData.value.uiAmount
+        : // @ts-ignore
+        typeof balanceData.value === 'number'
+        ? // @ts-ignore
+          balanceData.value / Math.pow(10, token.decimals)
         : 0
     }
     return 0
@@ -181,6 +186,7 @@ export function TokensProvider({ children = undefined }) {
         tokenErrors,
         balances,
         tokenManagerOpened,
+        // @ts-ignore
         setTokenManagerOpened,
         refreshTokenList,
       }}
@@ -190,6 +196,6 @@ export function TokensProvider({ children = undefined }) {
   )
 }
 
-export function useTokensContext() {
+export function useTokensContext(): any {
   return useContext(TokensContext)
 }

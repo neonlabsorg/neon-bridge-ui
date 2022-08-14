@@ -2,7 +2,7 @@
 import NeonIcon from '@/assets/neon.png'
 import SolanaIcon from '@/assets/solana.png'
 
-const SourceCard = ({ direction = 'solana', prefix }) => {
+const SourceCard = ({ direction = 'solana', prefix }: any) => {
   // const { active } = useWeb3React()
   // const { network } = useNetworkType()
   return (

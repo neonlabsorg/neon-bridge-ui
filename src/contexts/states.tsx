@@ -147,12 +147,14 @@ export function StateProvider({ children = undefined }) {
     const { feeCalculator } = await connection.getRecentBlockhash()
     setDepositFee(feeCalculator.lamportsPerSignature / Math.pow(10, NEON_TOKEN_DECIMALS))
     const balance = await connection.getBalance(publicKey)
+    // @ts-ignore
     setSolBalance((Number(balance) / Math.pow(10, NEON_TOKEN_DECIMALS)).toFixed(9))
   }
   const calculatingEthBalances = async () => {
     const instruction = getEthereumTransactionParams(amount, token)
     const gasPriceStr = await library.eth.getGasPrice()
     const res = await library.eth.estimateGas(instruction)
+    // @ts-ignore
     setWithdrawFee(((res * Number(gasPriceStr)) / Math.pow(10, ERC20_GAS_DECIMALS)).toFixed(9))
   }
   useEffect(() => {
@@ -187,6 +189,7 @@ export function StateProvider({ children = undefined }) {
       value={{
         steps,
         finishStep,
+        // @ts-ignore
         setStepActive,
         resetSteps,
         direction,
@@ -219,6 +222,6 @@ export function StateProvider({ children = undefined }) {
   )
 }
 
-export function useStatesContext() {
+export function useStatesContext(): any {
   return useContext(StateContext)
 }

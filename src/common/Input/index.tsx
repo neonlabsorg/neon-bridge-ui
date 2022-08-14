@@ -5,7 +5,7 @@ const Input = ({
   onChange = () => {},
   placeholder = '',
   error = false,
-}) => {
+}: any) => {
   return (
     <input
       type={type}
