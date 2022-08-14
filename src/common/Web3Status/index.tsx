@@ -1,7 +1,7 @@
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core'
-import { shortenAddress } from '../../utils'
-import { injected } from '../../connectors'
-import { Dropdown } from '../Dropdown'
+import { shortenAddress } from '@/utils'
+import { injected } from '@/connectors'
+import { Dropdown } from '@/common/Dropdown'
 import { useState, useCallback } from 'react'
 const Web3Status = ({ className = '' }) => {
   const [copied, setCopied] = useState(false)

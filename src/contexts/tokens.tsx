@@ -1,14 +1,14 @@
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useWeb3React } from '@web3-react/core'
 import { useEffect, useState, useMemo, createContext, useContext } from 'react'
-import { useNetworkType } from '../SplConverter/hooks'
+import { useNetworkType } from '@/SplConverter/hooks'
 import { useConnection } from './connection'
 import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
-import ERC20_ABI from '../SplConverter/hooks/abi/erc20.json'
+import ERC20_ABI from '@/SplConverter/hooks/abi/erc20.json'
 import { NEON_TOKEN_MINT, NEON_TOKEN_MINT_DECIMALS } from 'neon-portal/src/constants'
-import { CHAIN_IDS } from '../connectors'
-import { usePrevious } from '../utils'
+import { CHAIN_IDS } from '@/connectors'
+import { usePrevious } from '@/utils'
 
 const { REACT_APP_TOKEN_LIST_VER } = process.env
 

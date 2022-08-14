@@ -1,4 +1,4 @@
-import { useStatesContext } from '../../../contexts/states'
+import { useStatesContext } from '@/contexts/states'
 
 export const ErrorHandler = ({ className }) => {
   const { error } = useStatesContext()

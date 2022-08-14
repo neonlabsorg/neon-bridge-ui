@@ -1,4 +1,4 @@
-import Button from '../Button'
+import Button from '@/common/Button'
 import { WalletIcon } from './WalletIcon'
 
 export const WalletListItem = ({ handleClick, wallet }) => {

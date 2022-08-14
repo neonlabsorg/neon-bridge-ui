@@ -1,10 +1,10 @@
-import { useStatesContext } from '../../../contexts/states'
+import { useStatesContext } from '@/contexts/states'
 import { useEffect } from 'react'
-import { TransferInfo } from '../common/TransferInfo'
+import { TransferInfo } from '@/SplConverter/components/common/TransferInfo'
 import { ReactComponent as ArrowIcon } from '@/assets/arrow-right.svg'
-import Button from '../../../common/Button'
-import { useTransfering } from '../../hooks/transfering'
-import { ErrorHandler } from '../common/ErrorHandler'
+import Button from '@/common/Button'
+import { useTransfering } from '@/SplConverter/hooks/transfering'
+import { ErrorHandler } from '@/SplConverter/components/common/ErrorHandler'
 import { useToast } from '@/common/Notifications'
 
 export const Confirm = () => {

@@ -1,6 +1,6 @@
 import React from 'react'
-import Button from '../Button'
-import { ReactComponent as CloseIcon } from '../../assets/cross.svg'
+import Button from '@/common/Button'
+import { ReactComponent as CloseIcon } from '@/assets/cross.svg'
 
 export class Modal extends React.Component<any, any> {
   overlay

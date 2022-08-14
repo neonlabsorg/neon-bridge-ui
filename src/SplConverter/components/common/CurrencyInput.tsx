@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
-import { ReactComponent as DropDownIcon } from '../../../assets/dropdown.svg'
-import { useStatesContext } from '../../../contexts/states'
-import { useTokensContext } from '../../../contexts/tokens'
+import { ReactComponent as DropDownIcon } from '@/assets/dropdown.svg'
+import { useStatesContext } from '@/contexts/states'
+import { useTokensContext } from '@/contexts/tokens'
 import { escapeRegExp } from '@/utils'
 
 const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`)

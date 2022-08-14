@@ -1,11 +1,11 @@
 import Button from '@/common/Button'
 import { useMemo } from 'react'
-import { SourceCard } from '../common/SourceCard'
+import { SourceCard } from '@/SplConverter/components/common/SourceCard'
 import { ReactComponent as ReverseIcon } from '@/assets/reverse.svg'
 import Web3Status from '@/common/Web3Status'
 import { useWeb3React } from '@web3-react/core'
 import { WalletModalProvider, WalletMultiButton } from '@/common/SolanaStatus'
-import { CurrencyInput } from '../common/CurrencyInput'
+import { CurrencyInput } from '@/SplConverter/components/common/CurrencyInput'
 import { useStatesContext } from '@/contexts/states'
 import { useWallet } from '@solana/wallet-adapter-react'
 

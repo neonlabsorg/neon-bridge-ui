@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
-import { useTokensContext } from '../../../../contexts/tokens'
+import { useTokensContext } from '@/contexts/tokens'
 import { SearchInput } from './components/SearchInput'
 import Modal from 'react-modal'
-import { useStatesContext } from '../../../../contexts/states'
+import { useStatesContext } from '@/contexts/states'
 import { ReactComponent as LoaderIcon } from '@/assets/loader.svg'
 import { TokenRow } from './components/TokenRow'
-import Button from '../../../../common/Button'
+import Button from '@/common/Button'
 Modal.setAppElement('#root')
 
 export const TokenManager = () => {

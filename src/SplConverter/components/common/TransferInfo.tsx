@@ -1,4 +1,4 @@
-import { useStatesContext } from '../../../contexts/states'
+import { useStatesContext } from '@/contexts/states'
 
 export const TransferInfo = ({ className = '' }) => {
   const { direction, amount, token, depositFee, withdrawFee, solBalance } = useStatesContext()

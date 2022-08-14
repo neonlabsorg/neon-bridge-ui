@@ -1,4 +1,4 @@
-import { useStatesContext } from '../../../contexts/states'
+import { useStatesContext } from '@/contexts/states'
 import { ReactComponent as LoaderIcon } from '@/assets/loader.svg'
 import { ReactComponent as CloseIcon } from '@/assets/close.svg'
 import { ReactComponent as DoneIcon } from '@/assets/done.svg'
