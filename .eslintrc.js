@@ -14,8 +14,8 @@ module.exports = {
   rules: {
     'prettier/prettier': 'error',
     'no-unused-vars': ['error', { argsIgnorePattern: '^_|e$' }],
-    // 'curly': ['error', 'multi-line'],
-    // 'newline-before-return': 'error',
+    'curly': ['error', 'multi-line'],
+    'newline-before-return': 'error',
 
     'simple-import-sort/imports': [
       'error',

@@ -30,6 +30,7 @@ export const CurrencyInput = ({ className = '' }) => {
     }
     // eslint-disable-next-line
   }, [inputAmount, setAmount])
+
   return (
     <div
       className={`inline-flex bg-light-gray dark:bg-dark-500 px-6 ${className} items-center justify-between`}

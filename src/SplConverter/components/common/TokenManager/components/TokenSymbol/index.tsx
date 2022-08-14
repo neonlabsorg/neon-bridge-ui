@@ -25,6 +25,7 @@ export const TokenSymbol = ({ src = '', alt = '' }) => {
     if (!imgRef.current) return
     const { current } = imgRef
     current.onerror = handleError
+
     return () => (current.onerror = null)
   }, [])
 

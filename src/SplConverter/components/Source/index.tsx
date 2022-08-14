@@ -18,6 +18,7 @@ export const Source = ({ className = '' }) => {
     () => (direction === 'neon' && connected) || (direction === 'solana' && active),
     [active, connected, direction],
   )
+
   return (
     <div className={`flex flex-col w-full ${className}`}>
       <div className='flex justify-between items-center mb-6'>

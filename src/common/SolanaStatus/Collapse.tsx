@@ -65,6 +65,7 @@ export const Collapse: FC<CollapseProps> = ({ id, children, expanded = false }) 
     }
 
     node.addEventListener('transitionend', handleTransitionEnd)
+
     return () => node.removeEventListener('transitionend', handleTransitionEnd)
   }, [expanded])
 

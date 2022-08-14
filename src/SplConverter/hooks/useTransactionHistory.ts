@@ -35,6 +35,7 @@ const useTransactionHistory = () => {
         if (account === addr || (publicKey && publicKey.toBase58() === addr)) status = false
       })
     })
+
     return status
   }, [account, publicKey, transactions])
 

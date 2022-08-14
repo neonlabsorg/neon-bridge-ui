@@ -29,6 +29,7 @@ const MobileErrorOverlay = () => {
 }
 const Layout = ({ children = null, bodyClassName = '', className = '' }) => {
   const browser = Bowser.parse(window.navigator.userAgent)
+
   return (
     <div className={`layout ${className}`}>
       <Header />

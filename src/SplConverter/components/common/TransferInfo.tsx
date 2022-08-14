@@ -2,6 +2,7 @@ import { useStatesContext } from '@/contexts/states'
 
 export const TransferInfo = ({ className = '' }) => {
   const { direction, amount, token, depositFee, withdrawFee, solBalance } = useStatesContext()
+
   return (
     <div className={`w-full flex flex-col mb-8 ${className}`}>
       <div className='flex w-full justify-between mb-2'>

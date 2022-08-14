@@ -12,6 +12,7 @@ export const Target = () => {
   const { direction, finishStep, depositFee, solBalance } = useStatesContext()
   const { active } = useWeb3React()
   const { publicKey } = useWallet()
+
   return (
     <div className='w-full flex flex-col'>
       <SourceCard direction={direction} prefix='To' className='mb-6' />

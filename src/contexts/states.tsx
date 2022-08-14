@@ -81,6 +81,7 @@ export function StateProvider({ children = undefined }) {
   const maxBalance = useMemo(() => {
     if (balances && token && balances[token.symbol]) {
       const netKey = direction === 'neon' ? 'sol' : 'eth'
+
       return balances[token.symbol][netKey]
     } else return 0
   }, [token, balances, direction])

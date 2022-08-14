@@ -33,5 +33,6 @@ export const useTransfering = () => {
     },
     connection,
   )
+
   return { deposit, withdraw, getEthereumTransactionParams }
 }

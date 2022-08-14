@@ -79,6 +79,7 @@ export const SplConverter = () => {
           {Object.keys(steps).map((stepKey, index) => {
             const step = steps[stepKey]
             const StepComponent = COMPONENTS_BY_STEPS[stepKey]
+
             return (
               <Accordion
                 className='mb-8'

@@ -16,6 +16,7 @@ const Accordion = ({
     if (!finished || active) return
     setStepActive(stepKey)
   }
+
   return (
     <div className={`w-full bg-white dark:bg-dark-600 p-10 ${className}`}>
       <div className='flex w-full flex-col'>

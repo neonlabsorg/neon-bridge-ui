@@ -24,6 +24,7 @@ export const WalletDisconnectButton: FC<ButtonProps> = ({
     if (children) return children
     if (disconnecting) return 'Disconnecting ...'
     if (wallet) return 'Disconnect'
+
     return 'Disconnect Wallet'
   }, [children, disconnecting, wallet])
 

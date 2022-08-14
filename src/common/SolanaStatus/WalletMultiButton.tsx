@@ -13,6 +13,7 @@ export const WalletMultiButton: FC<ButtonProps> = ({ children, ...props }) => {
   const content = useMemo(() => {
     if (children) return children
     if (!wallet || !base58) return null
+
     return base58.slice(0, 4) + '..' + base58.slice(-4)
   }, [children, wallet, base58])
 

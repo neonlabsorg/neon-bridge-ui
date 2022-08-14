@@ -39,6 +39,7 @@ export const TokenRow = ({
   }, [activeNetkey])
   const currencyBalance = useMemo(() => {
     if (balance === undefined) return undefined
+
     return balance[activeNetkey]
   }, [balance, activeNetkey])
   const tokenError = useMemo(() => tokenErrors[token.symbol], [tokenErrors, token])
@@ -47,8 +48,9 @@ export const TokenRow = ({
     if (
       (direction === 'neon' && activeNetkey === 'eth') ||
       (direction === 'solana' && activeNetkey === 'sol')
-    )
+    ) {
       return <></>
+    }
     if (
       tokenError !== undefined &&
       ((direction === 'neon' && tokenError.type === 'sol') ||
@@ -56,7 +58,7 @@ export const TokenRow = ({
     ) {
       return <div className={'py-1 text-red-400 text-xs'}>{tokenError.message}</div>
     }
-    if (currencyBalance === undefined)
+    if (currencyBalance === undefined) {
       return (
         <div className='py-1 flex items-center'>
           <span className='mr-2'>
@@ -67,6 +69,7 @@ export const TokenRow = ({
           <Icon />
         </div>
       )
+    }
     if (
       (direction === 'neon' && publicKey && activeNetkey === 'sol') ||
       (direction === 'solana' && account && activeNetkey === 'eth')

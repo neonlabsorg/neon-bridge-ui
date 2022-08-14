@@ -26,6 +26,7 @@ export const WalletConnectButton: FC<ButtonProps> = ({ children, disabled, onCli
     if (children) return children
     if (connecting) return 'Connecting ...'
     if (connected) return 'Connected'
+
     return 'Connect Wallet'
   }, [children, connecting, connected])
 

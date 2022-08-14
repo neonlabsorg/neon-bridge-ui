@@ -26,6 +26,7 @@ export const Dropdown = ({ className = '', trigger, children }) => {
       document.removeEventListener('touchstart', listener)
     }
   }, [ref, closeDropdown])
+
   return (
     <div className={`dropdown ${className}`} ref={ref}>
       <div onClick={openDropdown}>{trigger}</div>

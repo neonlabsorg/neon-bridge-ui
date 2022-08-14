@@ -20,7 +20,9 @@ export function useNetworkType() {
     } else {
       network = 'disconnected'
     }
+
     return { network, chainId }
   }, [active, library?.currentProvider])
+
   return { network, chainId }
 }

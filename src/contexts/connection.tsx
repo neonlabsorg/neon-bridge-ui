@@ -21,10 +21,12 @@ export function ConnectionProvider({ children = undefined }) {
 
   useEffect(() => {
     const id = connection.onSlotChange(() => null)
+
     return () => {
       connection.removeSlotChangeListener(id)
     }
   }, [connection])
+
   return (
     <ConnectionContext.Provider
       value={{
@@ -46,6 +48,7 @@ export function useConnection() {
 
 export function useConnectionConfig() {
   const context = useContext(ConnectionContext)
+
   return {
     endpoint: context.endpoint,
     setEndpoint: context.setEndpoint,

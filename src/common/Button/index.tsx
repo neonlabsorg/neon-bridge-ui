@@ -22,6 +22,7 @@ const Button = ({
         ${iconed ? 'button--iconed' : ''}
         ${gradient ? `button--gradient` : `button--${layoutTheme}`}
         ${disabled ? 'button--disabled' : ''}`
+
   return (
     <React.Fragment>
       {to.length ? (

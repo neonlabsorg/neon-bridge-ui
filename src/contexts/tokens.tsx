@@ -36,11 +36,13 @@ export function TokensProvider({ children = undefined }) {
   const { chainId } = useNetworkType()
   const filteringChainId = useMemo(() => {
     if (Number.isNaN(chainId)) return CHAIN_IDS['devnet']
+
     return chainId
   }, [chainId])
   const initialTokenListState = useMemo(() => {
     const model = Object.assign({}, NEON_TOKEN_MODEL)
     model.chainId = filteringChainId
+
     return [model]
   }, [filteringChainId])
   const { publicKey } = useWallet()
@@ -79,6 +81,7 @@ export function TokensProvider({ children = undefined }) {
       timeout(500),
     ]).catch((e) => {
       console.warn(e)
+
       return [0, undefined]
     })
     const balanceData = completed[0]
@@ -95,17 +98,20 @@ export function TokensProvider({ children = undefined }) {
           balanceData.value / Math.pow(10, token.decimals)
         : 0
     }
+
     return 0
   }
 
   const getEthBalance = async (token) => {
     if (token.address_spl === NEON_TOKEN_MINT) {
       const balance = await library.eth.getBalance(account)
+
       return +(balance / Math.pow(10, token.decimals)).toFixed(4)
     }
 
     const tokenInstance = new library.eth.Contract(ERC20_ABI, token.address)
     const balance = await tokenInstance.methods.balanceOf(account).call()
+
     return balance / Math.pow(10, token.decimals)
   }
 
@@ -142,6 +148,7 @@ export function TokensProvider({ children = undefined }) {
     await Promise.all([setTokenList(initialTokenListState), timeout(20), updateTokenList()]).catch(
       (e) => {
         console.warn(e)
+
         return e
       },
     )

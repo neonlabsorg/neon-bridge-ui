@@ -29,6 +29,7 @@ export const TokenManager = () => {
         arr.push(item)
       }
     })
+
     return arr
   }
   const searchList = useMemo(findBySearch, [list, searchString])

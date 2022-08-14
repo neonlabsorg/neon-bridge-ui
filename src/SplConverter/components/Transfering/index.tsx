@@ -26,6 +26,7 @@ export const Transfering = () => {
       setReset(true)
       timeout.current = null
     }, 30000)
+
     return () => (timeout.current = null)
   }, [pending])
 

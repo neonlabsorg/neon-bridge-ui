@@ -20,6 +20,7 @@ function getLibrary(provider) {
 
 function App() {
   const { wallets } = useSolanaWallet()
+
   return (
     <Web3ReactProvider getLibrary={getLibrary}>
       <ConnectionProvider>

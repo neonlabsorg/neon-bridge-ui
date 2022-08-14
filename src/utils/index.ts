@@ -6,6 +6,7 @@ export function escapeRegExp(string = '') {
 
 export function shortenAddress(address = '', chars = 4) {
   if (!address.length) return ''
+
   return `${address.substring(0, chars + 2)}...${address.substring(42 - chars)}`
 }
 
@@ -14,6 +15,7 @@ export function usePrevious(value) {
   useEffect(() => {
     ref.current = value
   }, [value])
+
   return ref.current
 }
 
@@ -24,6 +26,7 @@ export function useLocalStorageState(key = '', defaultState = '') {
     if (storedState) {
       return JSON.parse(storedState)
     }
+
     return defaultState
   })
 

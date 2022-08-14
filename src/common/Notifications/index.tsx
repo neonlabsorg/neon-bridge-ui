@@ -57,6 +57,7 @@ const ToastProvider = ({ children }) => {
 
 const useToast = () => {
   const context = useContext(ToastContext)
+
   return context
 }
 
@@ -106,6 +107,7 @@ const ToastContainer = ({ toasts }) => {
     enter: { left: '0%' },
     leave: { left: '-100%' },
   })
+
   return (
     <div className='fixed flex flex-col justify-end left-6 z-10 top-0 bottom-0 h-full'>
       {transitions.map(({ item, key, props }) => (
