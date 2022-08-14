@@ -1,21 +1,26 @@
-import React, { FC, MouseEvent, useCallback } from 'react';
-import { Button, ButtonProps } from './Button';
-import { useWalletModal } from './useWalletModal';
+import React, { FC, MouseEvent, useCallback } from 'react'
 
-export const WalletModalButton: FC<ButtonProps> = ({ children = 'Select Wallet', onClick, ...props }) => {
-    const { visible, setVisible } = useWalletModal();
+import { Button, ButtonProps } from './Button'
+import { useWalletModal } from './useWalletModal'
 
-    const handleClick = useCallback(
-        (event: MouseEvent<HTMLButtonElement>) => {
-            if (onClick) onClick(event);
-            if (!event.defaultPrevented) setVisible(!visible);
-        },
-        [onClick, setVisible, visible]
-    );
+export const WalletModalButton: FC<ButtonProps> = ({
+  children = 'Select Wallet',
+  onClick,
+  ...props
+}) => {
+  const { visible, setVisible } = useWalletModal()
 
-    return (
-        <Button className="wallet-adapter-button-trigger" onClick={handleClick} {...props}>
-            {children}
-        </Button>
-    );
-};
+  const handleClick = useCallback(
+    (event: MouseEvent<HTMLButtonElement>) => {
+      if (onClick) onClick(event)
+      if (!event.defaultPrevented) setVisible(!visible)
+    },
+    [onClick, setVisible, visible],
+  )
+
+  return (
+    <Button className='wallet-adapter-button-trigger' onClick={handleClick} {...props}>
+      {children}
+    </Button>
+  )
+}

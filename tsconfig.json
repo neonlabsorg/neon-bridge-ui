@@ -1,9 +1,10 @@
 {
-  "extends": "./node_modules/@tsconfig/recommended/tsconfig.json",
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.path.json",
   "compilerOptions": {
     "target": "ES2015",
     "module": "esnext",
-    "strict": true,
+    "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -21,8 +22,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "display": "Recommended",
   "include": [
     "src"
   ]

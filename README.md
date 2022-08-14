@@ -1,41 +1,22 @@
-# Neon Bridge UI
+# Neon Pass
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). For installing and manipulating packages and processes, please use **yarn**!
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and [Tailwind CSS](https://tailwindcss.com).
 
-Deployment process delimeted on other solana web3 networks. One type of network connected with preconfigured chainID in metamask ethereum wallet.
+- [Node.js LTS](https://nodejs.org)
+- [Yarn](https://yarnpkg.com)
+- [TypeScript](https://code.visualstudio.com/docs/languages/typescript)
+- [ESLint](https://eslint.org/docs/user-guide/integrations)
+- [Prettier](https://prettier.io/docs/en/editors.html)
 
-## Available Scripts
+## Dev-mode
 
-### `npm run start`
-Metamask Chain Id: 245022926
+```sh
+yarn install
+yarn start
+```
 
-Runs the app in the development mode for **devnet** RPC network by default.
-Other start scripts runs the same, but for other networks.
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
+## Networks
 
-### `npm run start-testnet`
-Metamask Chain Id: 245022940
-
-Runs the app in the development mode for **testnet** RPC network.
-
-
-### `npm run start-mainnet`
-Metamask Chain Id: 245022934
-
-Runs the app in the development mode for **mainnet** RPC network.
-
-
-### `npm run build`
-
-Builds the app in the production mode for **devnet** RPC network
-
-
-### `npm run build-testnet`
-
-Builds the app in the production mode for **testnet** RPC network
-
-
-### `npm run build-mainnet`
-
-Builds the app in the production mode for **mainnet** RPC network
-
+Using the `REACT_APP_NETWORK` environment variable in the file `.env` you can specify the target network: `devnet`, `testnet`, `mainnet-beta`.
