@@ -1,5 +1,5 @@
-import { ReactComponent as CheckIcon } from '@/assets/check.svg'
 import { useStatesContext } from '@/contexts/states'
+import { ReactComponent as CheckIcon } from '@/assets/check.svg'
 
 const Accordion = ({
   stepNumber = 1,

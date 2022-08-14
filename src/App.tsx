@@ -1,17 +1,19 @@
-import './App.scss'
-import Layout from './common/Layout'
-import { SplConverter } from './SplConverter'
+import { WalletProvider } from '@solana/wallet-adapter-react'
 import { Web3ReactProvider } from '@web3-react/core'
+import Web3 from 'web3'
+
+import { ToastProvider } from '@/common/Notifications'
+import Layout from './common/Layout'
 import { ConnectionProvider } from './contexts/connection'
 import { StateProvider } from './contexts/states'
-import { WalletProvider } from '@solana/wallet-adapter-react'
-import { useSolanaWallet } from './SplConverter/hooks/useSolanaWallet'
-import { ToastProvider } from '@/common/Notifications'
-import Web3 from 'web3'
 import { TokensProvider } from './contexts/tokens'
-import IssueReporter from './SplConverter/components/IssueReporter'
+import { SplConverter } from './SplConverter'
 import TokenManager from './SplConverter/components/common/TokenManager'
+import IssueReporter from './SplConverter/components/IssueReporter'
 import ThemeSwitcher from './SplConverter/components/ThemeSwitcher'
+import { useSolanaWallet } from './SplConverter/hooks/useSolanaWallet'
+import './App.scss'
+
 function getLibrary(provider) {
   return new Web3(provider)
 }

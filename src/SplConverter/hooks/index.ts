@@ -1,5 +1,5 @@
-import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 import { useMemo } from 'react'
+import { useWeb3React as useWeb3ReactCore } from '@web3-react/core'
 export const ChainId = {
   111: 'LOCAL',
   245022926: 'devnet',

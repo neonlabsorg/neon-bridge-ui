@@ -1,7 +1,8 @@
-import Header from './Header'
 import Bowser from 'bowser'
-import { ReactComponent as MobileErrorIcon } from '@/assets/mobile-error.svg'
+
 import Button from '@/common/Button'
+import { ReactComponent as MobileErrorIcon } from '@/assets/mobile-error.svg'
+import Header from './Header'
 const MobileErrorOverlay = () => {
   return (
     <div className='flex flex-col items-center justify-between pb-12'>

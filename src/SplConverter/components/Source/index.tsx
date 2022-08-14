@@ -1,13 +1,14 @@
-import Button from '@/common/Button'
 import { useMemo } from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useWeb3React } from '@web3-react/core'
+
+import Button from '@/common/Button'
+import { WalletModalProvider, WalletMultiButton } from '@/common/SolanaStatus'
+import Web3Status from '@/common/Web3Status'
+import { useStatesContext } from '@/contexts/states'
+import { CurrencyInput } from '@/SplConverter/components/common/CurrencyInput'
 import { SourceCard } from '@/SplConverter/components/common/SourceCard'
 import { ReactComponent as ReverseIcon } from '@/assets/reverse.svg'
-import Web3Status from '@/common/Web3Status'
-import { useWeb3React } from '@web3-react/core'
-import { WalletModalProvider, WalletMultiButton } from '@/common/SolanaStatus'
-import { CurrencyInput } from '@/SplConverter/components/common/CurrencyInput'
-import { useStatesContext } from '@/contexts/states'
-import { useWallet } from '@solana/wallet-adapter-react'
 
 export const Source = ({ className = '' }) => {
   const { direction, toggleDirection, finishStep, amount, token, maxBalance } = useStatesContext()

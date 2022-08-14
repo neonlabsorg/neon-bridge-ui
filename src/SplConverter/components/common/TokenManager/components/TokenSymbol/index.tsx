@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, useMemo } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+
 import stub from '@/assets/no_symbol.svg'
 
 export const TokenSymbol = ({ src = '', alt = '' }) => {

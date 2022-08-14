@@ -1,10 +1,11 @@
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { useTransition } from 'react-spring'
+
+import { useStatesContext } from '@/contexts/states'
 import { ReactComponent as CrossIcon } from '@/assets/cross.svg'
 import { ReactComponent as ErrorIcon } from '@/assets/notifications/error_icon.svg'
 import { ReactComponent as InfoIcon } from '@/assets/notifications/info_icon.svg'
 import { ReactComponent as SuccessIcon } from '@/assets/notifications/success_icon.svg'
-import React, { useEffect, useState, useContext, useCallback } from 'react'
-import { useStatesContext } from '@/contexts/states'
 
 const ICONS = {
   SUCCESS: SuccessIcon,

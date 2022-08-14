@@ -1,14 +1,15 @@
+import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { useWeb3React } from '@web3-react/core'
-import { useEffect, useState, useMemo, createContext, useContext } from 'react'
-import { useNetworkType } from '@/SplConverter/hooks'
-import { useConnection } from './connection'
-import { Token, TOKEN_PROGRAM_ID, ASSOCIATED_TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
-import ERC20_ABI from '@/SplConverter/hooks/abi/erc20.json'
+import { useWeb3React } from '@web3-react/core'
 import { NEON_TOKEN_MINT, NEON_TOKEN_MINT_DECIMALS } from 'neon-portal/src/constants'
+
 import { CHAIN_IDS } from '@/connectors'
+import { useNetworkType } from '@/SplConverter/hooks'
+import ERC20_ABI from '@/SplConverter/hooks/abi/erc20.json'
 import { usePrevious } from '@/utils'
+import { useConnection } from './connection'
 
 const { REACT_APP_TOKEN_LIST_VER } = process.env
 

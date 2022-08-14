@@ -1,6 +1,6 @@
-import { useWeb3React } from '@web3-react/core'
-import { useState, useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { useWeb3React } from '@web3-react/core'
 
 const useTransactionHistory = () => {
   const { publicKey } = useWallet()

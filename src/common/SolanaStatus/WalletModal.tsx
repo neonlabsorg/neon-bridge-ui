@@ -1,5 +1,3 @@
-import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletName } from '@solana/wallet-adapter-wallets'
 import React, {
   FC,
   MouseEvent,
@@ -11,6 +9,9 @@ import React, {
   useState,
 } from 'react'
 import { createPortal } from 'react-dom'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { WalletName } from '@solana/wallet-adapter-wallets'
+
 import { Button } from './Button'
 import { Collapse } from './Collapse'
 import { useWalletModal } from './useWalletModal'

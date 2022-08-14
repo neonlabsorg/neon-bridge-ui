@@ -1,4 +1,5 @@
 import React, { FC, ReactNode, useState } from 'react'
+
 import { WalletModalContext } from './useWalletModal'
 import { WalletModal, WalletModalProps } from './WalletModal'
 

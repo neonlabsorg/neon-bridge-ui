@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "./tsconfig.path.json",
   "compilerOptions": {
     "target": "ES2015",
@@ -7,7 +8,11 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "noFallthroughCasesInSwitch": true,
@@ -17,6 +22,7 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "$schema": "https://json.schemastore.org/tsconfig",
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

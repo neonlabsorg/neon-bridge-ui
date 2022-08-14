@@ -1,5 +1,6 @@
-import { useWallet } from '@solana/wallet-adapter-react'
 import { FC, MouseEventHandler, useCallback, useEffect, useMemo } from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
+
 import { Button, ButtonProps } from './Button'
 import { WalletIcon } from './WalletIcon'
 

@@ -1,5 +1,5 @@
-import { ReactComponent as Logo } from '@/assets/logo.svg'
 import { useStatesContext } from '@/contexts/states'
+import { ReactComponent as Logo } from '@/assets/logo.svg'
 
 const Header = () => {
   const { theme } = useStatesContext()

@@ -1,15 +1,16 @@
-import { Accordion } from './components/common/Accordion'
-import { Source } from './components/Source'
-import { useStatesContext } from '@/contexts/states'
-import { Target } from './components/Target'
-import { Confirm } from './components/Confirm'
-import { shortenAddress } from '@/utils'
-import { useWeb3React } from '@web3-react/core'
 import { useMemo } from 'react'
-import { Transfering } from './components/Transfering'
 import { useWallet } from '@solana/wallet-adapter-react'
-import useTransactionHistory from './hooks/useTransactionHistory'
+import { useWeb3React } from '@web3-react/core'
+
+import { useStatesContext } from '@/contexts/states'
+import { shortenAddress } from '@/utils'
 import { ReactComponent as CrossIcon } from '@/assets/cross.svg'
+import { Accordion } from './components/common/Accordion'
+import { Confirm } from './components/Confirm'
+import { Source } from './components/Source'
+import { Target } from './components/Target'
+import { Transfering } from './components/Transfering'
+import useTransactionHistory from './hooks/useTransactionHistory'
 const COMPONENTS_BY_STEPS = {
   source: Source,
   target: Target,

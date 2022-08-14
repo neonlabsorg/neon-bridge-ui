@@ -1,11 +1,12 @@
 import { useCallback, useMemo } from 'react'
-import { useTokensContext } from '@/contexts/tokens'
-import { useStatesContext } from '@/contexts/states'
-import { ReactComponent as PhantomIcon } from '@/assets/phantom.svg'
-import { ReactComponent as MetamaskIcon } from '@/assets/metamask.svg'
-import { ReactComponent as LoaderIcon } from '@/assets/loader.svg'
-import { useWeb3React } from '@web3-react/core'
 import { useWallet } from '@solana/wallet-adapter-react'
+import { useWeb3React } from '@web3-react/core'
+
+import { useStatesContext } from '@/contexts/states'
+import { useTokensContext } from '@/contexts/tokens'
+import { ReactComponent as LoaderIcon } from '@/assets/loader.svg'
+import { ReactComponent as MetamaskIcon } from '@/assets/metamask.svg'
+import { ReactComponent as PhantomIcon } from '@/assets/phantom.svg'
 import { TokenSymbol } from './TokenSymbol'
 export const TokenRow = ({
   token = {

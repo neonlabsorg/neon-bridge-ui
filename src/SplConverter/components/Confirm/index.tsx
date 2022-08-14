@@ -1,11 +1,12 @@
-import { useStatesContext } from '@/contexts/states'
 import { useEffect } from 'react'
-import { TransferInfo } from '@/SplConverter/components/common/TransferInfo'
-import { ReactComponent as ArrowIcon } from '@/assets/arrow-right.svg'
+
 import Button from '@/common/Button'
-import { useTransfering } from '@/SplConverter/hooks/transfering'
-import { ErrorHandler } from '@/SplConverter/components/common/ErrorHandler'
 import { useToast } from '@/common/Notifications'
+import { useStatesContext } from '@/contexts/states'
+import { ErrorHandler } from '@/SplConverter/components/common/ErrorHandler'
+import { TransferInfo } from '@/SplConverter/components/common/TransferInfo'
+import { useTransfering } from '@/SplConverter/hooks/transfering'
+import { ReactComponent as ArrowIcon } from '@/assets/arrow-right.svg'
 
 export const Confirm = () => {
   const { addToast } = useToast()

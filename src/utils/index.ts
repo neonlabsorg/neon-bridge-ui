@@ -1,4 +1,4 @@
-import { useCallback, useState, useRef, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export function escapeRegExp(string = '') {
   return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')

@@ -1,9 +1,10 @@
+import { useEffect, useRef, useState } from 'react'
+
+import Button from '@/common/Button'
 import { useStatesContext } from '@/contexts/states'
-import { ReactComponent as LoaderIcon } from '@/assets/loader.svg'
 import { ReactComponent as CloseIcon } from '@/assets/close.svg'
 import { ReactComponent as DoneIcon } from '@/assets/done.svg'
-import Button from '@/common/Button'
-import { useRef, useEffect, useState } from 'react'
+import { ReactComponent as LoaderIcon } from '@/assets/loader.svg'
 const { REACT_APP_NETWORK } = process.env
 
 const ASSOC_TX_EXPLORERS = {

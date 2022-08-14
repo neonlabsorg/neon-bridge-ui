@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useState, useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export const Dropdown = ({ className = '', trigger, children }) => {
   const ref = useRef(null)

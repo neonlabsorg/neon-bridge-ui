@@ -1,5 +1,6 @@
-import { useWallet } from '@solana/wallet-adapter-react'
 import { FC, useCallback, useMemo, useState } from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
+
 import { Dropdown } from '@/common/Dropdown'
 import { Button, ButtonProps } from './Button'
 import { WalletConnectButton } from './WalletConnectButton'

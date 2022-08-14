@@ -1,10 +1,11 @@
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { createContext, useContext, useEffect, useState, useRef, useMemo } from 'react'
+import { useWeb3React } from '@web3-react/core'
+import { NEON_TOKEN_DECIMALS } from 'neon-portal/src/constants'
+
+import { useTransfering } from '@/SplConverter/hooks/transfering'
 import { useConnection } from './connection'
 import { useTokensContext } from './tokens'
-import { NEON_TOKEN_DECIMALS } from 'neon-portal/src/constants'
-import { useWeb3React } from '@web3-react/core'
-import { useTransfering } from '@/SplConverter/hooks/transfering'
 const STEPS = {
   source: {
     title: 'Source',

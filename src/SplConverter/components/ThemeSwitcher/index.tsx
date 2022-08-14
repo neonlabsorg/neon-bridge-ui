@@ -1,5 +1,5 @@
-import { ReactComponent as SwitchIcon } from '@/assets/theme-switcher.svg'
 import { useStatesContext } from '@/contexts/states'
+import { ReactComponent as SwitchIcon } from '@/assets/theme-switcher.svg'
 
 const ThemeSwitcher = () => {
   const { toggleTheme } = useStatesContext()

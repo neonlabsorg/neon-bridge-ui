@@ -1,5 +1,6 @@
+import { createContext, useContext, useEffect, useMemo } from 'react'
 import { clusterApiUrl, Connection } from '@solana/web3.js'
-import { createContext, useMemo, useEffect, useContext } from 'react'
+
 import { useLocalStorageState } from '@/utils'
 
 const DEFAULT = clusterApiUrl(process.env.REACT_APP_NETWORK || ('mainnet-beta' as any))

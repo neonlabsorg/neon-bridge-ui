@@ -1,11 +1,12 @@
-import { useStatesContext } from '@/contexts/states'
-import { SourceCard } from '@/SplConverter/components/common/SourceCard'
+import { useWallet } from '@solana/wallet-adapter-react'
+import { useWeb3React } from '@web3-react/core'
+
+import Button from '@/common/Button'
 import { WalletModalProvider, WalletMultiButton } from '@/common/SolanaStatus'
 import Web3Status from '@/common/Web3Status'
-import { useWeb3React } from '@web3-react/core'
-import Button from '@/common/Button'
+import { useStatesContext } from '@/contexts/states'
+import { SourceCard } from '@/SplConverter/components/common/SourceCard'
 import { TransferInfo } from '@/SplConverter/components/common/TransferInfo'
-import { useWallet } from '@solana/wallet-adapter-react'
 
 export const Target = () => {
   const { direction, finishStep, depositFee, solBalance } = useStatesContext()
