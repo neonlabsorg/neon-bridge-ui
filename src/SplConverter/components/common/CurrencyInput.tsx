@@ -9,26 +9,22 @@ const inputRegex = RegExp(`^\\d*(?:\\\\[.])?\\d*$`)
 
 export const CurrencyInput = ({ className = '' }) => {
   const enforcer = (nextUserInput) => {
-    if (nextUserInput === '' || inputRegex.test(escapeRegExp(nextUserInput))) {
+    const amount = Number(nextUserInput)
+    const isSafe = Number.isFinite(amount) && Number.isSafeInteger(amount * Math.pow(10, 9))
+
+    if (nextUserInput === '' || (inputRegex.test(escapeRegExp(nextUserInput)) && isSafe)) {
       setInputAmount(nextUserInput)
     }
   }
+
   const [inputAmount, setInputAmount] = useState('0.0')
   const { setAmount, token, maxBalance } = useStatesContext()
   const { setTokenManagerOpened } = useTokensContext()
-  const openManageTokenModal = () => {
-    setTokenManagerOpened(true)
-  }
-  // useEffect(() => {
-  //   if (amount !== 0 && typeof amount === 'number') setInputAmount(`${amount}`)
-  // }, [amount])
 
   useEffect(() => {
-    const num = Number(inputAmount)
-    if (Number.isFinite(num) && num <= Number.MAX_SAFE_INTEGER) {
-      setAmount(num)
-    }
-    // eslint-disable-next-line
+    const amount = Number(inputAmount)
+    const isSafe = Number.isFinite(amount) && Number.isSafeInteger(amount * Math.pow(10, 9))
+    if (isSafe) setAmount(amount)
   }, [inputAmount, setAmount])
 
   return (
@@ -38,7 +34,9 @@ export const CurrencyInput = ({ className = '' }) => {
     >
       <div className='flex flex-col justify-center'>
         <div
-          onClick={openManageTokenModal}
+          onClick={() => {
+            setTokenManagerOpened(true)
+          }}
           className='flex-grow flex items-center text-lg pb-1 cursor-pointer'
         >
           {token ? token.name : 'Select a token'}

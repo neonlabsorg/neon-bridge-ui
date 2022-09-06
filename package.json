@@ -23,7 +23,7 @@
     "@web3-react/injected-connector": "6.0.7",
     "bowser": "2.11.0",
     "classnames": "2.2.5",
-    "neon-portal": "1.5.1",
+    "neon-portal": "1.5.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-modal": "3.14.4",
