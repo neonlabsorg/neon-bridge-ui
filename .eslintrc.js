@@ -12,7 +12,7 @@ module.exports = {
   plugins: ['prettier', 'simple-import-sort'],
   parser: '@typescript-eslint/parser',
   rules: {
-    'prettier/prettier': 'error',
+    // 'prettier/prettier': 'error',
     'no-unused-vars': ['error', { argsIgnorePattern: '^_|e$' }],
     'curly': ['error', 'multi-line'],
     'newline-before-return': 'error',

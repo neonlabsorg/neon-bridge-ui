@@ -155,9 +155,13 @@ export function StateProvider({ children = undefined }) {
   const calculatingEthBalances = async () => {
     const instruction = getEthereumTransactionParams(amount, token)
     const gasPriceStr = await library.eth.getGasPrice()
-    const res = await library.eth.estimateGas(instruction)
-    // @ts-ignore
-    setWithdrawFee(((res * Number(gasPriceStr)) / Math.pow(10, ERC20_GAS_DECIMALS)).toFixed(9))
+    try {
+      const res = await library.eth.estimateGas(instruction)
+      // @ts-ignore
+      setWithdrawFee(((res * Number(gasPriceStr)) / Math.pow(10, ERC20_GAS_DECIMALS)).toFixed(9))
+    } catch (e) {
+      console.log(e);
+    }
   }
   useEffect(() => {
     async function main() {

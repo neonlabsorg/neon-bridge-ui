@@ -9,7 +9,7 @@ import { Accordion } from './components/common/Accordion'
 import { Confirm } from './components/Confirm'
 import { Source } from './components/Source'
 import { Target } from './components/Target'
-import { Transfering } from './components/Transfering'
+import { Transferring } from './components/Transfering'
 import useTransactionHistory from './hooks/useTransactionHistory'
 const COMPONENTS_BY_STEPS = {
   source: Source,
@@ -61,7 +61,7 @@ export const SplConverter = () => {
   const { isFirstTransaction, viewNotify, setViewNotify } = useTransactionHistory()
   const { steps, pending, neonTransferSign, solanaTransferSign } = useStatesContext()
   if (pending === true || solanaTransferSign || neonTransferSign) {
-    return <Transfering />
+    return <Transferring />
   } else {
     return (
       <>

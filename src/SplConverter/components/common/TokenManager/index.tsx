@@ -7,6 +7,7 @@ import { useTokensContext } from '@/contexts/tokens'
 import { ReactComponent as LoaderIcon } from '@/assets/loader.svg'
 import { SearchInput } from './components/SearchInput'
 import { TokenRow } from './components/TokenRow'
+
 Modal.setAppElement('#root')
 
 export const TokenManager = () => {
@@ -34,6 +35,10 @@ export const TokenManager = () => {
   }
   const searchList = useMemo(findBySearch, [list, searchString])
 
+  const getTheme = useMemo(() => {
+    return theme === 'light' ? 'border-gray-300' : 'border-dark-600';
+  }, [theme]);
+
   return (
     <div>
       <Modal
@@ -49,12 +54,8 @@ export const TokenManager = () => {
           onChange={setSearchString}
         />
         <div
-          className={`flex-col overflow-y-auto ${
-            theme === 'light' ? 'border-gray-300' : 'border-dark-600'
-          } border-t`}
-          style={{
-            maxHeight: '50vh',
-          }}
+          className={`flex-col overflow-y-auto ${ getTheme } border-t`}
+          style={{ maxHeight: '50vh' }}
         >
           {list && !error && list.length && !pending && !searchString ? (
             list.map((token) => {
