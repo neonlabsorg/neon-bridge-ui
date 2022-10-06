@@ -7,7 +7,8 @@ import {
   NEON_TOKEN_DECIMALS,
   NEON_TOKEN_MINT,
   SPL_TOKEN_DEFAULT
-} from '../constants';
+} from '../data';
+import { SPLToken } from '@/transfer/models';
 
 // Neon-token
 export class NeonPortal extends InstructionService {
@@ -17,22 +18,20 @@ export class NeonPortal extends InstructionService {
       events.onBeforeCreateInstruction();
     }
     const { blockhash } = await this.connection.getRecentBlockhash();
-    const solanaKey = this._getSolanaWalletPubkey();
+    const solanaKey = this.solanaWalletPubkey;
     const transaction = new Transaction({ recentBlockhash: blockhash, feePayer: solanaKey });
     const neonAccount = await this.getNeonAccount();
 
     if (!neonAccount) {
       const neonAccountInstruction = await this._createNeonAccountInstruction();
       transaction.add(neonAccountInstruction);
-      if (typeof events.onCreateNeonAccountInstruction === 'function') {
-        events.onCreateNeonAccountInstruction();
-      }
+      this.emitFunction(events.onCreateNeonAccountInstruction);
     }
 
     const approveInstruction = await this._createApproveDepositInstruction(amount);
     transaction.add(approveInstruction);
 
-    const solanaPubkey = this._getSolanaWalletPubkey();
+    const solanaPubkey = this.solanaWalletPubkey;
     const source = await Token.getAssociatedTokenAddress(
       ASSOCIATED_TOKEN_PROGRAM_ID,
       TOKEN_PROGRAM_ID,
@@ -47,7 +46,7 @@ export class NeonPortal extends InstructionService {
       authority,
       true
     );
-    const { neonAddress } = await this._getNeonAccountAddress();
+    const { neonAddress } = await this.getNeonAccountAddress();
 
     const keys = [
       { pubkey: source, isSigner: false, isWritable: true },
@@ -56,9 +55,6 @@ export class NeonPortal extends InstructionService {
       { pubkey: authority, isSigner: false, isWritable: false },
       { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }
     ];
-
-    // const data = [Number.parseInt('0x19', 16)];
-    // console.log(new Buffer([0x19]));
 
     const depositInstruction = new TransactionInstruction({
       programId: new PublicKey(NEON_EVM_LOADER_ID),
@@ -82,8 +78,10 @@ export class NeonPortal extends InstructionService {
     });
   }
 
+  createNeonTransferERC20 = this.createNeonTransfer;
+
   async _createApproveDepositInstruction(amount) {
-    const solanaPubkey = this._getSolanaPubkey();
+    const solanaPubkey = this.solanaPubkey();
     const source = await Token.getAssociatedTokenAddress(
       ASSOCIATED_TOKEN_PROGRAM_ID,
       TOKEN_PROGRAM_ID,
@@ -132,8 +130,7 @@ export class NeonPortal extends InstructionService {
     }
   }
 
-  getEthereumTransactionParams(amount, token) {
-    console.log(amount, token);
+  getEthereumTransactionParams(amount: number, token: SPLToken) {
     return {
       to: '0x053e3d1b12726f648B2e45CEAbDF9078B742576D',
       from: this.neonWalletAddress,
@@ -144,7 +141,7 @@ export class NeonPortal extends InstructionService {
 
   _computeWithdrawEthTransactionData(): string {
     const withdrawMethodID = '0x8e19899e';
-    const solanaPubkey = this._getSolanaPubkey();
+    const solanaPubkey = this.solanaPubkey();
     // @ts-ignore
     const solanaStr = solanaPubkey.toBytes().toString('hex');
     return `${withdrawMethodID}${solanaStr}`;

@@ -1,15 +1,23 @@
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useWeb3React } from '@web3-react/core';
 import { MintPortal, NeonPortal } from '../core';
-import { NEON_TOKEN_MINT } from '../constants';
+import { NEON_TOKEN_MINT } from '../data';
+import { NeonProxy } from '@/api/proxy';
+
+const proxyApi = new NeonProxy({
+  solanaRpcApi: 'https://api.devnet.solana.com',
+  neonProxyRpcApi: 'https://proxy.devnet.neonlabs.org/solana'
+});
 
 export function useNeonTransfer(events, currentConnection) {
   const { connection } = useConnection();
-  const { account } = useWeb3React();
+  const { account, library } = useWeb3React();
   const { publicKey } = useWallet();
   const options = {
     solanaWalletAddress: publicKey,
     neonWalletAddress: account,
+    web3: library,
+    proxyApi: proxyApi,
     customConnection: currentConnection || connection
   };
 
@@ -25,12 +33,14 @@ export function useNeonTransfer(events, currentConnection) {
   };
 
   const deposit = (amount: number, splToken): void => {
+    console.log('deposit');
     const portal = portalInstance(splToken.address_spl);
 
-    return portal.createNeonTransfer.call(portal, events, amount, splToken);
+    return portal.createNeonTransferERC20.call(portal, events, amount, splToken);
   };
 
   const withdraw = (amount: number, splToken): void => {
+    console.log('withdraw');
     const portal = portalInstance(splToken.address_spl);
 
     return portal.createSolanaTransfer.call(portal, events, amount, splToken);
