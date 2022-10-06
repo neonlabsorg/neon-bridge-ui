@@ -11,7 +11,7 @@ import { InstructionEvents } from '@/transfer/models/events';
 import Big from 'big.js';
 import Web3 from 'web3';
 import { SPLToken } from '@/transfer/models';
-import { EvmInstruction } from '@/transfer/data';
+import { Account, EvmInstruction } from '@/transfer/data';
 import { NeonProxy } from '@/api/proxy';
 import { NEON_EVM_LOADER_ID, NEON_TOKEN_MINT } from '../data';
 
@@ -92,7 +92,7 @@ export class InstructionService {
   async getNeonAccountAddress() {
     const accountSeed = this.neonAccountSeed;
     const [neonAddress, neonNonce] = await PublicKey.findProgramAddress(
-      [new Uint8Array([1]), new Uint8Array(accountSeed)],
+      [new Uint8Array([Account.SeedVersion]), new Uint8Array(accountSeed)],
       new PublicKey(NEON_EVM_LOADER_ID)
     );
     return { neonAddress, neonNonce };
@@ -132,6 +132,7 @@ export class InstructionService {
       try {
         return new PublicKey(address);
       } catch (e) {
+        //
       }
     }
     return this.solanaWalletPubkey;

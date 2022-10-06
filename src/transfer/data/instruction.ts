@@ -1,10 +1,6 @@
 export const enum EvmInstruction {
+
   CreateAccountV02 = 0x18, // 24
-  Deposit = 0x19, // 25
-  MigrateAccount = 0x1a, // 26
-  ExecuteTrxFromAccountDataIterativeOrContinueNoChainId = 0x1b, // 27
-  WriteValueToDistributedStorage = 0x1c, // 28
-  ConvertDataAccountFromV1ToV2 = 0x1d, // 29
   CollectTreasure = 0x1e, // 30
   TransactionExecuteFromData = 0x1f, //  31,
   TransactionStepFromData = 0x20, //  32
@@ -16,4 +12,8 @@ export const enum EvmInstruction {
   HolderWrite = 0x26, //  38
   DepositV03 = 0x27, //  39
   CreateAccountV03 = 0x28, //  40
+}
+
+export const enum Account {
+  SeedVersion = 0x02
 }

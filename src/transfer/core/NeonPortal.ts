@@ -1,8 +1,9 @@
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
-import { PublicKey, Transaction, TransactionInstruction } from '@solana/web3.js';
+import { PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import Big from 'big.js';
 import { InstructionService } from './InstructionService';
 import {
+  EvmInstruction,
   NEON_EVM_LOADER_ID,
   NEON_TOKEN_DECIMALS,
   NEON_TOKEN_MINT,
@@ -14,9 +15,8 @@ import { SPLToken } from '@/transfer/models';
 export class NeonPortal extends InstructionService {
   // #region Solana -> Neon
   async createNeonTransfer(events = this.events, amount = 0) {
-    if (typeof events.onBeforeCreateInstruction === 'function') {
-      events.onBeforeCreateInstruction();
-    }
+    this.emitFunction(events.onBeforeCreateInstruction);
+
     const { blockhash } = await this.connection.getRecentBlockhash();
     const solanaKey = this.solanaWalletPubkey;
     const transaction = new Transaction({ recentBlockhash: blockhash, feePayer: solanaKey });
@@ -52,28 +52,28 @@ export class NeonPortal extends InstructionService {
       { pubkey: source, isSigner: false, isWritable: true },
       { pubkey: pool, isSigner: false, isWritable: true },
       { pubkey: neonAddress, isSigner: false, isWritable: true },
-      { pubkey: authority, isSigner: false, isWritable: false },
-      { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false }
+      { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+      { pubkey: this.solanaWalletPubkey, isSigner: true, isWritable: true }, // operator
+      { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
     ];
 
+    const bNeonAccount = new Buffer(this.neonWalletAddress.slice(2), 'hex');
+    const data = new Buffer([EvmInstruction.DepositV03, ...bNeonAccount]);
     const depositInstruction = new TransactionInstruction({
       programId: new PublicKey(NEON_EVM_LOADER_ID),
       keys,
-      data: new Buffer([0x19])
+      data // 0x27 -> 39
     });
     transaction.add(depositInstruction);
-
-    if (typeof events.onBeforeSignTransaction === 'function') {
-      events.onBeforeSignTransaction();
-    }
+    this.emitFunction(events.onBeforeSignTransaction);
 
     setTimeout(async () => {
       try {
         const signedTransaction = await this.solana.signTransaction(transaction);
         const sig = await this.connection.sendRawTransaction(signedTransaction.serialize());
-        if (typeof events.onSuccessSign === 'function') events.onSuccessSign(sig);
+        this.emitFunction(events.onSuccessSign, sig);
       } catch (error) {
-        if (typeof events.onErrorSign === 'function') events.onErrorSign(error);
+        this.emitFunction(events.onErrorSign, error);
       }
     });
   }
@@ -88,12 +88,12 @@ export class NeonPortal extends InstructionService {
       new PublicKey(NEON_TOKEN_MINT),
       solanaPubkey
     );
-    const authority = await this._getAuthorityPoolAddress();
+    const { neonAddress } = await this.getNeonAccountAddress();
 
     return Token.createApproveInstruction(
       TOKEN_PROGRAM_ID,
       source,
-      authority,
+      neonAddress,
       solanaPubkey,
       [],
       // @ts-ignore
@@ -101,7 +101,7 @@ export class NeonPortal extends InstructionService {
     );
   }
 
-  async _getAuthorityPoolAddress() {
+  async _getAuthorityPoolAddress(): Promise<PublicKey> {
     const enc = new TextEncoder();
     const [authority] = await PublicKey.findProgramAddress([enc.encode('Deposit')], new PublicKey(NEON_EVM_LOADER_ID));
     return authority;

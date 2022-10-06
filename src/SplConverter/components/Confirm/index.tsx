@@ -52,4 +52,4 @@ export function Confirm() {
       <ErrorHandler className='mt-8 text-red-500' />
     </div>
   );
-};
+}

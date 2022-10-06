@@ -153,9 +153,9 @@ export function StateProvider({ children = undefined }) {
     setSolBalance((Number(balance) / Math.pow(10, NEON_TOKEN_DECIMALS)).toFixed(9))
   }
   const calculatingEthBalances = async () => {
-    const instruction = getEthereumTransactionParams(amount, token)
-    const gasPriceStr = await library.eth.getGasPrice()
     try {
+      const instruction = getEthereumTransactionParams(amount, token)
+      const gasPriceStr = await library.eth.getGasPrice()
       const res = await library.eth.estimateGas(instruction)
       // @ts-ignore
       setWithdrawFee(((res * Number(gasPriceStr)) / Math.pow(10, ERC20_GAS_DECIMALS)).toFixed(9))

@@ -141,7 +141,6 @@ export function TokensProvider({ children = undefined }) {
   const mergeTokenList = async (source = []) => {
     const fullList = [...initialTokenListState].concat(source)
     const newList = fullList.filter((item) => item.chainId === filteringChainId)
-    console.log(source);
     setTokenList(newList)
   }
 
@@ -159,8 +158,8 @@ export function TokensProvider({ children = undefined }) {
     setTokenErrors({})
     setPending(true)
     fetch(
-      // `https://raw.githubusercontent.com/neonlabsorg/token-list/v${REACT_APP_TOKEN_LIST_VER}/tokenlist.json`,
-      'https://raw.githubusercontent.com/neonlabsorg/token-list/main/tokenlist.json'
+      `https://raw.githubusercontent.com/neonlabsorg/token-list/v${REACT_APP_TOKEN_LIST_VER}/tokenlist.json`,
+      // 'https://raw.githubusercontent.com/neonlabsorg/token-list/main/tokenlist.json'
     )
       .then((resp) => {
         if (resp.ok) {
