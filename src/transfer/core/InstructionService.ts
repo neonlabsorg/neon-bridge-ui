@@ -14,6 +14,7 @@ import { SPLToken } from '@/transfer/models';
 import { Account, EvmInstruction } from '@/transfer/data';
 import { NeonProxy } from '@/api/proxy';
 import { NEON_EVM_LOADER_ID, NEON_TOKEN_MINT } from '../data';
+import { TransactionConfig } from 'web3-core';
 
 Big.PE = 42;
 
@@ -188,7 +189,7 @@ export class InstructionService {
     return `${approveSolanaMethodID}${solanaStr}${amountStr}`;
   }
 
-  getEthereumTransactionParams(amount: number, token: SPLToken) {
+  getEthereumTransactionParams(amount: number, token: SPLToken): TransactionConfig {
     return {
       to: token.address, // Required except during contract publications.
       from: this.neonWalletAddress, // must match user's active address.

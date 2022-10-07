@@ -7,9 +7,11 @@ import {
   NEON_EVM_LOADER_ID,
   NEON_TOKEN_DECIMALS,
   NEON_TOKEN_MINT,
+  NEON_WRAPPER_SOL,
   SPL_TOKEN_DEFAULT
 } from '../data';
 import { SPLToken } from '@/transfer/models';
+import { TransactionConfig } from 'web3-core';
 
 // Neon-token
 export class NeonPortal extends InstructionService {
@@ -54,7 +56,7 @@ export class NeonPortal extends InstructionService {
       { pubkey: neonAddress, isSigner: false, isWritable: true },
       { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
       { pubkey: this.solanaWalletPubkey, isSigner: true, isWritable: true }, // operator
-      { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+      { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }
     ];
 
     const bNeonAccount = new Buffer(this.neonWalletAddress.slice(2), 'hex');
@@ -119,7 +121,7 @@ export class NeonPortal extends InstructionService {
       const txHash = await this.ethereum.request({
         method: 'eth_sendTransaction',
         params: [this.getEthereumTransactionParams(amount, splToken)]
-      });
+      }).then(result => console.log(result));
       if (typeof events.onSuccessSign === 'function') {
         events.onSuccessSign(undefined, txHash);
       }
@@ -130,9 +132,9 @@ export class NeonPortal extends InstructionService {
     }
   }
 
-  getEthereumTransactionParams(amount: number, token: SPLToken) {
+  getEthereumTransactionParams(amount: number, token: SPLToken): TransactionConfig {
     return {
-      to: '0x053e3d1b12726f648B2e45CEAbDF9078B742576D',
+      to: NEON_WRAPPER_SOL,
       from: this.neonWalletAddress,
       value: this._computeWithdrawAmountValue(amount, token),
       data: this._computeWithdrawEthTransactionData()
