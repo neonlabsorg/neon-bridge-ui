@@ -7,11 +7,11 @@ import { NEON_TOKEN_MINT, NEON_TOKEN_MINT_DECIMALS } from 'neon-portal/src/const
 
 import { CHAIN_IDS } from '@/connectors'
 import { useNetworkType } from '@/SplConverter/hooks'
-import ERC20_ABI from '@/SplConverter/hooks/abi/erc20.json'
+import ERC20_ABI from '@/SplConverter/hooks/abi/ERC20ForSpl.json'
 import { usePrevious } from '@/utils'
 import { useConnection } from './connection'
 
-const { REACT_APP_TOKEN_LIST_VER } = process.env
+// const { REACT_APP_TOKEN_LIST_VER } = process.env
 
 export const TokensContext = createContext({
   list: [],
@@ -80,8 +80,7 @@ export function TokensProvider({ children = undefined }) {
       connection.getTokenAccountBalance(assocTokenAccountAddress),
       timeout(500),
     ]).catch((e) => {
-      console.warn(e)
-
+      // console.warn(e);
       return [0, undefined]
     })
     const balanceData = completed[0]
@@ -105,13 +104,13 @@ export function TokensProvider({ children = undefined }) {
   const getEthBalance = async (token) => {
     if (token.address_spl === NEON_TOKEN_MINT) {
       const balance = await library.eth.getBalance(account)
-
+      console.log(balance);
       return +(balance / Math.pow(10, token.decimals)).toFixed(4)
     }
 
-    const tokenInstance = new library.eth.Contract(ERC20_ABI, token.address)
+    const tokenInstance = new library.eth.Contract(ERC20_ABI['abi'], token.address)
     const balance = await tokenInstance.methods.balanceOf(account).call()
-
+    console.log(balance)
     return balance / Math.pow(10, token.decimals)
   }
 
@@ -158,15 +157,23 @@ export function TokensProvider({ children = undefined }) {
     setTokenErrors({})
     setPending(true)
     fetch(
-      `https://raw.githubusercontent.com/neonlabsorg/token-list/v${REACT_APP_TOKEN_LIST_VER}/tokenlist.json`,
-      // 'https://raw.githubusercontent.com/neonlabsorg/token-list/main/tokenlist.json'
+      // `https://raw.githubusercontent.com/neonlabsorg/token-list/v${REACT_APP_TOKEN_LIST_VER}/tokenlist.json`,
+      'https://raw.githubusercontent.com/neonlabsorg/token-list/main/tokenlist.json'
     )
       .then((resp) => {
         if (resp.ok) {
           resp
             .json()
             .then((data) => {
-              mergeTokenList(data.tokens)
+              mergeTokenList([{
+                chainId: 245022926,
+                address_spl: 'HdvHZXp5F4ZPxb5V7xG4gpBnwmbzMite85NSg3aycmhi',
+                address: '0xBdd4cDAf6c9bbb6979d043512e7940f869B06b8C',
+                decimals: 6,
+                name: 'Wrapped AAVE',
+                symbol: 'AAVE',
+                logoURI: ''
+              }, ...data.tokens])
             })
             .catch((err) => setError(err.message))
         }

@@ -1,10 +1,13 @@
 export const NEON_TOKEN_MINT_DECIMALS = 18;
 export const NEON_TOKEN_DECIMALS = 9;
 export const NEON_HOLDER_MSG_SIZE = 1000;
+export const NEON_COMPUTE_UNITS = 500000;
+export const NEON_HEAP_FRAME = 262144;
 export const NEON_PKG_VERSION = '0.7.0';
 export const NEON_CHAIN_ID = 245022926;
 export const NEON_SEED_VERSION = 1;
 export const NEON_POOL_COUNT = 10;
+export const COLLATERALL_POOL_MAX = 10;
 export const NEON_PAYMENT_TO_TREASURE = 5000;
 export const NEON_MINIMAL_CONTRACT_ALLOWANCE_BALANCE = 0;
 export const NEON_TOKEN_MINT = '89dre8rZjLNft7HoupGiyxu3MNftR577ZYu8bHe2kK7g';

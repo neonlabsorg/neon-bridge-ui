@@ -8,13 +8,14 @@ import {
   TransactionInstruction
 } from '@solana/web3.js';
 import { InstructionEvents } from '@/transfer/models/events';
-import Big from 'big.js';
-import Web3 from 'web3';
 import { SPLToken } from '@/transfer/models';
 import { Account, EvmInstruction } from '@/transfer/data';
 import { NeonProxy } from '@/api/proxy';
-import { NEON_EVM_LOADER_ID, NEON_TOKEN_MINT } from '../data';
+import Big from 'big.js';
+import Web3 from 'web3';
 import { TransactionConfig } from 'web3-core';
+import { SHA256 } from 'crypto-js';
+import { NEON_EVM_LOADER_ID, NEON_TOKEN_MINT } from '../data';
 
 Big.PE = 42;
 
@@ -22,7 +23,7 @@ const noop = new Function();
 
 export class InstructionService {
   network: Cluster;
-  solanaWalletAddress: string;
+  solanaWalletAddress: PublicKey;
   neonWalletAddress: string;
   web3: Web3;
   proxyApi: NeonProxy;
@@ -90,12 +91,10 @@ export class InstructionService {
     return isHexStrict;
   }
 
-  async getNeonAccountAddress() {
+  async getNeonAccountAddress(): Promise<{ neonAddress: PublicKey, neonNonce: number }> {
     const accountSeed = this.neonAccountSeed;
-    const [neonAddress, neonNonce] = await PublicKey.findProgramAddress(
-      [new Uint8Array([Account.SeedVersion]), new Uint8Array(accountSeed)],
-      new PublicKey(NEON_EVM_LOADER_ID)
-    );
+    const seeds = [new Uint8Array([Account.SeedVersion]), new Uint8Array(accountSeed)];
+    const [neonAddress, neonNonce] = await PublicKey.findProgramAddress(seeds, new PublicKey(NEON_EVM_LOADER_ID));
     return { neonAddress, neonNonce };
   }
 

@@ -36,7 +36,7 @@ export function useNeonTransfer(events, currentConnection) {
     console.log('deposit');
     const portal = portalInstance(splToken.address_spl);
 
-    return portal.createNeonTransfer.call(portal, events, amount, splToken);
+    return portal.createNeonTransferERC20.call(portal, events, amount, splToken);
   };
 
   const withdraw = (amount: number, splToken): void => {

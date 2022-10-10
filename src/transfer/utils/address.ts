@@ -1,6 +1,7 @@
 import { PublicKey } from '@solana/web3.js';
-import { NEON_EVM_LOADER_ID, NEON_SEED_VERSION } from '@/transfer/data';
+import { Account, NEON_EVM_LOADER_ID } from '@/transfer/data';
 import { Buffer } from 'buffer';
+import Big from 'big.js';
 
 export function isValidHex(hex: string | number): boolean {
   const isHexStrict = /^(0x)?[0-9a-f]*$/i.test(hex.toString());
@@ -12,14 +13,22 @@ export function isValidHex(hex: string | number): boolean {
 
 export async function etherToProgram(etherKey: string): Promise<[PublicKey, number]> {
   const keyBuffer = Buffer.from(isValidHex(etherKey) ? etherKey.replace(/^0x/i, '') : etherKey, 'hex');
-  const seed = [new Uint8Array(NEON_SEED_VERSION), new Uint8Array(keyBuffer)];
+  const seed = [new Uint8Array([Account.SeedVersion]), new Uint8Array(keyBuffer)];
   const [pda, nonce] = await PublicKey.findProgramAddress(seed, new PublicKey(NEON_EVM_LOADER_ID));
   return [pda, nonce];
 }
 
-export function mergeTypedArraysUnsafe(a, b) {
-  const c = new a.constructor(a.length + b.length);
-  c.set(a);
-  c.set(b, a.length);
-  return c;
+export function toBytesInt32(number: number, littleEndian = true): ArrayBuffer {
+  const arrayBuffer = new ArrayBuffer(4); // an Int32 takes 4 bytes
+  const dataView = new DataView(arrayBuffer);
+  dataView.setUint32(0, number, littleEndian); // byteOffset = 0; litteEndian = false
+  return arrayBuffer;
 }
+
+export function toFullAmount(amount: number, decimals: number): BigInt {
+  const data = Big(amount).times(Big(10).pow(decimals));
+  const result = BigInt(data);
+  return BigInt(result);
+}
+
+
