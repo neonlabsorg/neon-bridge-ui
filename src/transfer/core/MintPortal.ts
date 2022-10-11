@@ -393,9 +393,4 @@ export class MintPortal extends InstructionService {
 
     return { erc20Address: erc20addr[0], erc20Nonce: erc20addr[1] };
   }
-
-  _computeWithdrawAmountValue(amount, { decimals }): string {
-    const result = Big(amount).times(Big(10).pow(decimals));
-    return `0x${BigInt(result).toString(16)}`;
-  }
 }

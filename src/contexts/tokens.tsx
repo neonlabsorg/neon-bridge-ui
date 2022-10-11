@@ -1,197 +1,173 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { PublicKey } from '@solana/web3.js'
-import { useWeb3React } from '@web3-react/core'
-import { NEON_TOKEN_MINT, NEON_TOKEN_MINT_DECIMALS } from 'neon-portal/src/constants'
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { PublicKey } from '@solana/web3.js';
+import { useWeb3React } from '@web3-react/core';
 
-import { CHAIN_IDS } from '@/connectors'
-import { useNetworkType } from '@/SplConverter/hooks'
-import ERC20_ABI from '@/SplConverter/hooks/abi/ERC20ForSpl.json'
-import { usePrevious } from '@/utils'
-import { useConnection } from './connection'
-
-// const { REACT_APP_TOKEN_LIST_VER } = process.env
+import { CHAIN_IDS } from '@/connectors';
+import { useNetworkType } from '@/SplConverter/hooks';
+import ERC20_ABI from '@/SplConverter/hooks/abi/ERC20ForSpl.json';
+import { usePrevious } from '@/utils';
+import { useConnection } from './connection';
+import { splTokensList } from '@/contexts/data';
+import { NEON_TOKEN_MINT } from '@/transfer/data';
+import { Direction } from '@/contexts/models';
 
 export const TokensContext = createContext({
   list: [],
   tokenErrors: {},
   pending: false,
   tokenManagerOpened: false,
-  setTokenManagerOpened: () => {},
-  refreshTokenList: () => {},
-})
-
-const NEON_TOKEN_MODEL = {
-  chainId: 0,
-  address_spl: NEON_TOKEN_MINT,
-  address: '',
-  decimals: NEON_TOKEN_MINT_DECIMALS,
-  name: 'Neon',
-  symbol: 'NEON',
-  logoURI: 'https://raw.githubusercontent.com/neonlabsorg/token-list/main/neon_token_md.png',
-}
+  setTokenManagerOpened: () => {
+  },
+  refreshTokenList: () => {
+  }
+});
 
 export function TokensProvider({ children = undefined }) {
-  const { chainId } = useNetworkType()
-  const filteringChainId = useMemo(() => {
-    if (Number.isNaN(chainId)) return CHAIN_IDS['devnet']
-
-    return chainId
-  }, [chainId])
+  const { chainId } = useNetworkType();
+  const currentChainId = useMemo(() => {
+    if (Number.isNaN(chainId)) {
+      return CHAIN_IDS['devnet'];
+    }
+    return chainId;
+  }, [chainId]);
   const initialTokenListState = useMemo(() => {
-    const model = Object.assign({}, NEON_TOKEN_MODEL)
-    model.chainId = filteringChainId
+    return splTokensList.map(item => {
+      item.chainId = currentChainId;
+      return item;
+    });
+  }, [currentChainId]);
+  const { publicKey } = useWallet();
+  const { library, account } = useWeb3React();
+  const prevAccountState = usePrevious(account);
+  const prevPublicKeyState = usePrevious(publicKey);
+  const connection = useConnection();
+  const [list, setTokenList] = useState(initialTokenListState);
+  const [pending, setPending] = useState(false);
+  const [tokenManagerOpened, setTokenManagerOpened] = useState(false);
 
-    return [model]
-  }, [filteringChainId])
-  const { publicKey } = useWallet()
-  const { library, account } = useWeb3React()
-  const prevAccountState = usePrevious(account)
-  const prevPublicKeyState = usePrevious(publicKey)
-  const connection = useConnection()
-  const [list, setTokenList] = useState(initialTokenListState)
-  const [pending, setPending] = useState(false)
-  const [tokenManagerOpened, setTokenManagerOpened] = useState(false)
+  const [error, setError] = useState('');
 
-  const [error, setError] = useState('')
+  const [tokenErrors, setTokenErrors] = useState({});
 
-  const [tokenErrors, setTokenErrors] = useState({})
-
-  const [balances, setBalances] = useState({})
+  const [balances, setBalances] = useState({});
   const addBalance = (symbol, balance) => {
-    balances[symbol] = balance
-    setBalances({ ...balances })
-  }
+    balances[symbol] = balance;
+    setBalances({ ...balances });
+  };
 
   const timeout = (ms) => {
-    return new Promise((resolve) => setTimeout(resolve, ms))
-  }
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  };
 
   const getSplBalance = async (token) => {
-    const pubkey = new PublicKey(token.address_spl)
+    const pubkey = new PublicKey(token.address_spl);
     const assocTokenAccountAddress = await Token.getAssociatedTokenAddress(
       ASSOCIATED_TOKEN_PROGRAM_ID,
       TOKEN_PROGRAM_ID,
       pubkey,
-      publicKey,
-    )
+      publicKey
+    );
     const completed = await Promise.all([
       connection.getTokenAccountBalance(assocTokenAccountAddress),
-      timeout(500),
+      timeout(500)
     ]).catch((e) => {
       // console.warn(e);
-      return [0, undefined]
-    })
-    const balanceData = completed[0]
-    if (balanceData === 0) return 0
+      return [0, undefined];
+    });
+    const balanceData = completed[0];
+    if (balanceData === 0) return 0;
     // @ts-ignore
     if (balanceData && balanceData.value) {
       // @ts-ignore
       return typeof balanceData.value === 'object' && balanceData.value.uiAmount
         ? // @ts-ignore
-          balanceData.value.uiAmount
+        balanceData.value.uiAmount
         : // @ts-ignore
         typeof balanceData.value === 'number'
-        ? // @ts-ignore
+          ? // @ts-ignore
           balanceData.value / Math.pow(10, token.decimals)
-        : 0
+          : 0;
     }
 
-    return 0
-  }
+    return 0;
+  };
 
   const getEthBalance = async (token) => {
     if (token.address_spl === NEON_TOKEN_MINT) {
-      const balance = await library.eth.getBalance(account)
+      const balance = await library.eth.getBalance(account);
       console.log(balance);
-      return +(balance / Math.pow(10, token.decimals)).toFixed(4)
+      return +(balance / Math.pow(10, token.decimals)).toFixed(4);
     }
 
-    const tokenInstance = new library.eth.Contract(ERC20_ABI['abi'], token.address)
-    const balance = await tokenInstance.methods.balanceOf(account).call()
-    console.log(balance)
-    return balance / Math.pow(10, token.decimals)
-  }
+    const tokenInstance = new library.eth.Contract(ERC20_ABI['abi'], token.address);
+    const balance = await tokenInstance.methods.balanceOf(account).call();
+    return balance / Math.pow(10, token.decimals);
+  };
 
   const requestListBalances = async () => {
     for (const item of list) {
-      let currencies = { sol: undefined, eth: undefined }
+      let currencies = { [Direction.neon]: undefined, [Direction.solana]: undefined };
       try {
         if (publicKey) {
-          currencies.sol = await getSplBalance(item)
+          currencies[Direction.neon] = await getSplBalance(item);
         }
         if (account) {
-          currencies.eth = await getEthBalance(item)
+          currencies[Direction.solana] = await getEthBalance(item);
         }
-        setTimeout(() => addBalance(item.symbol, currencies))
+        setTimeout(() => addBalance(item.symbol, currencies));
       } catch (e) {
-        console.warn(e)
+        console.warn(e);
       }
     }
-  }
+  };
 
   useEffect(() => {
-    if (list) requestListBalances()
-    else setBalances({})
+    if (list) requestListBalances();
+    else setBalances({});
     // eslint-disable-next-line
-  }, [list])
+  }, [list]);
 
   const mergeTokenList = async (source = []) => {
-    const fullList = [...initialTokenListState].concat(source)
-    const newList = fullList.filter((item) => item.chainId === filteringChainId)
-    setTokenList(newList)
-  }
+    const fullList = [...initialTokenListState].concat(source);
+    const newList = fullList.filter((item) => item.chainId === currentChainId);
+    setTokenList(newList);
+  };
 
   const refreshTokenList = async () => {
     await Promise.all([setTokenList(initialTokenListState), timeout(20), updateTokenList()]).catch(
       (e) => {
-        console.warn(e)
+        console.warn(e);
 
-        return e
-      },
-    )
-  }
+        return e;
+      }
+    );
+  };
 
   const updateTokenList = () => {
-    setTokenErrors({})
-    setPending(true)
-    fetch(
-      // `https://raw.githubusercontent.com/neonlabsorg/token-list/v${REACT_APP_TOKEN_LIST_VER}/tokenlist.json`,
-      'https://raw.githubusercontent.com/neonlabsorg/token-list/main/tokenlist.json'
-    )
+    setTokenErrors({});
+    setPending(true);
+    fetch('https://raw.githubusercontent.com/neonlabsorg/token-list/main/tokenlist.json')
       .then((resp) => {
         if (resp.ok) {
-          resp
-            .json()
-            .then((data) => {
-              mergeTokenList([{
-                chainId: 245022926,
-                address_spl: 'HdvHZXp5F4ZPxb5V7xG4gpBnwmbzMite85NSg3aycmhi',
-                address: '0xBdd4cDAf6c9bbb6979d043512e7940f869B06b8C',
-                decimals: 6,
-                name: 'Wrapped AAVE',
-                symbol: 'AAVE',
-                logoURI: ''
-              }, ...data.tokens])
-            })
-            .catch((err) => setError(err.message))
+          resp.json().then((data) => mergeTokenList(data.tokens)).catch((err) => setError(err.message));
         }
       })
       .catch((err) => {
-        setError(`Failed to fetch neon transfer token list: ${err.message}`)
+        setError(`Failed to fetch neon transfer token list: ${err.message}`);
       })
-      .finally(() => setPending(false))
-  }
+      .finally(() => setPending(false));
+  };
 
   useEffect(() => {
     if ((account && !prevAccountState) || (publicKey && !prevPublicKeyState)) {
-      updateTokenList()
+      updateTokenList();
     } else {
-      setTokenList(initialTokenListState)
+      setTokenList(initialTokenListState);
     }
     // eslint-disable-next-line
-  }, [account, publicKey])
+  }, [account, publicKey]);
 
   return (
     <TokensContext.Provider
@@ -204,14 +180,14 @@ export function TokensProvider({ children = undefined }) {
         tokenManagerOpened,
         // @ts-ignore
         setTokenManagerOpened,
-        refreshTokenList,
+        refreshTokenList
       }}
     >
       {children}
     </TokensContext.Provider>
-  )
+  );
 }
 
 export function useTokensContext(): any {
-  return useContext(TokensContext)
+  return useContext(TokensContext);
 }

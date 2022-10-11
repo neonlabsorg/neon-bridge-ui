@@ -3,6 +3,7 @@ import { useWeb3React } from '@web3-react/core';
 import { MintPortal, NeonPortal } from '../core';
 import { NEON_TOKEN_MINT } from '../data';
 import { NeonProxy } from '@/api/proxy';
+import { TransactionConfig } from 'web3-core';
 
 const proxyApi = new NeonProxy({
   solanaRpcApi: 'https://api.devnet.solana.com',
@@ -26,7 +27,7 @@ export function useNeonTransfer(events, currentConnection) {
 
   const portalInstance = (addr: string) => NEON_TOKEN_MINT === addr ? neonPortal : mintPortal;
 
-  const getEthereumTransactionParams = (amount: number, splToken): void => {
+  const getEthereumTransactionParams = (amount: number, splToken): TransactionConfig => {
     const portal = portalInstance(splToken.address_spl);
 
     return portal.getEthereumTransactionParams.call(portal, amount, splToken);

@@ -6,23 +6,27 @@ import { ErrorHandler } from '@/SplConverter/components/common/ErrorHandler';
 import { TransferInfo } from '@/SplConverter/components/common/TransferInfo';
 import { useTransfering } from '@/SplConverter/hooks/transfering';
 import { ReactComponent as ArrowIcon } from '@/assets/arrow-right.svg';
+import { TokenSymbol } from '@/SplConverter/components/common/TokenManager/components/TokenSymbol';
+import { Direction } from '@/contexts/models';
 
 export function Confirm() {
   const { addToast } = useToast();
   const { amount, token, direction, error } = useStatesContext();
   const { deposit, withdraw } = useTransfering();
+
   const handleConfirmTransfer = () => {
-    if (direction === 'neon') {
-      deposit(amount, token);
-    }
-    if (direction === 'solana') {
-      withdraw(amount, token);
+    switch (direction) {
+      case Direction.neon:
+        deposit(amount, token);
+        break;
+      case Direction.solana:
+        withdraw(amount, token);
+        break;
     }
   };
 
   useEffect(() => {
     if (error) {
-      console.log(error);
       addToast(error, 'ERROR');
     }
   }, [error]);
@@ -30,21 +34,21 @@ export function Confirm() {
   return (
     <div className='w-full flex flex-col pt-6'>
       <div className='flex flex-col items-center'>
-        <img style={{ width: '56px', height: '56px' }} src={token.logoURI}
-             className='mb-4' alt={token.symbol} />
-        <div className='text-2xl font-medium mb-8'>{`${amount} ${token.symbol}`}</div>
+        <TokenSymbol src={token?.logoURI} alt={token?.name}
+                     style={{ width: '56px', height: '56px' }} className='mb-4' />
+        <div className='text-2xl font-medium mb-8'>{`${amount} ${token?.symbol}`}</div>
       </div>
       <div className='flex justify-between mb-8'>
         <div
           className='w-5/12 p-6 flex items-center justify-center bg-pinky-white border border-transparent dark:bg-dark-600 dark:border-op15-white'>
-          {direction === 'neon' ? 'Solana' : 'Neon'}
+          {direction === Direction.neon ? 'Solana' : 'Neon'}
         </div>
         <div className='w-1/6 flex items-center justify-center'>
           <ArrowIcon />
         </div>
         <div
           className='w-5/12 p-6 flex items-center justify-center bg-pinky-white border border-transparent dark:bg-dark-600 dark:border-op15-white'>
-          {direction === 'neon' ? 'Neon' : 'Solana'}
+          {direction === Direction.neon ? 'Neon' : 'Solana'}
         </div>
       </div>
       <TransferInfo className='mb-8' />
