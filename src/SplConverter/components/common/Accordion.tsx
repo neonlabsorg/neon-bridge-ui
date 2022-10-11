@@ -26,13 +26,14 @@ const Accordion = (props) => {
 
   return <div className={`w-full bg-white dark:bg-dark-600 p-10 ${className}`}>
     <div className='flex w-full flex-col'>
-      <div className='flex items-center mb-6'>
+      <div className='flex items-center'>
         <div className={stepClassName} style={stepStyles}>
           {finished ? <CheckIcon /> : stepNumber}
         </div>
         <h3 className={titleClassName} onClick={handleOpenContent}>{title}</h3>
       </div>
-      <div className='flex flex-col'>{active ? children : finished ? resultsView : null}</div>
+      {active ? <div className='flex flex-col pt-6'>{children}</div> :
+        finished ? <div className='flex flex-col pt-6'>{resultsView}</div> : null}
     </div>
   </div>;
 };

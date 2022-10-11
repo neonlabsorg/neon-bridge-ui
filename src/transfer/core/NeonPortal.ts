@@ -111,6 +111,8 @@ export class NeonPortal extends InstructionService {
 
   // #endregion
 
+  createSolanaTransferERC20 = this.createSolanaTransfer;
+
   // #region Neon -> Solana
   async createSolanaTransfer(events = undefined, amount = 0, splToken = SPL_TOKEN_DEFAULT) {
     events = events === undefined ? this.events : events;

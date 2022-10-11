@@ -9,13 +9,13 @@ import {
 } from '@solana/web3.js';
 import { InstructionEvents } from '@/transfer/models/events';
 import { SPLToken } from '@/transfer/models';
-import { Account, EvmInstruction } from '@/transfer/data';
+import { AccountHex, EvmInstruction } from '@/transfer/data';
 import { NeonProxy } from '@/api/proxy';
 import Big from 'big.js';
 import Web3 from 'web3';
-import { TransactionConfig } from 'web3-core';
-import { SHA256 } from 'crypto-js';
+import { Account, TransactionConfig } from 'web3-core';
 import { NEON_EVM_LOADER_ID, NEON_TOKEN_MINT } from '../data';
+import { SHA256 } from 'crypto-js';
 
 Big.PE = 42;
 
@@ -40,6 +40,11 @@ export class InstructionService {
 
   get solanaWalletPubkey() {
     return new PublicKey(this.solanaWalletAddress);
+  }
+
+  get emulateSigner(): Account {
+    const emulateSignerPrivateKey = `0x${SHA256(this.solanaWalletPubkey.toBase58()).toString()}`;
+    return this.web3.eth.accounts.privateKeyToAccount(emulateSignerPrivateKey);
   }
 
   get neonMintToken() {
@@ -93,7 +98,7 @@ export class InstructionService {
 
   async getNeonAccountAddress(): Promise<{ neonAddress: PublicKey, neonNonce: number }> {
     const accountSeed = this.neonAccountSeed;
-    const seeds = [new Uint8Array([Account.SeedVersion]), new Uint8Array(accountSeed)];
+    const seeds = [new Uint8Array([AccountHex.SeedVersion]), new Uint8Array(accountSeed)];
     const [neonAddress, neonNonce] = await PublicKey.findProgramAddress(seeds, new PublicKey(NEON_EVM_LOADER_ID));
     return { neonAddress, neonNonce };
   }

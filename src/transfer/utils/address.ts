@@ -1,5 +1,5 @@
 import { PublicKey } from '@solana/web3.js';
-import { Account, NEON_EVM_LOADER_ID } from '@/transfer/data';
+import { AccountHex, NEON_EVM_LOADER_ID } from '@/transfer/data';
 import { Buffer } from 'buffer';
 import Big from 'big.js';
 
@@ -13,7 +13,7 @@ export function isValidHex(hex: string | number): boolean {
 
 export async function etherToProgram(etherKey: string): Promise<[PublicKey, number]> {
   const keyBuffer = Buffer.from(isValidHex(etherKey) ? etherKey.replace(/^0x/i, '') : etherKey, 'hex');
-  const seed = [new Uint8Array([Account.SeedVersion]), new Uint8Array(keyBuffer)];
+  const seed = [new Uint8Array([AccountHex.SeedVersion]), new Uint8Array(keyBuffer)];
   const [pda, nonce] = await PublicKey.findProgramAddress(seed, new PublicKey(NEON_EVM_LOADER_ID));
   return [pda, nonce];
 }

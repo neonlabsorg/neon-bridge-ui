@@ -14,7 +14,6 @@ import Big from 'big.js';
 import ERC20SPL from '@/SplConverter/hooks/abi/ERC20ForSpl.json';
 import { SPLToken } from '@/transfer/models';
 import { etherToProgram, toBytesInt32, toFullAmount } from '@/transfer/utils/address';
-import { SHA256 } from 'crypto-js';
 import {
   COLLATERALL_POOL_MAX,
   COMPUTE_BUDGET_ID,
@@ -69,8 +68,7 @@ export class MintPortal extends InstructionService {
     const splTokenMint = new PublicKey(splToken.address_spl);
     const computedBudgetProgram = new PublicKey(COMPUTE_BUDGET_ID);
     const solanaWallet = this.solanaWalletPubkey;
-    const emulateSignerPrivateKey = `0x${SHA256(this.solanaWalletPubkey.toBase58()).toString()}`;
-    const emulateSigner = this.web3.eth.accounts.privateKeyToAccount(emulateSignerPrivateKey);
+    const emulateSigner = this.emulateSigner;
     const [accountPDA] = await etherToProgram(emulateSigner.address);
     const { blockhash } = await this.connection.getRecentBlockhash();
     const { neonAddress } = await this.getNeonAccountAddress();
@@ -268,28 +266,71 @@ export class MintPortal extends InstructionService {
     return this.connection.getAccountInfo(erc20Address);
   }
 
+  async createWithdraw(emulateSigner: Account, solanaWallet: PublicKey, splToken: SPLToken, amount: number) {
+    const nonce = await this.web3.eth.getTransactionCount(emulateSigner.address);
+    const contract = new this.web3.eth.Contract(ERC20SPL['abi'] as any);
+    const fullAmount = toFullAmount(amount, splToken.decimals);
+    const withdraw = '0x93e29346';
+    const data = contract.methods[withdraw](fullAmount.toString(), solanaWallet.toBuffer().toString('hex')).encodeABI();
+
+    const transaction: TransactionConfig = {
+      nonce: nonce,
+      gas: `0x5F5E100`, // 100000000
+      gasPrice: `0x0`,
+      data,
+      chainId: splToken.chainId
+    };
+
+    const signedTransaction = await this.accountTransactionSign(transaction, emulateSigner);
+    const neonEmulate = await this.proxyApi.neonEmulate([signedTransaction.rawTransaction.slice(2)]);
+    console.log(signedTransaction, neonEmulate);
+    return { signedTransaction, neonEmulate };
+  }
+
   // #endregion
+  async createSolanaTransferERC20(events = this.events, amount = 0, splToken = SPL_TOKEN_DEFAULT) {
+    const solanaWallet = this.solanaWalletAddress;
+    const emulateSigner = this.emulateSigner;
+    const computedBudgetProgram = new PublicKey(COMPUTE_BUDGET_ID);
+    const { blockhash } = await this.connection.getRecentBlockhash();
+
+    const transaction = new Transaction({ recentBlockhash: blockhash, feePayer: solanaWallet });
+    transaction.add(this.computeBudgetUtilsInstruction(computedBudgetProgram));
+    transaction.add(this.computeBudgetHeapFrameInstruction(computedBudgetProgram));
+
+    const mintPubkey = this.solanaPubkey(splToken.address_spl);
+    const assocTokenAccountAddress = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID,
+      mintPubkey,
+      solanaWallet
+    );
+    const associatedTokenAccount = await this.connection.getAccountInfo(assocTokenAccountAddress);
+    if (!associatedTokenAccount) {
+      // Create token account if it not exists
+      const createAccountInstruction = Token.createAssociatedTokenAccountInstruction(
+        ASSOCIATED_TOKEN_PROGRAM_ID,
+        TOKEN_PROGRAM_ID,
+        mintPubkey, // token mint
+        assocTokenAccountAddress, // account to create
+        solanaWallet, // new account owner
+        solanaWallet // payer
+      );
+      transaction.add(createAccountInstruction);
+    }
+
+    console.log(transaction);
+
+    await this.createWithdraw(emulateSigner, solanaWallet, splToken, amount);
+  }
 
   // #region Neon -> Solana
-  async createSolanaTransfer(
-    events = undefined,
-    amount = 0,
-    splToken = {
-      chainId: 0,
-      address_spl: '',
-      address: '',
-      decimals: 1,
-      name: '',
-      symbol: '',
-      logoURI: ''
-    }
-  ) {
-    events = events === undefined ? this.events : events;
+  async createSolanaTransfer(events = this.events, amount = 0, splToken = SPL_TOKEN_DEFAULT) {
+    console.log('#region Neon -> Solana');
     const solanaPubkey = this.solanaPubkey();
     const recentBlockhash = await this.connection.getRecentBlockhash();
-    if (typeof events.onBeforeNeonSign === 'function') {
-      events.onBeforeNeonSign();
-    }
+
+    this.emitFunction(events.onBeforeNeonSign);
 
     // txHash is a hex string
     // As with any RPC call, it may throw an error
@@ -300,9 +341,7 @@ export class MintPortal extends InstructionService {
         params: [this.getEthereumTransactionParams(amount, splToken)]
       });
     } catch (error) {
-      if (typeof events.onErrorSign === 'function') {
-        events.onErrorSign(error);
-      }
+      this.emitFunction(events.onErrorSign, error);
     }
     if (txHash === undefined) {
       return false;
@@ -336,9 +375,7 @@ export class MintPortal extends InstructionService {
     const liquidityInstruction = await this._createTransferInstruction(amount, splToken, true);
     transaction.add(liquidityInstruction);
 
-    if (typeof events.onBeforeSignTransaction === 'function') {
-      events.onBeforeSignTransaction();
-    }
+    this.emitFunction(events.onBeforeSignTransaction);
 
     setTimeout(async () => {
       try {

@@ -44,7 +44,7 @@ export function useNeonTransfer(events, currentConnection) {
     console.log('withdraw');
     const portal = portalInstance(splToken.address_spl);
 
-    return portal.createSolanaTransfer.call(portal, events, amount, splToken);
+    return portal.createSolanaTransferERC20.call(portal, events, amount, splToken);
   };
 
   return { deposit, withdraw, getEthereumTransactionParams };

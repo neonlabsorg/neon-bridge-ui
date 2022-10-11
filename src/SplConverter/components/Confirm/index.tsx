@@ -32,7 +32,7 @@ export function Confirm() {
   }, [error]);
 
   return (
-    <div className='w-full flex flex-col pt-6'>
+    <div className='w-full flex flex-col'>
       <div className='flex flex-col items-center'>
         <TokenSymbol src={token?.logoURI} alt={token?.name}
                      style={{ width: '56px', height: '56px' }} className='mb-4' />
