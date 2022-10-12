@@ -64,21 +64,18 @@ export class MintPortal extends InstructionService {
   }
 
   async createNeonTransferERC20(events = this.events, amount: number, splToken = SPL_TOKEN_DEFAULT) {
+    this.emitFunction(events.onBeforeCreateInstruction);
     const fullAmount = toFullAmount(amount, splToken.decimals);
     const splTokenMint = new PublicKey(splToken.address_spl);
     const computedBudgetProgram = new PublicKey(COMPUTE_BUDGET_ID);
     const solanaWallet = this.solanaWalletPubkey;
     const emulateSigner = this.emulateSigner;
     const [accountPDA] = await etherToProgram(emulateSigner.address);
-    const { blockhash } = await this.connection.getRecentBlockhash();
     const { neonAddress } = await this.getNeonAccountAddress();
     const signers = [];
-    const transaction = new Transaction({ recentBlockhash: blockhash, feePayer: solanaWallet });
-    this.emitFunction(events.onBeforeCreateInstruction);
 
-    // 0, 1
-    transaction.add(this.computeBudgetUtilsInstruction(computedBudgetProgram));
-    transaction.add(this.computeBudgetHeapFrameInstruction(computedBudgetProgram));
+    const computeBudgetUtilsInstruction = this.computeBudgetUtilsInstruction(computedBudgetProgram);
+    const computeBudgetHeapFrameInstruction = this.computeBudgetHeapFrameInstruction(computedBudgetProgram);
 
     const associatedTokenAddress = await Token.getAssociatedTokenAddress(
       ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -87,17 +84,14 @@ export class MintPortal extends InstructionService {
       solanaWallet
     );
 
-    // 2
-    transaction.add(Token.createApproveInstruction(
+    const createApproveInstruction = Token.createApproveInstruction(
       TOKEN_PROGRAM_ID,
       associatedTokenAddress,
       accountPDA,
       solanaWallet,
       signers,
       Number(fullAmount.toString(10))
-    ));
-
-    this.emitFunction(events.onBeforeSignTransaction);
+    );
 
     const { neonKeys, neonTransaction, nonce } = await this.createClaimInstruction(
       solanaWallet,
@@ -108,13 +102,21 @@ export class MintPortal extends InstructionService {
       fullAmount
     );
 
-    // 3
+    const { blockhash } = await this.connection.getRecentBlockhash();
+    const transaction = new Transaction({ recentBlockhash: blockhash, feePayer: solanaWallet });
+    // 0, 1, 2, 3
+    transaction.add(computeBudgetUtilsInstruction);
+    transaction.add(computeBudgetHeapFrameInstruction);
+    transaction.add(createApproveInstruction);
+
     if (nonce === 0) {
       transaction.add(this.createAccountV3Instruction(solanaWallet, accountPDA, emulateSigner));
     }
 
     // 4
     transaction.add(await this.makeTrExecFromDataIx(neonAddress, neonTransaction?.rawTransaction, neonKeys));
+
+    this.emitFunction(events.onBeforeSignTransaction);
 
     setTimeout(async () => {
       try {
@@ -204,7 +206,6 @@ export class MintPortal extends InstructionService {
     return { neonKeys: [], neonTransaction: null, emulateSigner: null, nonce };
   }
 
-
   async makeTrExecFromDataIx(neonAddress: PublicKey, neonRawTransaction: string, neonKeys: AccountMeta[]): Promise<TransactionInstruction> {
     const programId = new PublicKey(NEON_EVM_LOADER_ID);
     const treasuryPoolIndex = Math.floor(Math.random() * COLLATERALL_POOL_MAX) % COLLATERALL_POOL_MAX;
@@ -266,37 +267,36 @@ export class MintPortal extends InstructionService {
     return this.connection.getAccountInfo(erc20Address);
   }
 
-  async createWithdraw(emulateSigner: Account, solanaWallet: PublicKey, splToken: SPLToken, amount: number) {
-    const nonce = await this.web3.eth.getTransactionCount(emulateSigner.address);
+  async createWithdraw(neonWallet: string, solanaWallet: PublicKey, splToken: SPLToken, amount: number): Promise<any> {
+    const nonce = await this.web3.eth.getTransactionCount(neonWallet);
     const contract = new this.web3.eth.Contract(ERC20SPL['abi'] as any);
     const fullAmount = toFullAmount(amount, splToken.decimals);
-    const withdraw = '0x93e29346';
-    const data = contract.methods[withdraw](fullAmount.toString(), solanaWallet.toBuffer().toString('hex')).encodeABI();
-
+    const data = contract.methods.transferSolana(solanaWallet.toBytes(), fullAmount).encodeABI();
+    console.log(data);
     const transaction: TransactionConfig = {
-      nonce: nonce,
-      gas: `0x5F5E100`, // 100000000
-      gasPrice: `0x0`,
-      data,
+      nonce,
+      from: neonWallet,
+      to: splToken.address,
+      data: data,
+      value: `0x0`,
       chainId: splToken.chainId
     };
+    const gasPrice = await this.web3.eth.getGasPrice();
+    const gas = await this.web3.eth.estimateGas(transaction);
+    transaction['gasPrice'] = gasPrice;
+    transaction['gas'] = gas;
 
-    const signedTransaction = await this.accountTransactionSign(transaction, emulateSigner);
-    const neonEmulate = await this.proxyApi.neonEmulate([signedTransaction.rawTransaction.slice(2)]);
-    console.log(signedTransaction, neonEmulate);
-    return { signedTransaction, neonEmulate };
+    console.log(transaction);
+    return this.web3.eth.sendTransaction(transaction);
   }
 
   // #endregion
   async createSolanaTransferERC20(events = this.events, amount = 0, splToken = SPL_TOKEN_DEFAULT) {
+    console.log('!');
     const solanaWallet = this.solanaWalletAddress;
-    const emulateSigner = this.emulateSigner;
     const computedBudgetProgram = new PublicKey(COMPUTE_BUDGET_ID);
-    const { blockhash } = await this.connection.getRecentBlockhash();
-
-    const transaction = new Transaction({ recentBlockhash: blockhash, feePayer: solanaWallet });
-    transaction.add(this.computeBudgetUtilsInstruction(computedBudgetProgram));
-    transaction.add(this.computeBudgetHeapFrameInstruction(computedBudgetProgram));
+    const computeBudgetUtilsInstruction = this.computeBudgetUtilsInstruction(computedBudgetProgram);
+    const computeBudgetHeapFrameInstruction = this.computeBudgetHeapFrameInstruction(computedBudgetProgram);
 
     const mintPubkey = this.solanaPubkey(splToken.address_spl);
     const assocTokenAccountAddress = await Token.getAssociatedTokenAddress(
@@ -306,6 +306,12 @@ export class MintPortal extends InstructionService {
       solanaWallet
     );
     const associatedTokenAccount = await this.connection.getAccountInfo(assocTokenAccountAddress);
+
+    const { blockhash } = await this.connection.getRecentBlockhash();
+    const transaction = new Transaction({ recentBlockhash: blockhash, feePayer: solanaWallet });
+    transaction.add(computeBudgetUtilsInstruction);
+    transaction.add(computeBudgetHeapFrameInstruction);
+
     if (!associatedTokenAccount) {
       // Create token account if it not exists
       const createAccountInstruction = Token.createAssociatedTokenAccountInstruction(
@@ -319,9 +325,20 @@ export class MintPortal extends InstructionService {
       transaction.add(createAccountInstruction);
     }
 
-    console.log(transaction);
 
-    await this.createWithdraw(emulateSigner, solanaWallet, splToken, amount);
+    this.emitFunction(events.onBeforeSignTransaction);
+
+    try {
+      const tr = await this.createWithdraw(this.neonWalletAddress, solanaWallet, splToken, amount);
+      console.log(tr);
+
+      const signedTransaction = await this.solana.signTransaction(transaction);
+      const sig = await this.connection.sendRawTransaction(signedTransaction.serialize());
+      this.emitFunction(events.onSuccessSign, sig, signedTransaction);
+    } catch (error) {
+      console.log(error);
+      this.emitFunction(events.onErrorSign, error);
+    }
   }
 
   // #region Neon -> Solana
@@ -413,14 +430,14 @@ export class MintPortal extends InstructionService {
   }
 
   async _getERC20WrapperAddress(splToken) {
-    const enc = new TextEncoder();
+    const encoder = new TextEncoder();
     const tokenPubkey = this.solanaPubkey(splToken.address_spl);
     const erc20Seed = this._getEthSeed(splToken.address);
     const accountSeed = this.neonAccountSeed;
     const erc20addr = await PublicKey.findProgramAddress(
       [
         new Uint8Array([1]),
-        enc.encode('ERC20Balance'),
+        encoder.encode('ERC20Balance'),
         tokenPubkey.toBytes(),
         erc20Seed,
         accountSeed

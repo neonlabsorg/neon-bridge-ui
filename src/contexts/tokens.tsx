@@ -148,7 +148,7 @@ export function TokensProvider({ children = undefined }) {
   const updateTokenList = () => {
     setTokenErrors({});
     setPending(true);
-    fetch('https://raw.githubusercontent.com/neonlabsorg/token-list/main/tokenlist.json')
+    fetch('https://raw.githubusercontent.com/neonlabsorg/token-list/develop/tokenlist.json')
       .then((resp) => {
         if (resp.ok) {
           resp.json().then((data) => mergeTokenList(data.tokens)).catch((err) => setError(err.message));

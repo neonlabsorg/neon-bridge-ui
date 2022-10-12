@@ -1,12 +1,12 @@
-const path = require('path')
-const VersionFile = require('webpack-version-file')
-const packageJson = require('./package.json')
-require('dotenv').config()
+const path = require('path');
+const VersionFile = require('webpack-version-file');
+const packageJson = require('./package.json');
+require('dotenv').config();
 
 module.exports = {
   webpack: {
     alias: {
-      '@': path.resolve(__dirname, 'src/'),
+      '@': path.resolve(__dirname, 'src/')
     },
     plugins: [
       new VersionFile({
@@ -15,18 +15,18 @@ module.exports = {
           '<%= name %>@<%= version %>',
           'Build date: <%= buildDate %>',
           'Portal version: <%= neonPortalVersion %>',
-          'TokenList version: <%= tokenListVersion %>',
+          'TokenList version: <%= tokenListVersion %>'
         ].join('\n'),
         data: {
           neonPortalVersion: packageJson.dependencies['neon-portal'],
-          tokenListVersion: process.env.REACT_APP_TOKEN_LIST_VER,
-        },
-      }),
-    ],
+          tokenListVersion: process.env.REACT_APP_TOKEN_LIST_VER
+        }
+      })
+    ]
   },
   style: {
     postcss: {
-      plugins: [require('tailwindcss'), require('autoprefixer')],
-    },
-  },
-}
+      plugins: [require('tailwindcss'), require('autoprefixer')]
+    }
+  }
+};

@@ -16,7 +16,7 @@ export function useTransfering() {
         setPending(true);
       },
       onBeforeSignTransaction: () => {
-        setPending(true);
+        setPending(true)
       },
       onSuccessSign: (sig, txHash) => {
         if (sig) {

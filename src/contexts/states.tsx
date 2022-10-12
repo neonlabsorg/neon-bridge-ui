@@ -14,6 +14,8 @@ const STEPS = {
   confirm: { title: 'Confirmation', status: 'next' }
 };
 
+const rowSteps = JSON.stringify(STEPS);
+
 const ERC20_GAS_DECIMALS = 18;
 export const StateContext = createContext({
   steps: {},
@@ -44,13 +46,13 @@ export function StateProvider({ children = undefined }) {
   const [neonTransferSign, setNeonTransferSign] = useState('');
   const [error, setError] = useState(null);
   const [token, setToken] = useState<SPLToken>(null);
-  const [steps, setSteps] = useState(STEPS);
+  const [steps, setSteps] = useState(JSON.parse(rowSteps));
   const [direction, setDirection] = useState<Direction>(Direction.neon);
   const [theme, setTheme] = useState('light');
   const rejected = useRef(false);
   const { getEthereumTransactionParams } = useTransfering();
   const toggleDirection = () => setDirection(direction === Direction.neon ? Direction.solana : Direction.neon);
-  const resetSteps = () => setSteps(STEPS);
+  const resetSteps = () => setSteps(JSON.parse(rowSteps));
 
   const maxBalance = useMemo(() => {
     if (balances && token && balances[token.symbol]) {
