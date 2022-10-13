@@ -35,7 +35,7 @@ export const CurrencyInput = ({ className = '' }) => {
       <div onClick={() => setTokenManagerOpened(true)}
            className='flex-grow flex items-center text-lg cursor-pointer'>
         {token ? token.name : 'Select a token'}
-        <DropDownIcon className='ml-3 svg-fill' />
+        <DropDownIcon className='ml-2 svg-fill' />
       </div>
       {token && <div className='flex items-center'>
         <span className='text-sm text-grey'>{`Balance: ${maxBalance} ${token.symbol}`}</span>

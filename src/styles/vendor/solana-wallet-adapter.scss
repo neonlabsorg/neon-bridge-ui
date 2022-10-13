@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
 
 .wallet-adapter-button {
-  @apply p-4 text-blue-600 cursor-pointer mb-6;
+  @apply p-4 text-blue-600 cursor-pointer;
 }
 
 .wallet-adapter-button:not([disabled]):focus-visible {

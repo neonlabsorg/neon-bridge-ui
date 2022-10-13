@@ -7,7 +7,7 @@ import {
   Transaction,
   TransactionInstruction
 } from '@solana/web3.js';
-import { Account, SignedTransaction, TransactionConfig } from 'web3-core';
+import { Account, SignedTransaction, TransactionConfig, TransactionReceipt } from 'web3-core';
 import { Buffer } from 'buffer';
 import Big from 'big.js';
 
@@ -267,12 +267,11 @@ export class MintPortal extends InstructionService {
     return this.connection.getAccountInfo(erc20Address);
   }
 
-  async createWithdraw(neonWallet: string, solanaWallet: PublicKey, splToken: SPLToken, amount: number): Promise<any> {
+  async createTransferSolana(neonWallet: string, solanaWallet: PublicKey, splToken: SPLToken, amount: number): Promise<TransactionReceipt> {
     const nonce = await this.web3.eth.getTransactionCount(neonWallet);
     const contract = new this.web3.eth.Contract(ERC20SPL['abi'] as any);
     const fullAmount = toFullAmount(amount, splToken.decimals);
     const data = contract.methods.transferSolana(solanaWallet.toBytes(), fullAmount).encodeABI();
-    console.log(data);
     const transaction: TransactionConfig = {
       nonce,
       from: neonWallet,
@@ -285,14 +284,11 @@ export class MintPortal extends InstructionService {
     const gas = await this.web3.eth.estimateGas(transaction);
     transaction['gasPrice'] = gasPrice;
     transaction['gas'] = gas;
-
-    console.log(transaction);
     return this.web3.eth.sendTransaction(transaction);
   }
 
   // #endregion
   async createSolanaTransferERC20(events = this.events, amount = 0, splToken = SPL_TOKEN_DEFAULT) {
-    console.log('!');
     const solanaWallet = this.solanaWalletAddress;
     const computedBudgetProgram = new PublicKey(COMPUTE_BUDGET_ID);
     const computeBudgetUtilsInstruction = this.computeBudgetUtilsInstruction(computedBudgetProgram);
@@ -305,45 +301,36 @@ export class MintPortal extends InstructionService {
       mintPubkey,
       solanaWallet
     );
-    const associatedTokenAccount = await this.connection.getAccountInfo(assocTokenAccountAddress);
 
     const { blockhash } = await this.connection.getRecentBlockhash();
     const transaction = new Transaction({ recentBlockhash: blockhash, feePayer: solanaWallet });
     transaction.add(computeBudgetUtilsInstruction);
     transaction.add(computeBudgetHeapFrameInstruction);
 
-    if (!associatedTokenAccount) {
-      // Create token account if it not exists
-      const createAccountInstruction = Token.createAssociatedTokenAccountInstruction(
-        ASSOCIATED_TOKEN_PROGRAM_ID,
-        TOKEN_PROGRAM_ID,
-        mintPubkey, // token mint
-        assocTokenAccountAddress, // account to create
-        solanaWallet, // new account owner
-        solanaWallet // payer
-      );
-      transaction.add(createAccountInstruction);
-    }
-
+    const createAccountInstruction = this.createAssociatedTokenAccountInstruction(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID,
+      mintPubkey, // token mint
+      assocTokenAccountAddress, // account to create
+      solanaWallet, // new account owner
+      solanaWallet // payer
+    );
+    transaction.add(createAccountInstruction);
 
     this.emitFunction(events.onBeforeSignTransaction);
 
     try {
-      const tr = await this.createWithdraw(this.neonWalletAddress, solanaWallet, splToken, amount);
-      console.log(tr);
-
       const signedTransaction = await this.solana.signTransaction(transaction);
       const sig = await this.connection.sendRawTransaction(signedTransaction.serialize());
-      this.emitFunction(events.onSuccessSign, sig, signedTransaction);
+      const tr = await this.createTransferSolana(this.neonWalletAddress, assocTokenAccountAddress, splToken, amount);
+      this.emitFunction(events.onSuccessSign, sig, tr.transactionHash);
     } catch (error) {
-      console.log(error);
       this.emitFunction(events.onErrorSign, error);
     }
   }
 
   // #region Neon -> Solana
   async createSolanaTransfer(events = this.events, amount = 0, splToken = SPL_TOKEN_DEFAULT) {
-    console.log('#region Neon -> Solana');
     const solanaPubkey = this.solanaPubkey();
     const recentBlockhash = await this.connection.getRecentBlockhash();
 
@@ -446,5 +433,19 @@ export class MintPortal extends InstructionService {
     );
 
     return { erc20Address: erc20addr[0], erc20Nonce: erc20addr[1] };
+  }
+
+  createAssociatedTokenAccountInstruction(associatedProgramId: PublicKey, programId: PublicKey, mint: PublicKey, associatedAccount: PublicKey, owner: PublicKey, payer: PublicKey): TransactionInstruction {
+    const data = new Buffer([0x1]);
+    const keys = [
+      { pubkey: payer, isSigner: true, isWritable: true },
+      { pubkey: associatedAccount, isSigner: false, isWritable: true },
+      { pubkey: owner, isSigner: false, isWritable: false },
+      { pubkey: mint, isSigner: false, isWritable: false },
+      { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
+      { pubkey: programId, isSigner: false, isWritable: false },
+      { pubkey: SYSVAR_RENT_PUBKEY, isSigner: false, isWritable: false }];
+
+    return new TransactionInstruction({ keys, programId: associatedProgramId, data });
   }
 }

@@ -1,9 +1,9 @@
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { useWeb3React } from '@web3-react/core';
-import { MintPortal, NeonPortal } from '../core';
-import { NEON_TOKEN_MINT } from '../data';
 import { NeonProxy } from '@/api/proxy';
 import { TransactionConfig } from 'web3-core';
+import { MintPortal, NeonPortal } from '../core';
+import { NEON_TOKEN_MINT } from '../data';
 
 const proxyApi = new NeonProxy({
   solanaRpcApi: 'https://api.devnet.solana.com',

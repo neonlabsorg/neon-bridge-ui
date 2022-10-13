@@ -11,8 +11,8 @@ export const ChainId = {
 export function useNetworkType() {
   const { library, active } = useWeb3ReactCore();
   const { network, chainId } = useMemo(() => {
-    let network = '',
-      chainId = Number(library?.currentProvider?.networkVersion);
+    let network = '';
+    let chainId = Number(library?.currentProvider?.networkVersion);
     if (active) {
       network =
         library?.currentProvider && library.currentProvider.networkVersion

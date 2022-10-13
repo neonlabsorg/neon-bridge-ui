@@ -11,7 +11,7 @@ import { Direction } from '@/contexts/models';
 
 export function Confirm() {
   const { addToast } = useToast();
-  const { amount, token, direction, error } = useStatesContext();
+  const { amount, token, direction, error, pending } = useStatesContext();
   const { deposit, withdraw } = useTransfering();
 
   const handleConfirmTransfer = () => {
@@ -52,7 +52,7 @@ export function Confirm() {
         </div>
       </div>
       <TransferInfo className='mb-8' />
-      <Button onClick={handleConfirmTransfer}>Confirm</Button>
+      <Button onClick={handleConfirmTransfer} diabled={pending}>Confirm</Button>
       <ErrorHandler className='mt-8 text-red-500' />
     </div>
   );
