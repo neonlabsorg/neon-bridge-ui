@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import Button from '@/common/Button';
 import { useToast } from '@/common/Notifications';
 import { useStatesContext } from '@/contexts/states';
@@ -24,6 +24,10 @@ export function Confirm() {
         break;
     }
   };
+  const amountToken = useMemo(() => {
+    const decimals = token.decimals < 9 ? token.decimals : 9;
+    return `${amount ? amount.toFixed(decimals).replace(/\.?0+$/, '') : 0} ${token?.symbol}`;
+  }, [amount, token]);
 
   useEffect(() => {
     if (error) {
@@ -36,7 +40,7 @@ export function Confirm() {
       <div className='flex flex-col items-center'>
         <TokenSymbol src={token?.logoURI} alt={token?.name}
                      style={{ width: '56px', height: '56px' }} className='mb-4' />
-        <div className='text-2xl font-medium mb-8'>{`${amount} ${token?.symbol}`}</div>
+        <div className='text-2xl font-medium mb-8'>{amountToken}</div>
       </div>
       <div className='flex justify-between mb-8'>
         <div

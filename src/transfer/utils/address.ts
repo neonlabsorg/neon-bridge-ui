@@ -14,8 +14,7 @@ export function isValidHex(hex: string | number): boolean {
 export async function etherToProgram(etherKey: string): Promise<[PublicKey, number]> {
   const keyBuffer = Buffer.from(isValidHex(etherKey) ? etherKey.replace(/^0x/i, '') : etherKey, 'hex');
   const seed = [new Uint8Array([AccountHex.SeedVersion]), new Uint8Array(keyBuffer)];
-  const [pda, nonce] = await PublicKey.findProgramAddress(seed, new PublicKey(NEON_EVM_LOADER_ID));
-  return [pda, nonce];
+  return PublicKey.findProgramAddress(seed, new PublicKey(NEON_EVM_LOADER_ID));
 }
 
 export function toBytesInt32(number: number, littleEndian = true): ArrayBuffer {
@@ -30,5 +29,4 @@ export function toFullAmount(amount: number, decimals: number): BigInt {
   const result = BigInt(data);
   return BigInt(result);
 }
-
 

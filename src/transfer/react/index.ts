@@ -4,6 +4,7 @@ import { NeonProxy } from '@/api/proxy';
 import { TransactionConfig } from 'web3-core';
 import { MintPortal, NeonPortal } from '../core';
 import { NEON_TOKEN_MINT } from '../data';
+import { SPLToken } from '@/transfer/models';
 
 const proxyApi = new NeonProxy({
   solanaRpcApi: 'https://api.devnet.solana.com',
@@ -27,24 +28,21 @@ export function useNeonTransfer(events, currentConnection) {
 
   const portalInstance = (addr: string) => NEON_TOKEN_MINT === addr ? neonPortal : mintPortal;
 
-  const getEthereumTransactionParams = (amount: number, splToken): TransactionConfig => {
+  const getEthereumTransactionParams = (amount: number, splToken: SPLToken): TransactionConfig => {
     const portal = portalInstance(splToken.address_spl);
-
     return portal.getEthereumTransactionParams.call(portal, amount, splToken);
   };
 
-  const deposit = (amount: number, splToken): void => {
+  const deposit = (amount: number, splToken: SPLToken): void => {
     console.log('deposit');
     const portal = portalInstance(splToken.address_spl);
-
-    return portal.createNeonTransferERC20.call(portal, events, amount, splToken);
+    return portal.createNeonTransfer.call(portal, events, amount, splToken);
   };
 
-  const withdraw = (amount: number, splToken): void => {
+  const withdraw = (amount: number, splToken: SPLToken): void => {
     console.log('withdraw');
     const portal = portalInstance(splToken.address_spl);
-
-    return portal.createSolanaTransferERC20.call(portal, events, amount, splToken);
+    return portal.createSolanaTransfer.call(portal, events, amount, splToken);
   };
 
   return { deposit, withdraw, getEthereumTransactionParams };

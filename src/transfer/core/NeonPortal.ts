@@ -1,6 +1,7 @@
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import { PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@solana/web3.js';
 import Big from 'big.js';
+import { SPLToken } from '@/transfer/models';
 import { InstructionService } from './InstructionService';
 import {
   EvmInstruction,
@@ -10,127 +11,91 @@ import {
   NEON_WRAPPER_SOL,
   SPL_TOKEN_DEFAULT
 } from '../data';
-import { SPLToken } from '@/transfer/models';
 import { TransactionConfig } from 'web3-core';
 
 // Neon-token
 export class NeonPortal extends InstructionService {
   // #region Solana -> Neon
-  async createNeonTransfer(events = this.events, amount = 0) {
+  async createNeonTransfer(events = this.events, amount = 0, token: SPLToken) {
     this.emitFunction(events.onBeforeCreateInstruction);
-
+    const solanaWallet = this.solanaWalletPubkey;
+    const [neonWallet] = await this.neonAccountAddress;
+    const neonAccount = await this.getNeonAccount(neonWallet);
+    const [authorityPoolPubkey] = await this.getAuthorityPoolAddress();
     const { blockhash } = await this.connection.getRecentBlockhash();
-    const solanaKey = this.solanaWalletPubkey;
-    const transaction = new Transaction({ recentBlockhash: blockhash, feePayer: solanaKey });
-    const neonAccount = await this.getNeonAccount();
+    const transaction = new Transaction({ recentBlockhash: blockhash, feePayer: solanaWallet });
 
     if (!neonAccount) {
-      const neonAccountInstruction = await this._createNeonAccountInstruction();
+      const neonAccountInstruction = await this.neonAccountInstruction();
       transaction.add(neonAccountInstruction);
       this.emitFunction(events.onCreateNeonAccountInstruction);
     }
 
-    const approveInstruction = await this._createApproveDepositInstruction(amount);
-    transaction.add(approveInstruction);
+    const neonToken: SPLToken = { ...token, decimals: NEON_TOKEN_DECIMALS };
+    const { createApproveInstruction } = await this.approveDepositInstruction(solanaWallet, neonWallet, neonToken, amount);
+    transaction.add(createApproveInstruction);
 
-    const solanaPubkey = this.solanaWalletPubkey;
-    const source = await Token.getAssociatedTokenAddress(
-      ASSOCIATED_TOKEN_PROGRAM_ID,
-      TOKEN_PROGRAM_ID,
-      new PublicKey(NEON_TOKEN_MINT),
-      solanaPubkey
-    );
-    const authority = await this._getAuthorityPoolAddress();
-    const pool = await Token.getAssociatedTokenAddress(
-      ASSOCIATED_TOKEN_PROGRAM_ID,
-      TOKEN_PROGRAM_ID,
-      new PublicKey(NEON_TOKEN_MINT),
-      authority,
-      true
-    );
-    const { neonAddress } = await this.getNeonAccountAddress();
-
-    const keys = [
-      { pubkey: source, isSigner: false, isWritable: true },
-      { pubkey: pool, isSigner: false, isWritable: true },
-      { pubkey: neonAddress, isSigner: false, isWritable: true },
-      { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
-      { pubkey: this.solanaWalletPubkey, isSigner: true, isWritable: true }, // operator
-      { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }
-    ];
-
-    const bNeonAccount = new Buffer(this.neonWalletAddress.slice(2), 'hex');
-    const data = new Buffer([EvmInstruction.DepositV03, ...bNeonAccount]);
-    const depositInstruction = new TransactionInstruction({
-      programId: new PublicKey(NEON_EVM_LOADER_ID),
-      keys,
-      data // 0x27 -> 39
-    });
+    const depositInstruction = await this.createDepositInstruction(solanaWallet, neonWallet, authorityPoolPubkey, this.neonWalletAddress);
     transaction.add(depositInstruction);
     this.emitFunction(events.onBeforeSignTransaction);
 
-    setTimeout(async () => {
-      try {
-        const signedTransaction = await this.solana.signTransaction(transaction);
-        const sig = await this.connection.sendRawTransaction(signedTransaction.serialize());
-        this.emitFunction(events.onSuccessSign, sig);
-      } catch (error) {
-        this.emitFunction(events.onErrorSign, error);
-      }
+    try {
+      const signedTransaction = await this.solana.signTransaction(transaction);
+      const sig = await this.connection.sendRawTransaction(signedTransaction.serialize());
+      this.emitFunction(events.onSuccessSign, sig);
+    } catch (error) {
+      this.emitFunction(events.onErrorSign, error);
+    }
+  }
+
+  async createDepositInstruction(solanaPubkey: PublicKey, neonPubkey: PublicKey, depositPubkey: PublicKey, neonWalletAddress: string): Promise<TransactionInstruction> {
+    const neonTokenMint = new PublicKey(NEON_TOKEN_MINT);
+    const solanaAssociatedTokenAddress = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID,
+      neonTokenMint,
+      solanaPubkey
+    );
+    const poolKey = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID,
+      neonTokenMint,
+      depositPubkey,
+      true
+    );
+    const keys = [
+      { pubkey: solanaAssociatedTokenAddress, isSigner: false, isWritable: true },
+      { pubkey: poolKey, isSigner: false, isWritable: true },
+      { pubkey: neonPubkey, isSigner: false, isWritable: true },
+      { pubkey: TOKEN_PROGRAM_ID, isSigner: false, isWritable: false },
+      { pubkey: solanaPubkey, isSigner: true, isWritable: true }, // operator
+      { pubkey: SystemProgram.programId, isSigner: false, isWritable: false }
+    ];
+
+    const bNeonAccount = new Buffer(neonWalletAddress.slice(2), 'hex');
+    const data = new Buffer([EvmInstruction.DepositV03, ...bNeonAccount]);
+    return new TransactionInstruction({
+      programId: new PublicKey(NEON_EVM_LOADER_ID),
+      keys,
+      data
     });
   }
 
-  createNeonTransferERC20 = this.createNeonTransfer;
-
-  async _createApproveDepositInstruction(amount) {
-    const solanaPubkey = this.solanaPubkey();
-    const source = await Token.getAssociatedTokenAddress(
-      ASSOCIATED_TOKEN_PROGRAM_ID,
-      TOKEN_PROGRAM_ID,
-      new PublicKey(NEON_TOKEN_MINT),
-      solanaPubkey
-    );
-    const { neonAddress } = await this.getNeonAccountAddress();
-
-    return Token.createApproveInstruction(
-      TOKEN_PROGRAM_ID,
-      source,
-      neonAddress,
-      solanaPubkey,
-      [],
-      // @ts-ignore
-      Big(amount).times(Big(10).pow(NEON_TOKEN_DECIMALS)).toString()
-    );
-  }
-
-  async _getAuthorityPoolAddress(): Promise<PublicKey> {
-    const enc = new TextEncoder();
-    const [authority] = await PublicKey.findProgramAddress([enc.encode('Deposit')], new PublicKey(NEON_EVM_LOADER_ID));
-    return authority;
-  }
-
   // #endregion
-
-  createSolanaTransferERC20 = this.createSolanaTransfer;
+  async getAuthorityPoolAddress(): Promise<[PublicKey, number]> {
+    const enc = new TextEncoder();
+    return await PublicKey.findProgramAddress([enc.encode('Deposit')], new PublicKey(NEON_EVM_LOADER_ID));
+  }
 
   // #region Neon -> Solana
-  async createSolanaTransfer(events = undefined, amount = 0, splToken = SPL_TOKEN_DEFAULT) {
-    events = events === undefined ? this.events : events;
-    if (typeof events.onBeforeSignTransaction === 'function') {
-      events.onBeforeSignTransaction();
-    }
+  async createSolanaTransfer(events = this.events, amount = 0, splToken = SPL_TOKEN_DEFAULT) {
+    // console.log(' Neon -> Solana NeonPortal.createSolanaTransfer');
+    this.emitFunction(events.onBeforeSignTransaction);
     try {
-      const txHash = await this.ethereum.request({
-        method: 'eth_sendTransaction',
-        params: [this.getEthereumTransactionParams(amount, splToken)]
-      }).then(result => console.log(result));
-      if (typeof events.onSuccessSign === 'function') {
-        events.onSuccessSign(undefined, txHash);
-      }
+      const transaction = await this.web3.eth.sendTransaction(this.getEthereumTransactionParams(amount, splToken));
+      this.emitFunction(events.onSuccessSign, undefined, transaction.transactionHash);
     } catch (error) {
-      if (typeof events.onErrorSign === 'function') {
-        events.onErrorSign(error);
-      }
+      this.emitFunction(events.onErrorSign, error);
     }
   }
 

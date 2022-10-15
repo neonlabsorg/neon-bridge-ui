@@ -7,15 +7,16 @@ import {
   SystemProgram,
   TransactionInstruction
 } from '@solana/web3.js';
-import { InstructionEvents } from '@/transfer/models/events';
-import { SPLToken } from '@/transfer/models';
-import { AccountHex, EvmInstruction } from '@/transfer/data';
-import { NeonProxy } from '@/api/proxy';
+import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
 import Big from 'big.js';
 import Web3 from 'web3';
 import { Account, TransactionConfig } from 'web3-core';
-import { NEON_EVM_LOADER_ID, NEON_TOKEN_MINT } from '../data';
 import { SHA256 } from 'crypto-js';
+import { InstructionEvents } from '@/transfer/models/events';
+import { SPLToken } from '@/transfer/models';
+import { NeonProxy } from '@/api/proxy';
+import { etherToProgram, toFullAmount } from '@/transfer/utils/address';
+import { NEON_EVM_LOADER_ID } from '../data';
 
 Big.PE = 42;
 
@@ -29,31 +30,6 @@ export class InstructionService {
   proxyApi: NeonProxy;
   connection: Connection;
   events: InstructionEvents;
-
-  get solana() {
-    return window['solana'];
-  }
-
-  get ethereum() {
-    return window['ethereum'];
-  }
-
-  get solanaWalletPubkey() {
-    return new PublicKey(this.solanaWalletAddress);
-  }
-
-  get emulateSigner(): Account {
-    const emulateSignerPrivateKey = `0x${SHA256(this.solanaWalletPubkey.toBase58()).toString()}`;
-    return this.web3.eth.accounts.privateKeyToAccount(emulateSignerPrivateKey);
-  }
-
-  get neonMintToken() {
-    return this.solanaPubkey(NEON_TOKEN_MINT);
-  }
-
-  get neonAccountSeed() {
-    return this._getEthSeed(this.neonWalletAddress);
-  }
 
   constructor(options) {
     this.network = 'mainnet-beta';
@@ -76,56 +52,29 @@ export class InstructionService {
     };
   }
 
-  bytesFromHex(hex: number): Buffer {
-    const hexString = hex.toString(16);
-    if (this.isValidHex(hexString)) {
-      const hexReplace = hexString.replace(/^0x/i, '');
-      const bytes = [];
-      for (let c = 0; c < hexReplace.length; c += 2) {
-        bytes.push(parseInt(hexReplace.slice(c, c + 2), 16));
-      }
-      return new Buffer(bytes);
-    }
+  get solana() {
+    return window['solana'];
   }
 
-  isValidHex(hex: string | number): boolean {
-    const isHexStrict = /^(0x)?[0-9a-f]*$/i.test(hex.toString());
-    if (!isHexStrict) {
-      throw new Error(`Given value "${hex}" is not a valid hex string.`);
-    }
-    return isHexStrict;
+  get ethereum() {
+    return window['ethereum'];
   }
 
-  async getNeonAccountAddress(): Promise<{ neonAddress: PublicKey, neonNonce: number }> {
-    const accountSeed = this.neonAccountSeed;
-    const seeds = [new Uint8Array([AccountHex.SeedVersion]), new Uint8Array(accountSeed)];
-    const [neonAddress, neonNonce] = await PublicKey.findProgramAddress(seeds, new PublicKey(NEON_EVM_LOADER_ID));
-    return { neonAddress, neonNonce };
+  get solanaWalletPubkey(): PublicKey {
+    return new PublicKey(this.solanaWalletAddress);
   }
 
-  _getEthSeed(hex: string): Buffer {
-    // @ts-ignore
-    hex = hex.toString(16);
-
-    const isHexStrict = (['string', 'number'].includes(typeof hex)) && /^(-)?0x[0-9a-f]*$/i.test(hex);
-
-    if (!isHexStrict) {
-      throw new Error(`Given value "${hex}" is not a valid hex string.`);
-    }
-
-    hex = hex.replace(/^0x/i, '');
-    const bytes = [];
-    for (let c = 0; c < hex.length; c += 2) {
-      bytes.push(parseInt(hex.slice(c, c + 2), 16));
-    }
-
-    return Buffer.from(bytes);
+  get solanaWalletSigner(): Account {
+    const emulateSignerPrivateKey = `0x${SHA256(this.solanaWalletPubkey.toBase58()).toString()}`;
+    return this.web3.eth.accounts.privateKeyToAccount(emulateSignerPrivateKey);
   }
 
-  async getNeonAccount(): Promise<AccountInfo<Buffer>> {
-    const { neonAddress } = await this.getNeonAccountAddress();
+  get neonAccountAddress(): Promise<[PublicKey, number]> {
+    return etherToProgram(this.neonWalletAddress);
+  }
 
-    return this.connection.getAccountInfo(neonAddress);
+  async getNeonAccount(neonAssociatedKey: PublicKey): Promise<AccountInfo<Buffer>> {
+    return this.connection.getAccountInfo(neonAssociatedKey);
   }
 
   isCorrectNetworkOption(network = ''): boolean {
@@ -143,43 +92,44 @@ export class InstructionService {
     return this.solanaWalletPubkey;
   }
 
-  async _getNeonAccountInstructionKeys(neonAddress: PublicKey) {
-    const solanaWalletPubkey = this.solanaWalletPubkey;
-
-    return [
-      { pubkey: solanaWalletPubkey, isSigner: true, isWritable: true },
-      { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
-      { pubkey: neonAddress, isSigner: false, isWritable: true }
-    ];
-  }
-
-  async createNeonAccountInstructionERC20(neonAddress, neonNonce) {
-    const solanaWallet = this.solanaWalletPubkey;
+  async neonAccountInstruction(): Promise<TransactionInstruction> {
+    const [neonAddress, neonNonce] = await this.neonAccountAddress;
     const keys = [
-      { pubkey: solanaWallet, isSigner: true, isWritable: true },
+      { pubkey: this.solanaWalletPubkey, isSigner: true, isWritable: true },
       { pubkey: SystemProgram.programId, isSigner: false, isWritable: false },
       { pubkey: neonAddress, isSigner: false, isWritable: true }
     ];
-
-    const pattern = this.bytesFromHex(EvmInstruction.CreateAccountV02); // 0x18 -> 24
-    const data = this.mergeTypedArraysUnsafe(this.mergeTypedArraysUnsafe(pattern, this.neonAccountSeed), new Uint8Array([neonNonce]));
-
-    return new TransactionInstruction({ programId: new PublicKey(NEON_EVM_LOADER_ID), keys, data });
-  }
-
-  async _createNeonAccountInstruction() {
-    const { neonAddress, neonNonce } = await this.getNeonAccountAddress();
-    const keys = await this._getNeonAccountInstructionKeys(neonAddress);
-    const pattern = this._getEthSeed('0x18');
-    const instructionData = this.mergeTypedArraysUnsafe(
-      this.mergeTypedArraysUnsafe(new Uint8Array(pattern), this.neonAccountSeed),
-      new Uint8Array([neonNonce]));
-
+    const a = new Uint8Array([0x18]);
+    const b = Buffer.from(this.neonWalletAddress, 'hex');
+    const c = new Uint8Array([neonNonce]);
+    const data = Buffer.concat([a, b, c]);
     return new TransactionInstruction({
       programId: new PublicKey(NEON_EVM_LOADER_ID),
-      data: instructionData,
+      data,
       keys
     });
+  }
+
+  async approveDepositInstruction(solanaPubkey: PublicKey, neonPDAPubkey: PublicKey, token: SPLToken, amount: number): Promise<{ associatedTokenAddress, createApproveInstruction }> {
+    const fullAmount = toFullAmount(amount, token.decimals);
+    const associatedTokenAddress = await Token.getAssociatedTokenAddress(
+      ASSOCIATED_TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID,
+      new PublicKey(token.address_spl),
+      solanaPubkey
+    );
+
+    const createApproveInstruction = Token.createApproveInstruction(
+      TOKEN_PROGRAM_ID,
+      associatedTokenAddress,
+      neonPDAPubkey,
+      solanaPubkey,
+      [],
+      // @ts-ignore
+      fullAmount.toString(10)
+    );
+
+    return { associatedTokenAddress, createApproveInstruction };
   }
 
   _computeWithdrawEthTransactionData(amount: number, splToken: SPLToken): string {
@@ -200,13 +150,6 @@ export class InstructionService {
       value: '0x00', // Only required to send ether to the recipient from the initiating external account.
       data: this._computeWithdrawEthTransactionData(amount, token)
     };
-  }
-
-  mergeTypedArraysUnsafe(a, b) {
-    const c = new a.constructor(a.length + b.length);
-    c.set(a);
-    c.set(b, a.length);
-    return c;
   }
 
   emitFunction = (functionName: Function, ...args): void => {

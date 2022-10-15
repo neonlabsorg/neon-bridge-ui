@@ -4,7 +4,7 @@ import { NEON_TOKEN_MINT, NEON_TOKEN_MINT_DECIMALS } from '@/transfer/data';
 export const NEON_TOKEN_MODEL: SPLToken = {
   chainId: 0,
   address_spl: NEON_TOKEN_MINT,
-  address: '',
+  address: NEON_TOKEN_MINT,
   decimals: NEON_TOKEN_MINT_DECIMALS,
   name: 'Neon',
   symbol: 'NEON',

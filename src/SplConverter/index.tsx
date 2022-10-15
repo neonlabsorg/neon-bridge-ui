@@ -5,13 +5,13 @@ import { useWeb3React } from '@web3-react/core';
 import { useStatesContext } from '@/contexts/states';
 import { shortenAddress } from '@/utils';
 import { ReactComponent as CrossIcon } from '@/assets/cross.svg';
+import { Direction } from '@/contexts/models';
+import useTransactionHistory from './hooks/useTransactionHistory';
 import { Accordion } from './components/common/Accordion';
 import { Confirm } from './components/Confirm';
 import { Source } from './components/Source';
 import { Target } from './components/Target';
 import { Transferring } from './components/Transfering';
-import useTransactionHistory from './hooks/useTransactionHistory';
-import { Direction } from '@/contexts/models';
 
 const COMPONENTS_BY_STEPS = {
   source: Source,
@@ -24,10 +24,7 @@ const ResultsView = ({ stepKey = '' }) => {
   const { account } = useWeb3React();
   const { amount, token, direction } = useStatesContext();
   const shortNeonKey = useMemo(() => shortenAddress(account), [account]);
-  const shortSolanaKey = useMemo(
-    () => (publicKey ? shortenAddress(publicKey.toString()) : ''),
-    [publicKey]
-  );
+  const shortSolanaKey = useMemo(() => (publicKey ? shortenAddress(publicKey.toString()) : ''), [publicKey]);
   const renderTransferInfo = () => {
     return (
       <div>

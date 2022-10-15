@@ -127,8 +127,8 @@ export function StateProvider({ children = undefined }) {
   };
   const calculatingSolBalances = async () => {
     const { feeCalculator } = await connection.getRecentBlockhash();
-    setDepositFee(feeCalculator.lamportsPerSignature / Math.pow(10, NEON_TOKEN_DECIMALS));
-    const balance = await connection.getBalance(publicKey).catch(console.log);
+    setDepositFee((feeCalculator.lamportsPerSignature / Math.pow(10, NEON_TOKEN_DECIMALS)));
+    const balance = await connection.getBalance(publicKey);
     setSolBalance((Number(balance) / Math.pow(10, NEON_TOKEN_DECIMALS)).toFixed(9));
   };
   const calculatingEthBalances = async () => {
