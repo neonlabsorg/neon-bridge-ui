@@ -6,9 +6,9 @@ import useTransactionHistory from '@/SplConverter/hooks/useTransactionHistory';
 import { useNeonTransfer } from '@/transfer';
 
 export function useTransfering() {
+  const connection = useConnection();
   const { setPending, setSolanaTransferSign, setNeonTransferSign, setError } = useStatesContext();
   const { addTransaction } = useTransactionHistory();
-  const connection = useConnection();
   const { publicKey } = useWallet();
   const { account } = useWeb3React();
   const { deposit, withdraw, getEthereumTransactionParams } = useNeonTransfer({

@@ -1,5 +1,4 @@
 export const enum EvmInstruction {
-
   CreateAccountV02 = 0x18, // 24
   CollectTreasure = 0x1e, // 30
   TransactionExecuteFromData = 0x1f, //  31,

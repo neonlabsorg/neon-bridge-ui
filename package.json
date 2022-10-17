@@ -7,7 +7,10 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "ENV_CONFIG=.env craco build",
+    "build:main": "ENV_CONFIG=.main.env craco build",
+    "build:dev": "ENV_CONFIG=.dev.env craco build",
+    "build:test": "ENV_CONFIG=.test.env craco build",
     "test": "npm-run-all test:*",
     "test:types": "tsc",
     "test:lint": "eslint 'src/**/*.{ts,tsx,js,jsx}'",

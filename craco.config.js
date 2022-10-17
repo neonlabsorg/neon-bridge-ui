@@ -1,7 +1,7 @@
 const path = require('path');
 const VersionFile = require('webpack-version-file');
 const packageJson = require('./package.json');
-require('dotenv').config();
+require('dotenv').config({ path: `./env/${process.env.ENV_CONFIG ?? `.env`}` });
 
 module.exports = {
   webpack: {

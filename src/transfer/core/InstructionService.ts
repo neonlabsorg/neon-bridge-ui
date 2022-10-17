@@ -11,11 +11,13 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/sp
 import Big from 'big.js';
 import Web3 from 'web3';
 import { Account, TransactionConfig } from 'web3-core';
+import { Contract } from 'web3-eth-contract';
 import { SHA256 } from 'crypto-js';
 import { InstructionEvents } from '@/transfer/models/events';
-import { SPLToken } from '@/transfer/models';
-import { NeonProxy } from '@/api/proxy';
+import { NeonProgramStatus, SPLToken } from '@/transfer/models';
 import { etherToProgram, toFullAmount } from '@/transfer/utils/address';
+import { NeonProxyRpcApi } from '@/transfer/api/neon-proxy-rpc';
+import ERC20SPL from '@/transfer/data/abi/erc20.json';
 import { NEON_EVM_LOADER_ID } from '../data';
 
 Big.PE = 42;
@@ -27,7 +29,8 @@ export class InstructionService {
   solanaWalletAddress: PublicKey;
   neonWalletAddress: string;
   web3: Web3;
-  proxyApi: NeonProxy;
+  proxyApi: NeonProxyRpcApi;
+  proxyStatus: NeonProgramStatus;
   connection: Connection;
   events: InstructionEvents;
 
@@ -38,6 +41,7 @@ export class InstructionService {
     }
     this.web3 = options.web3;
     this.proxyApi = options.proxyApi;
+    this.proxyStatus = options.proxyStatus;
     this.solanaWalletAddress = options.solanaWalletAddress || '';
     this.neonWalletAddress = options.neonWalletAddress || '';
     this.connection = options.customConnection instanceof Connection ?
@@ -50,6 +54,10 @@ export class InstructionService {
       onSuccessSign: options.onSuccessSign || noop,
       onErrorSign: options.onErrorSign || noop
     };
+  }
+
+  get contract(): Contract {
+    return new this.web3.eth.Contract(ERC20SPL as any);
   }
 
   get solana() {

@@ -35,7 +35,7 @@ export const TokenManager = () => {
     setTokenManagerOpened(false);
   };
 
-  const currencyBalance = useCallback((token: SPLToken) => {
+  const currencyBalance = useCallback((token: SPLToken): number => {
     if (balances instanceof Map && balances.has(token.address_spl)) {
       const balance = balances.get(token.address_spl);
       return balance[direction];

@@ -6,12 +6,16 @@ import { useWeb3React } from '@web3-react/core';
 
 import { CHAIN_IDS } from '@/connectors';
 import { useNetworkType } from '@/SplConverter/hooks';
-import ERC20_ABI from '@/SplConverter/hooks/abi/ERC20ForSpl.json';
+import ERC20_ABI from '@/transfer/data/abi/erc20.json';
 import { usePrevious } from '@/utils';
 import { useConnection } from './connection';
 import { splTokensList } from '@/contexts/data';
-import { NEON_TOKEN_MINT } from '@/transfer/data';
 import { Direction } from '@/contexts/models';
+import useProxyInfo from '@/transfer/hooks/status';
+import { proxyApi } from '@/transfer/react';
+import { SPLToken } from '@/transfer/models';
+
+const TOKEN_LIST = `https://raw.githubusercontent.com/neonlabsorg/token-list/v${process.env.REACT_APP_TOKEN_LIST}/tokenlist.json`;
 
 export const TokensContext = createContext({
   list: [],
@@ -26,6 +30,8 @@ export const TokensContext = createContext({
 
 export function TokensProvider({ children = undefined }) {
   const { chainId } = useNetworkType();
+  const proxy = useProxyInfo(proxyApi);
+
   const currentChainId = useMemo(() => {
     if (Number.isNaN(chainId)) {
       return CHAIN_IDS['devnet'];
@@ -35,9 +41,10 @@ export function TokensProvider({ children = undefined }) {
   const initialTokenListState = useMemo(() => {
     return splTokensList.map(item => {
       item.chainId = currentChainId;
+      item.address_spl = proxy?.NEON_TOKEN_MINT;
       return item;
     });
-  }, [currentChainId]);
+  }, [currentChainId, proxy]);
   const { publicKey } = useWallet();
   const { library, account } = useWeb3React();
   const prevAccountState = usePrevious(account);
@@ -94,14 +101,13 @@ export function TokensProvider({ children = undefined }) {
     return 0;
   };
 
-  const getEthBalance = async (token) => {
-    if (token.address_spl === NEON_TOKEN_MINT) {
+  const getEthBalance = async (token: SPLToken) => {
+    if (token.address_spl === proxy.NEON_TOKEN_MINT) {
       const balance = await library.eth.getBalance(account);
-      console.log(balance);
       return +(balance / Math.pow(10, token.decimals)).toFixed(4);
     }
 
-    const tokenInstance = new library.eth.Contract(ERC20_ABI['abi'], token.address);
+    const tokenInstance = new library.eth.Contract(ERC20_ABI, token.address);
     const balance = await tokenInstance.methods.balanceOf(account).call();
     return balance / Math.pow(10, token.decimals);
   };
@@ -148,16 +154,13 @@ export function TokensProvider({ children = undefined }) {
   const updateTokenList = () => {
     setTokenErrors({});
     setPending(true);
-    fetch('https://raw.githubusercontent.com/neonlabsorg/token-list/develop/tokenlist.json')
-      .then((resp) => {
-        if (resp.ok) {
-          resp.json().then((data) => mergeTokenList(data.tokens)).catch((err) => setError(err.message));
-        }
-      })
-      .catch((err) => {
-        setError(`Failed to fetch neon transfer token list: ${err.message}`);
-      })
-      .finally(() => setPending(false));
+    fetch(TOKEN_LIST).then((resp) => {
+      if (resp.ok) {
+        resp.json().then((data) => mergeTokenList(data.tokens)).catch((err) => setError(err.message));
+      }
+    }).catch((err) => {
+      setError(`Failed to fetch neon transfer token list: ${err.message}`);
+    }).finally(() => setPending(false));
   };
 
   useEffect(() => {

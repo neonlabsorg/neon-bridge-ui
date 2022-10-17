@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWeb3React } from '@web3-react/core';
-import { NEON_TOKEN_DECIMALS } from '@/transfer/data';
+import { ERC20_GAS_DECIMALS, NEON_TOKEN_DECIMALS } from '@/transfer/data';
 import { useTransfering } from '@/SplConverter/hooks/transfering';
 import { Direction } from '@/contexts/models';
 import { SPLToken } from '@/transfer/models';
@@ -16,7 +16,6 @@ const STEPS = {
 
 const rowSteps = JSON.stringify(STEPS);
 
-const ERC20_GAS_DECIMALS = 18;
 export const StateContext = createContext({
   steps: {},
   token: undefined,
@@ -56,9 +55,9 @@ export function StateProvider({ children = undefined }) {
 
   const maxBalance = useMemo(() => {
     if (balances && token && balances[token.symbol]) {
-      return balances[token.symbol][direction]
-    } else return 0
-  }, [token, balances, direction])
+      return balances[token.symbol][direction];
+    } else return 0;
+  }, [token, balances, direction]);
 
   const finishStep = (stepKey = '') => {
     let activeIndex = null;

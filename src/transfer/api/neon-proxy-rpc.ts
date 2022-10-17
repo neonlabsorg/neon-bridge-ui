@@ -1,10 +1,17 @@
-import { RPCResponse, SettingsFormState } from '@/api/models';
 import Web3 from 'web3';
+import { NeonProgramStatus, RPCResponse, SettingsFormState } from '@/transfer/models';
 
-export class NeonProxy {
+export class NeonProxyRpcApi {
   neonProxyRpcApi = '';
   solanaRpcApi = '';
   web3: Web3;
+
+  constructor(params: SettingsFormState) {
+    const web3Provider = new Web3.providers.HttpProvider(this.neonProxyRpcApi);
+    this.web3 = new Web3(web3Provider);
+    this.neonProxyRpcApi = params.neonProxyRpcApi ?? '';
+    this.solanaRpcApi = params.solanaRpcApi ?? '';
+  }
 
   async rpc<T>(url: string, method: string, params: unknown[] = []): Promise<RPCResponse<T>> {
     const id = Date.now();
@@ -29,10 +36,7 @@ export class NeonProxy {
     return this.proxy<any>('neon_emulate', params).then(d => d.result);
   }
 
-  constructor(params: SettingsFormState) {
-    this.neonProxyRpcApi = params.neonProxyRpcApi ?? '';
-    this.solanaRpcApi = params.solanaRpcApi ?? '';
-    const web3Provider = new Web3.providers.HttpProvider(this.neonProxyRpcApi);
-    this.web3 = new Web3(web3Provider);
+  async evmParams(): Promise<NeonProgramStatus> {
+    return this.proxy<NeonProgramStatus>('neon_getEvmParams', []).then(d => d.result);
   }
 }

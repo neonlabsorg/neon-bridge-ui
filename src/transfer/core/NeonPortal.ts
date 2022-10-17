@@ -3,14 +3,7 @@ import { PublicKey, SystemProgram, Transaction, TransactionInstruction } from '@
 import Big from 'big.js';
 import { SPLToken } from '@/transfer/models';
 import { InstructionService } from './InstructionService';
-import {
-  EvmInstruction,
-  NEON_EVM_LOADER_ID,
-  NEON_TOKEN_DECIMALS,
-  NEON_TOKEN_MINT,
-  NEON_WRAPPER_SOL,
-  SPL_TOKEN_DEFAULT
-} from '../data';
+import { EvmInstruction, NEON_EVM_LOADER_ID, NEON_WRAPPER_SOL, SPL_TOKEN_DEFAULT } from '../data';
 import { TransactionConfig } from 'web3-core';
 
 // Neon-token
@@ -31,7 +24,11 @@ export class NeonPortal extends InstructionService {
       this.emitFunction(events.onCreateNeonAccountInstruction);
     }
 
-    const neonToken: SPLToken = { ...token, decimals: NEON_TOKEN_DECIMALS };
+    // console.log(this.proxyStatus);
+    const neonToken: SPLToken = {
+      ...token,
+      decimals: Number(this.proxyStatus.NEON_TOKEN_MINT_DECIMALS)
+    };
     const { createApproveInstruction } = await this.approveDepositInstruction(solanaWallet, neonWallet, neonToken, amount);
     transaction.add(createApproveInstruction);
 
@@ -49,7 +46,7 @@ export class NeonPortal extends InstructionService {
   }
 
   async createDepositInstruction(solanaPubkey: PublicKey, neonPubkey: PublicKey, depositPubkey: PublicKey, neonWalletAddress: string): Promise<TransactionInstruction> {
-    const neonTokenMint = new PublicKey(NEON_TOKEN_MINT);
+    const neonTokenMint = new PublicKey(this.proxyStatus.NEON_TOKEN_MINT);
     const solanaAssociatedTokenAddress = await Token.getAssociatedTokenAddress(
       ASSOCIATED_TOKEN_PROGRAM_ID,
       TOKEN_PROGRAM_ID,

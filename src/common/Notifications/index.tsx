@@ -1,82 +1,75 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { useTransition } from 'react-spring'
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { useTransition } from 'react-spring';
 
-import { useStatesContext } from '@/contexts/states'
-import { ReactComponent as CrossIcon } from '@/assets/cross.svg'
-import { ReactComponent as ErrorIcon } from '@/assets/notifications/error_icon.svg'
-import { ReactComponent as InfoIcon } from '@/assets/notifications/info_icon.svg'
-import { ReactComponent as SuccessIcon } from '@/assets/notifications/success_icon.svg'
+import { useStatesContext } from '@/contexts/states';
+import { ReactComponent as CrossIcon } from '@/assets/cross.svg';
+import { ReactComponent as ErrorIcon } from '@/assets/notifications/error_icon.svg';
+import { ReactComponent as InfoIcon } from '@/assets/notifications/info_icon.svg';
+import { ReactComponent as SuccessIcon } from '@/assets/notifications/success_icon.svg';
 
 const ICONS = {
   SUCCESS: SuccessIcon,
   INFO: InfoIcon,
-  ERROR: ErrorIcon,
-}
+  ERROR: ErrorIcon
+};
 
-const ToastContext = React.createContext(null)
+const ToastContext = React.createContext(null);
 
-let id = 1
+let id = 1;
 
 const ToastProvider = ({ children }) => {
-  const [toasts, setToasts] = useState([])
+  const [toasts, setToasts] = useState([]);
 
-  const addToast = useCallback(
-    (content, type = 'SUCCESS') => {
+  const addToast = useCallback((content, type = 'SUCCESS') => {
       setToasts((toasts) => [
         {
           id: id++,
           content,
-          type,
+          type
         },
-        ...toasts,
-      ])
+        ...toasts
+      ]);
     },
-    [setToasts],
-  )
+    [setToasts]);
 
-  const removeToast = useCallback(
-    (id) => {
-      setToasts((toasts) => toasts.filter((t) => t.id !== id))
+  const removeToast = useCallback((id) => {
+      setToasts((toasts) => toasts.filter((t) => t.id !== id));
     },
     // eslint-disable-next-line
-    [setToasts],
-  )
+    [setToasts]);
 
   return (
     <ToastContext.Provider
       value={{
         addToast,
-        removeToast,
+        removeToast
       }}
     >
       <ToastContainer toasts={toasts} />
       {children}
     </ToastContext.Provider>
-  )
-}
+  );
+};
 
 const useToast = () => {
-  const context = useContext(ToastContext)
-
-  return context
-}
+  return useContext(ToastContext);
+};
 
 const Toast = ({ children, id, type, style }) => {
-  const { removeToast } = useToast()
-
-  const { theme } = useStatesContext()
+  const { removeToast } = useToast();
+  const { theme } = useStatesContext();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      removeToast(id)
-    }, 20000)
+      removeToast(id);
+    }, 20000);
 
     return () => {
-      clearTimeout(timer)
-    }
-  }, [id, removeToast])
+      clearTimeout(timer);
+    };
+  }, [id, removeToast]);
 
-  const Icon = ICONS[type]
+  const Icon = ICONS[type];
 
   return (
     <div
@@ -98,15 +91,15 @@ const Toast = ({ children, id, type, style }) => {
         <CrossIcon />
       </div>
     </div>
-  )
-}
+  );
+};
 
 const ToastContainer = ({ toasts }) => {
   const transitions = useTransition(toasts, (toast) => toast.id, {
     from: { left: '-100%' },
     enter: { left: '0%' },
-    leave: { left: '-100%' },
-  })
+    leave: { left: '-100%' }
+  });
 
   return (
     <div className='fixed flex flex-col justify-end left-6 z-10 top-0 bottom-0 h-full'>
@@ -116,7 +109,7 @@ const ToastContainer = ({ toasts }) => {
         </Toast>
       ))}
     </div>
-  )
-}
+  );
+};
 
-export { ToastContainer, ToastProvider, useToast }
+export { ToastContainer, ToastProvider, useToast };

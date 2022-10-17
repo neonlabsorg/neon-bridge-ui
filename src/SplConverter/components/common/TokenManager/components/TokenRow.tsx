@@ -8,8 +8,9 @@ import { ReactComponent as MetamaskIcon } from '@/assets/metamask.svg';
 import { ReactComponent as PhantomIcon } from '@/assets/phantom.svg';
 import { Direction } from '@/contexts/models';
 import { TokenSymbol } from './TokenSymbol';
+import { SPLToken } from '@/transfer/models';
 
-export const TokenRow = (data) => {
+export const TokenRow = (data: { token: SPLToken, balance: number, onClick: (e: any) => void }) => {
   const {
     token = {
       logoURI: '',

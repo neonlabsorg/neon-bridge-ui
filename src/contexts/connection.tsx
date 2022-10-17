@@ -40,7 +40,7 @@ export function ConnectionProvider({ children = undefined }) {
   );
 }
 
-export function useConnection() {
+export function useConnection(): Connection {
   return useContext(ConnectionContext).connection;
 }
 

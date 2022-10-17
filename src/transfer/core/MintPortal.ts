@@ -10,19 +10,9 @@ import {
 import { Account, SignedTransaction, TransactionConfig, TransactionReceipt } from 'web3-core';
 import { Buffer } from 'buffer';
 
-import ERC20SPL from '@/SplConverter/hooks/abi/ERC20ForSpl.json';
 import { SPLToken } from '@/transfer/models';
 import { etherToProgram, toBytesInt32, toFullAmount } from '@/transfer/utils/address';
-import {
-  COLLATERALL_POOL_MAX,
-  COMPUTE_BUDGET_ID,
-  EvmInstruction,
-  NEON_COMPUTE_UNITS,
-  NEON_EVM_LOADER_ID,
-  NEON_HEAP_FRAME,
-  NEON_POOL_BASE,
-  SPL_TOKEN_DEFAULT
-} from '../data';
+import { COMPUTE_BUDGET_ID, EvmInstruction, NEON_EVM_LOADER_ID, SPL_TOKEN_DEFAULT } from '../data';
 import { InstructionService } from './InstructionService';
 
 // ERC-20 tokens
@@ -71,7 +61,7 @@ export class MintPortal extends InstructionService {
 
     try {
       const signedTransaction = await this.solana.signTransaction(transaction);
-      const sign = await this.connection.sendRawTransaction(signedTransaction.serialize(), { skipPreflight: true });
+      const sign = await this.connection.sendRawTransaction(signedTransaction.serialize(), { skipPreflight: false });
       this.emitFunction(events.onSuccessSign, sign);
     } catch (e) {
       this.emitFunction(events.onErrorSign, e);
@@ -95,7 +85,7 @@ export class MintPortal extends InstructionService {
 
   computeBudgetUtilsInstruction(programId: PublicKey): TransactionInstruction {
     const a = Buffer.from([0x00]);
-    const b = Buffer.from(toBytesInt32(NEON_COMPUTE_UNITS));
+    const b = Buffer.from(toBytesInt32(parseInt(this.proxyStatus.NEON_COMPUTE_UNITS)));
     const c = Buffer.from(toBytesInt32(0));
     const data = Buffer.concat([a, b, c]);
     return new TransactionInstruction({ programId, data, keys: [] });
@@ -103,16 +93,15 @@ export class MintPortal extends InstructionService {
 
   computeBudgetHeapFrameInstruction(programId: PublicKey): TransactionInstruction {
     const a = new Buffer([0x01]);
-    const b = Buffer.from(toBytesInt32(NEON_HEAP_FRAME));
+    const b = Buffer.from(toBytesInt32(parseInt(this.proxyStatus.NEON_HEAP_FRAME)));
     const data = Buffer.concat([a, b]);
     return new TransactionInstruction({ programId, data, keys: [] });
   }
 
   async createClaimInstruction(owner: PublicKey, from: PublicKey, to: string, splToken: SPLToken, emulateSigner: Account, amount: any): Promise<{ neonKeys: AccountMeta[], neonTransaction: SignedTransaction, emulateSigner: Account, nonce: number }> {
     const nonce = await this.web3.eth.getTransactionCount(emulateSigner.address);
-    const contract = new this.web3.eth.Contract(ERC20SPL['abi'] as any);
-    const claimTransaction = contract.methods.claimTo(from.toBytes(), to, amount).encodeABI();
     try {
+      const claimTransaction = this.contract.methods.claimTo(from.toBytes(), to, amount).encodeABI();
       const transaction: TransactionConfig = {
         nonce: nonce,
         gas: `0x5F5E100`, // 100000000
@@ -157,7 +146,8 @@ export class MintPortal extends InstructionService {
 
   async makeTrExecFromDataIx(neonAddress: PublicKey, neonRawTransaction: string, neonKeys: AccountMeta[]): Promise<TransactionInstruction> {
     const programId = new PublicKey(NEON_EVM_LOADER_ID);
-    const treasuryPoolIndex = Math.floor(Math.random() * COLLATERALL_POOL_MAX) % COLLATERALL_POOL_MAX;
+    const count = 10; // Number(this.proxyStatus.NEON_POOL_COUNT);
+    const treasuryPoolIndex = Math.floor(Math.random() * count) % count;
     const treasuryPoolAddress = await this.createCollateralPoolAddress(treasuryPoolIndex);
     const a = Buffer.from([EvmInstruction.TransactionExecuteFromData]);
     const b = Buffer.from(toBytesInt32(treasuryPoolIndex));
@@ -177,15 +167,14 @@ export class MintPortal extends InstructionService {
 
   async createCollateralPoolAddress(collateralPoolIndex: number): Promise<PublicKey> {
     const seed = `collateral_seed_${collateralPoolIndex}`;
-    const collateralPoolBase = new PublicKey(NEON_POOL_BASE);
+    const collateralPoolBase = new PublicKey(this.proxyStatus.NEON_POOL_BASE);
     return PublicKey.createWithSeed(collateralPoolBase, seed, new PublicKey(NEON_EVM_LOADER_ID));
   }
 
   async createNeonTransaction(neonWallet: string, solanaWallet: PublicKey, splToken: SPLToken, amount: number): Promise<TransactionReceipt> {
     const nonce = await this.web3.eth.getTransactionCount(neonWallet);
-    const contract = new this.web3.eth.Contract(ERC20SPL['abi'] as any);
     const fullAmount = toFullAmount(amount, splToken.decimals);
-    const data = contract.methods.transferSolana(solanaWallet.toBytes(), fullAmount).encodeABI();
+    const data = this.contract.methods.transferSolana(solanaWallet.toBytes(), fullAmount).encodeABI();
     const transaction: TransactionConfig = {
       nonce,
       from: neonWallet,

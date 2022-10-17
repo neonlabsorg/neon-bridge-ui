@@ -17,6 +17,10 @@ export const CurrencyInput = ({ className = '' }) => {
     if (isSafe) setAmount(amount);
   }, [inputAmount, setAmount]);
 
+  useEffect(() => {
+    setInputAmount('0.0');
+  }, [token]);
+
   const enforcer = (nextUserInput: string): void => {
     const amount = Number(nextUserInput);
     const isSafe = Number.isFinite(amount) && Number.isSafeInteger(amount * Math.pow(10, 9));

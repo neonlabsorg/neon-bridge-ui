@@ -33,6 +33,8 @@ export function Confirm() {
     if (error) {
       addToast(error, 'ERROR');
     }
+    return () => {
+    };
   }, [error]);
 
   return (
