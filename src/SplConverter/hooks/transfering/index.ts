@@ -1,22 +1,22 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWeb3React } from '@web3-react/core';
+import { useNeonTransfer } from 'neon-portal/dist';
 import { useConnection } from '@/contexts/connection';
 import { useStatesContext } from '@/contexts/states';
 import useTransactionHistory from '@/SplConverter/hooks/useTransactionHistory';
-import { useNeonTransfer } from '@/transfer';
 
 export function useTransfering() {
   const connection = useConnection();
   const { setPending, setSolanaTransferSign, setNeonTransferSign, setError } = useStatesContext();
   const { addTransaction } = useTransactionHistory();
   const { publicKey } = useWallet();
-  const { account } = useWeb3React();
+  const { account, library } = useWeb3React();
   const { deposit, withdraw, getEthereumTransactionParams } = useNeonTransfer({
       onBeforeCreateInstruction: () => {
         setPending(true);
       },
       onBeforeSignTransaction: () => {
-        setPending(true)
+        setPending(true);
       },
       onSuccessSign: (sig, txHash) => {
         if (sig) {
@@ -33,7 +33,10 @@ export function useTransfering() {
         setPending(false);
       }
     },
-    connection
+    connection,
+    library,
+    publicKey,
+    account
   );
 
   return { deposit, withdraw, getEthereumTransactionParams };

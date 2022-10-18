@@ -16,8 +16,7 @@ export const Target = () => {
   const { publicKey } = useWallet();
 
   const isDisabled = useMemo(() => {
-    return (direction === Direction.neon && !active && depositFee > solBalance) ||
-      (direction === Direction.solana && !publicKey);
+    return !active || depositFee > solBalance || !publicKey;
   }, [direction, active, depositFee, solBalance, publicKey]);
 
   return <div className='w-full flex flex-col'>

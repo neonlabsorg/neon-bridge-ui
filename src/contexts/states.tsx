@@ -1,10 +1,9 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { NEON_TOKEN_DECIMALS, SPLToken, ERC20_GAS_DECIMALS } from 'neon-portal/dist';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWeb3React } from '@web3-react/core';
-import { ERC20_GAS_DECIMALS, NEON_TOKEN_DECIMALS } from '@/transfer/data';
 import { useTransfering } from '@/SplConverter/hooks/transfering';
 import { Direction } from '@/contexts/models';
-import { SPLToken } from '@/transfer/models';
 import { useConnection } from './connection';
 import { useTokensContext } from './tokens';
 

@@ -1,5 +1,5 @@
-import { SPLToken } from '@/transfer/models';
-import { NEON_TOKEN_MINT, NEON_TOKEN_MINT_DECIMALS } from '@/transfer/data';
+import { SPLToken } from 'neon-portal/src/models/token';
+import { NEON_TOKEN_MINT_DECIMALS } from 'neon-portal';
 
 export const NEON_TOKEN_MODEL: SPLToken = {
   chainId: 0,

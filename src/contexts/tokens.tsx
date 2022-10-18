@@ -3,17 +3,13 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/sp
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { useWeb3React } from '@web3-react/core';
-
+import { erc20Abi, proxyApi, SPLToken, useProxyInfo } from 'neon-portal/dist';
 import { CHAIN_IDS } from '@/connectors';
 import { useNetworkType } from '@/SplConverter/hooks';
-import ERC20_ABI from '@/transfer/data/abi/erc20.json';
-import { usePrevious } from '@/utils';
-import { useConnection } from './connection';
 import { splTokensList } from '@/contexts/data';
 import { Direction } from '@/contexts/models';
-import useProxyInfo from '@/transfer/hooks/status';
-import { proxyApi } from '@/transfer/react';
-import { SPLToken } from '@/transfer/models';
+import { usePrevious } from '@/utils';
+import { useConnection } from './connection';
 
 const TOKEN_LIST = `https://raw.githubusercontent.com/neonlabsorg/token-list/v${process.env.REACT_APP_TOKEN_LIST}/tokenlist.json`;
 
@@ -53,20 +49,15 @@ export function TokensProvider({ children = undefined }) {
   const [list, setTokenList] = useState(initialTokenListState);
   const [pending, setPending] = useState(false);
   const [tokenManagerOpened, setTokenManagerOpened] = useState(false);
-
   const [error, setError] = useState('');
-
   const [tokenErrors, setTokenErrors] = useState({});
-
   const [balances, setBalances] = useState({});
   const addBalance = (symbol, balance) => {
     balances[symbol] = balance;
     setBalances({ ...balances });
   };
 
-  const timeout = (ms) => {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  };
+  const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
   const getSplBalance = async (token) => {
     const pubkey = new PublicKey(token.address_spl);
@@ -107,7 +98,7 @@ export function TokensProvider({ children = undefined }) {
       return +(balance / Math.pow(10, token.decimals)).toFixed(4);
     }
 
-    const tokenInstance = new library.eth.Contract(ERC20_ABI, token.address);
+    const tokenInstance = new library.eth.Contract(erc20Abi, token.address);
     const balance = await tokenInstance.methods.balanceOf(account).call();
     return balance / Math.pow(10, token.decimals);
   };
@@ -142,13 +133,10 @@ export function TokensProvider({ children = undefined }) {
   };
 
   const refreshTokenList = async () => {
-    await Promise.all([setTokenList(initialTokenListState), timeout(20), updateTokenList()]).catch(
-      (e) => {
-        console.warn(e);
-
-        return e;
-      }
-    );
+    await Promise.all([setTokenList(initialTokenListState), timeout(20), updateTokenList()]).catch((e) => {
+      console.warn(e);
+      return e;
+    });
   };
 
   const updateTokenList = () => {
@@ -173,19 +161,17 @@ export function TokensProvider({ children = undefined }) {
   }, [account, publicKey]);
 
   return (
-    <TokensContext.Provider
-      value={{
-        list,
-        pending,
-        error,
-        tokenErrors,
-        balances,
-        tokenManagerOpened,
-        // @ts-ignore
-        setTokenManagerOpened,
-        refreshTokenList
-      }}
-    >
+    <TokensContext.Provider value={{
+      list,
+      pending,
+      error,
+      tokenErrors,
+      balances,
+      tokenManagerOpened,
+      // @ts-ignore
+      setTokenManagerOpened,
+      refreshTokenList
+    }}>
       {children}
     </TokensContext.Provider>
   );

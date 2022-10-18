@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWeb3React } from '@web3-react/core';
+import { SPLToken } from 'neon-portal';
 import { useStatesContext } from '@/contexts/states';
 import { useTokensContext } from '@/contexts/tokens';
 import { ReactComponent as LoaderIcon } from '@/assets/loader.svg';
@@ -8,7 +9,6 @@ import { ReactComponent as MetamaskIcon } from '@/assets/metamask.svg';
 import { ReactComponent as PhantomIcon } from '@/assets/phantom.svg';
 import { Direction } from '@/contexts/models';
 import { TokenSymbol } from './TokenSymbol';
-import { SPLToken } from '@/transfer/models';
 
 export const TokenRow = (data: { token: SPLToken, balance: number, onClick: (e: any) => void }) => {
   const {

@@ -6,7 +6,7 @@ import { useTokensContext } from '@/contexts/tokens';
 import { ReactComponent as LoaderIcon } from '@/assets/loader.svg';
 import { SearchInput } from './components/SearchInput';
 import { TokenRow } from './components/TokenRow';
-import { SPLToken } from '@/transfer/models';
+import { SPLToken } from 'neon-portal';
 
 Modal.setAppElement('#root');
 

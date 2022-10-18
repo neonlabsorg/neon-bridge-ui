@@ -27,12 +27,11 @@
     "bn.js": "^5.2.1",
     "bowser": "2.11.0",
     "classnames": "2.2.5",
-    "neon-portal": "1.5.2",
+    "neon-portal": "https://github.com/neonlabsorg/neon-client-transfer.git#v2.0.0-alpha",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-modal": "3.14.4",
     "react-spring": "8.0.27",
-    "typescript": "4.1.6",
     "web3": "1.6.1"
   },
   "devDependencies": {
@@ -61,6 +60,7 @@
     "sass": "1.44.0",
     "style-loader": "3.3.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@2.2.17",
+    "typescript": "4.1.6",
     "webpack-bundle-analyzer": "4.5.0",
     "webpack-version-file": "0.1.7"
   },
