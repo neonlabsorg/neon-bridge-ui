@@ -36,11 +36,11 @@ export const CurrencyInput = ({ className = '' }) => {
     className={`inline-flex bg-light-gray dark:bg-dark-500 px-4 items-center justify-between ${className}`}
     style={{ height: '80px' }}>
     <div className='flex flex-col justify-center'>
-      <div onClick={() => setTokenManagerOpened(true)}
+      <button onClick={() => setTokenManagerOpened(true)}
            className='flex-grow flex items-center text-lg cursor-pointer'>
         {token ? token.name : 'Select a token'}
         <DropDownIcon className='ml-2 svg-fill' />
-      </div>
+      </button>
       {token && <div className='flex items-center'>
         <span className='text-sm text-grey'>{`Balance: ${maxBalance} ${token.symbol}`}</span>
         <span className='text-blue-main text-sm ml-2 p-1 cursor-pointer leading-none'

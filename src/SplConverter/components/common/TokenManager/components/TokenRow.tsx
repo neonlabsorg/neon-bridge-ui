@@ -66,15 +66,15 @@ export const TokenRow = (data: { token: SPLToken, balance: number, onClick: (e: 
   const tokenClasses = useMemo(() => {
     const hover = isDisabled ? 'pointer-events-none opacity-70 transition ease-in-out delay-150' :
       `cursor-pointer hover:bg-gray-${theme === 'light' ? '100' : '600'}`;
-    return `flex pl-4 pr-6 py-2 justify-between dark:text-white ${hover}`;
+    return `flex w-full pl-4 pr-6 py-2 justify-between dark:text-white ${hover}`;
   }, [isDisabled, theme]);
 
-  return <div className={tokenClasses} onClick={onClick}>
+  return <button className={tokenClasses} onClick={onClick}>
     <div className='flex items-center w-3/4 pr-2'>
       <div className='w-1/5 pr-2 text-center'>
         <TokenSymbol src={token.logoURI} alt={token.name} style={{ width: 36, height: 36 }} />
       </div>
-      <div className='w-4/5 flex flex-col'>
+      <div className='w-4/5 flex text-left flex-col'>
         <div className='text-lg'>{token.symbol}</div>
         <div className='text-sm text-gray-500 leading-none'>{token.name}</div>
       </div>
@@ -82,5 +82,5 @@ export const TokenRow = (data: { token: SPLToken, balance: number, onClick: (e: 
     <div className='w-1/4 pl-2 text-sm flex items-center justify-end'>
       <div className='flex flex-col items-end'>{renderCurrencyBalance}</div>
     </div>
-  </div>;
+  </button>;
 };

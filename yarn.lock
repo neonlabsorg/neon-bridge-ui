@@ -9400,9 +9400,9 @@ neo-async@^2.5.0, neo-async@^2.6.1, neo-async@^2.6.2:
     "@solana/web3.js" "^1.66.1"
     big.js "^6.2.1"
 
-"neon-portal@https://github.com/neonlabsorg/neon-client-transfer.git#v2.0.0-alpha.2":
+"neon-portal@https://github.com/neonlabsorg/neon-client-transfer.git#v2.0.0-alpha.3":
   version "2.0.0"
-  resolved "https://github.com/neonlabsorg/neon-client-transfer.git#bbf9836a945fea994c5dc4bbdc9cafacb1a10233"
+  resolved "https://github.com/neonlabsorg/neon-client-transfer.git#a3441b7049cc1438932595420dd681cb9295c294"
   dependencies:
     "@solana/spl-token" "^0.1.8"
     "@solana/web3.js" "^1.66.1"

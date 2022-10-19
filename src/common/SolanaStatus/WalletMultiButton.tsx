@@ -32,14 +32,14 @@ export const WalletMultiButton: FC<ButtonProps> = ({ children, ...props }) => {
       trigger={<Button className='wallet-adapter-button-trigger w-full' {...props}>
         {content}
       </Button>}>
-      <ul aria-label='dropdown-list' role='menu'>
-        <li onClick={copyAddress} className='dropdown__item' role='menuitem'>
+      <div aria-label='dropdown-list' role='menu'>
+        <button onClick={copyAddress} className='dropdown__item' role='menuitem'>
           {copied ? 'Copied' : 'Copy address'}
-        </li>
-        <li onClick={disconnect} className='dropdown__item' role='menuitem'>
+        </button>
+        <button onClick={disconnect} className='dropdown__item' role='menuitem'>
           Disconnect
-        </li>
-      </ul>
+        </button>
+      </div>
     </Dropdown>
   );
 };
