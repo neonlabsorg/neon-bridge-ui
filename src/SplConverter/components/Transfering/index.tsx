@@ -1,34 +1,33 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react';
+import { ReactComponent as CloseIcon } from '@/assets/close.svg';
+import { ReactComponent as DoneIcon } from '@/assets/done.svg';
+import { ReactComponent as LoaderIcon } from '@/assets/loader.svg';
+import { useStatesContext } from '@/contexts/states';
+import Button from '@/common/Button';
 
-import Button from '@/common/Button'
-import { useStatesContext } from '@/contexts/states'
-import { ReactComponent as CloseIcon } from '@/assets/close.svg'
-import { ReactComponent as DoneIcon } from '@/assets/done.svg'
-import { ReactComponent as LoaderIcon } from '@/assets/loader.svg'
-const { REACT_APP_NETWORK } = process.env
+const { REACT_APP_NETWORK } = process.env;
 
 const ASSOC_TX_EXPLORERS = {
   'devnet': 'https://neonscan.org',
   'testnet': 'https://neonscan.org',
-  'mainnet-beta': 'https://neonscan.org',
-}
+  'mainnet-beta': 'https://neonscan.org'
+};
 
-export const Transfering = () => {
-  const { pending, solanaTransferSign, neonTransferSign, resetStates } = useStatesContext()
+export function Transferring() {
+  const { pending, solanaTransferSign, neonTransferSign, resetStates } = useStatesContext();
   const handleRepeatScript = () => {
-    resetStates()
-  }
-  const [reset, setReset] = useState(false)
-  const timeout = useRef(null)
+    resetStates();
+  };
+  const [reset, setReset] = useState(false);
+  const timeout = useRef(null);
   useEffect(() => {
-    if (pending === false) return
+    if (pending === false) return;
     timeout.current = setTimeout(() => {
-      setReset(true)
-      timeout.current = null
-    }, 30000)
-
-    return () => (timeout.current = null)
-  }, [pending])
+      setReset(true);
+      timeout.current = null;
+    }, 30000);
+    return () => clearTimeout(timeout.current);
+  }, [pending]);
 
   if (pending) {
     return (
@@ -50,14 +49,13 @@ export const Transfering = () => {
           ) : null}
         </div>
       </div>
-    )
+    );
   } else if (solanaTransferSign || neonTransferSign) {
     return (
       <div className='flex flex-col items-center min-w-420px p-6 bg-white dark:bg-dark-600'>
-        <CloseIcon
-          className='self-end mb-10 cursor-pointer fill-black dark:fill-white'
-          onClick={handleRepeatScript}
-        />
+        <button onClick={handleRepeatScript} className='self-end mb-10 cursor-pointer fill-black dark:fill-white' >
+          <CloseIcon />
+        </button>
         <DoneIcon className='mb-10' />
         <div className='font-medium text-xl mb-6'>Transfer complete</div>
         {neonTransferSign ? (
@@ -81,8 +79,8 @@ export const Transfering = () => {
           </a>
         ) : null}
       </div>
-    )
+    );
   } else {
-    return <></>
+    return <></>;
   }
 }

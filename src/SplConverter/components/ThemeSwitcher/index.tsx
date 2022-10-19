@@ -1,14 +1,12 @@
-import { useStatesContext } from '@/contexts/states'
-import { ReactComponent as SwitchIcon } from '@/assets/theme-switcher.svg'
+import { useStatesContext } from '@/contexts/states';
+import { ReactComponent as SwitchIcon } from '@/assets/theme-switcher.svg';
 
 const ThemeSwitcher = () => {
-  const { toggleTheme } = useStatesContext()
+  const { toggleTheme } = useStatesContext();
 
-  return (
-    <div>
-      <SwitchIcon className='theme-switcher' onClick={() => toggleTheme()} />
-    </div>
-  )
-}
+  return <button className='theme-switcher' onClick={() => toggleTheme()}>
+    <SwitchIcon />
+  </button>;
+};
 
-export default ThemeSwitcher
+export default ThemeSwitcher;

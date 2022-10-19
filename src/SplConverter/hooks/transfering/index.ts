@@ -1,38 +1,46 @@
-import { useWallet } from '@solana/wallet-adapter-react'
-import { useWeb3React } from '@web3-react/core'
-import { useNeonTransfer } from 'neon-portal/src/react'
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useWeb3React } from '@web3-react/core';
+import { useNeonTransfer } from 'neon-portal';
+import { useConnection } from '@/contexts/connection';
+import { useStatesContext } from '@/contexts/states';
+import useTransactionHistory from '@/SplConverter/hooks/useTransactionHistory';
+import { useTokensContext } from '@/contexts/tokens';
 
-import { useConnection } from '@/contexts/connection'
-import { useStatesContext } from '@/contexts/states'
-import useTransactionHistory from '@/SplConverter/hooks/useTransactionHistory'
-
-export const useTransfering = () => {
-  const { setPending, setSolanaTransferSign, setNeonTransferSign, setError } = useStatesContext()
-  const { addTransaction } = useTransactionHistory()
-  const connection = useConnection()
-  const { publicKey } = useWallet()
-  const { account } = useWeb3React()
-  const { deposit, withdraw, getEthereumTransactionParams } = useNeonTransfer(
-    {
+export function useTransfering() {
+  const connection = useConnection();
+  const { setPending, setSolanaTransferSign, setNeonTransferSign, setError } = useStatesContext();
+  const { addTransaction } = useTransactionHistory();
+  const { refreshTokenList } = useTokensContext();
+  const { publicKey } = useWallet();
+  const { account, library } = useWeb3React();
+  const { deposit, withdraw, getEthereumTransactionParams } = useNeonTransfer({
       onBeforeCreateInstruction: () => {
-        setPending(true)
+        setPending(true);
       },
       onBeforeSignTransaction: () => {
-        setPending(true)
+        setPending(true);
       },
       onSuccessSign: (sig, txHash) => {
-        if (sig) setSolanaTransferSign(sig)
-        if (txHash) setNeonTransferSign(txHash)
-        addTransaction({ from: publicKey.toBase58(), to: account })
-        setPending(false)
+        if (sig) {
+          setSolanaTransferSign(sig);
+        }
+        if (txHash) {
+          setNeonTransferSign(txHash);
+        }
+        addTransaction({ from: publicKey.toBase58(), to: account });
+        setPending(false);
+        refreshTokenList();
       },
       onErrorSign: (e) => {
-        setError(e.message)
-        setPending(false)
-      },
+        setError(e.message);
+        setPending(false);
+      }
     },
     connection,
-  )
+    library,
+    publicKey,
+    account
+  );
 
-  return { deposit, withdraw, getEthereumTransactionParams }
+  return { deposit, withdraw, getEthereumTransactionParams };
 }

@@ -5,30 +5,25 @@ module.exports = {
     screens: {
       xs: {
         min: '0px',
-        max: '639px',
+        max: '639px'
       },
       sm: '640px',
-      // => @media (min-width: 640px) { ... }
-
       md: '1024px',
-      // => @media (min-width: 1024px) { ... }
-
-      lg: '1280px',
-      // => @media (min-width: 1280px) { ... }
+      lg: '1280px'
     },
     extend: {
       width: {
-        '18px': '18px',
+        '18px': '18px'
       },
       maxWidth: {
-        '420px': '420px',
+        '420px': '420px'
       },
       maxHeight: {
-        '3/4': '75%',
+        '3/4': '75%'
       },
       height: {
         '18px': '18px',
-        '64px': '64px',
+        '64px': '64px'
       },
       colors: {
         'ocean-blue': 'rgba(94,118,153, 0.15)',
@@ -46,16 +41,16 @@ module.exports = {
         'dark-200': '#5B5B5B',
         'op04-white': 'rgba(255, 255, 255, 0.04)',
         'op15-white': 'rgba(255, 255, 255, 0.15)',
-        'op15-black': 'rgba(0, 0, 0, 0.15)',
-      },
+        'op15-black': 'rgba(0, 0, 0, 0.15)'
+      }
     },
     fill: {
       white: '#fff',
-      black: '#151515',
-    },
+      black: '#151515'
+    }
   },
   variants: {
-    extend: {},
+    extend: {}
   },
-  plugins: [],
-}
+  plugins: []
+};

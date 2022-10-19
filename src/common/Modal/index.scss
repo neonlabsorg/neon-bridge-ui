@@ -20,7 +20,6 @@
   position: relative;
   z-index: 2;
   display: flex;
-  padding-top: 24px;
   flex-direction: column;
   @apply bg-white dark:bg-black;
   &--cutted-corner {

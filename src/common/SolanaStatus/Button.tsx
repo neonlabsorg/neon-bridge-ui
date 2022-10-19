@@ -1,17 +1,18 @@
-import React, { CSSProperties, FC, MouseEvent, ReactElement } from 'react'
+import React, { CSSProperties, FC, MouseEvent, ReactElement } from 'react';
 
 export interface ButtonProps {
-  className?: string
-  disabled?: boolean
-  endIcon?: ReactElement
-  onClick?: (e: MouseEvent<HTMLButtonElement>) => void
-  startIcon?: ReactElement
-  style?: CSSProperties
-  tabIndex?: number
+  className?: string;
+  disabled?: boolean;
+  endIcon?: ReactElement;
+  onClick?: (e: MouseEvent<HTMLButtonElement>) => void;
+  startIcon?: ReactElement;
+  style?: CSSProperties;
+  tabIndex?: number;
+  children: any;
 }
 
 export const Button: FC<ButtonProps> = (props) => {
-  const justifyContent = props.endIcon || props.startIcon ? 'space-between' : 'center'
+  const justifyContent = props.endIcon || props.startIcon ? 'space-between' : 'center';
 
   return (
     <button
@@ -24,5 +25,5 @@ export const Button: FC<ButtonProps> = (props) => {
     >
       {props.children}
     </button>
-  )
-}
+  );
+};
