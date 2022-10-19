@@ -1,6 +1,6 @@
 {
   "name": "neon-bridge-ui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "engines": {
     "node": ">=16.14.0"
@@ -28,7 +28,7 @@
     "bn.js": "^5.2.1",
     "bowser": "2.11.0",
     "classnames": "2.2.5",
-    "neon-portal": "https://github.com/neonlabsorg/neon-client-transfer.git#v2.0.0-alpha.3",
+    "neon-portal": "^1.6.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-modal": "3.14.4",

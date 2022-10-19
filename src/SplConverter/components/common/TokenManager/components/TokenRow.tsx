@@ -66,10 +66,10 @@ export const TokenRow = (data: { token: SPLToken, balance: number, onClick: (e: 
   const tokenClasses = useMemo(() => {
     const hover = isDisabled ? 'pointer-events-none opacity-70 transition ease-in-out delay-150' :
       `cursor-pointer hover:bg-gray-${theme === 'light' ? '100' : '600'}`;
-    return `flex w-full pl-4 pr-6 py-2 justify-between dark:text-white ${hover}`;
+    return `flex w-full items-center pl-4 pr-6 py-2 justify-between dark:text-white ${hover}`;
   }, [isDisabled, theme]);
 
-  return <button className={tokenClasses} onClick={onClick}>
+  return <button className={tokenClasses} onClick={onClick} disabled={isDisabled}>
     <div className='flex items-center w-3/4 pr-2'>
       <div className='w-1/5 pr-2 text-center'>
         <TokenSymbol src={token.logoURI} alt={token.name} style={{ width: 36, height: 36 }} />
