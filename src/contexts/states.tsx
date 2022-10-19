@@ -1,11 +1,12 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { NEON_TOKEN_DECIMALS, SPLToken, ERC20_GAS_DECIMALS } from 'neon-portal/dist';
+import { ERC20_GAS_DECIMALS, NEON_TOKEN_DECIMALS, SPLToken } from 'neon-portal/dist';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWeb3React } from '@web3-react/core';
 import { useTransfering } from '@/SplConverter/hooks/transfering';
 import { Direction } from '@/contexts/models';
 import { useConnection } from './connection';
 import { useTokensContext } from './tokens';
+import { useTheme } from '@/contexts/theme';
 
 const STEPS = {
   source: { title: 'Source', status: 'active' },
@@ -46,7 +47,7 @@ export function StateProvider({ children = undefined }) {
   const [token, setToken] = useState<SPLToken>(null);
   const [steps, setSteps] = useState(JSON.parse(rowSteps));
   const [direction, setDirection] = useState<Direction>(Direction.neon);
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useTheme();
   const rejected = useRef(false);
   const { getEthereumTransactionParams } = useTransfering();
   const toggleDirection = () => setDirection(direction === Direction.neon ? Direction.solana : Direction.neon);
@@ -99,14 +100,7 @@ export function StateProvider({ children = undefined }) {
     setSteps(currentSteps);
   };
   const toggleTheme = () => {
-    const { classList } = document.documentElement;
-    if (theme === 'light') {
-      classList.add('dark');
-      setTheme('dark');
-    } else {
-      classList.remove('dark');
-      setTheme('light');
-    }
+    setTheme();
   };
   const resetStates = () => {
     setSolanaTransferSign('');
@@ -134,10 +128,9 @@ export function StateProvider({ children = undefined }) {
       const instruction = getEthereumTransactionParams(amount, token);
       const gasPriceStr = await library.eth.getGasPrice();
       const res = await library.eth.estimateGas(instruction);
-      // @ts-ignore
-      setWithdrawFee(((res * Number(gasPriceStr)) / Math.pow(10, ERC20_GAS_DECIMALS)).toFixed(9));
+      setWithdrawFee(Number(((res * Number(gasPriceStr)) / Math.pow(10, ERC20_GAS_DECIMALS)).toFixed(9)));
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
   useEffect(() => {

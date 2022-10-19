@@ -13,6 +13,7 @@ export function Confirm() {
   const { addToast } = useToast();
   const { amount, token, direction, error, pending } = useStatesContext();
   const { deposit, withdraw } = useTransfering();
+  let prevError = '';
 
   const handleConfirmTransfer = () => {
     switch (direction) {
@@ -30,11 +31,10 @@ export function Confirm() {
   }, [amount, token]);
 
   useEffect(() => {
-    if (error) {
+    if (error && prevError !== error) {
+      prevError = error;
       addToast(error, 'ERROR');
     }
-    return () => {
-    };
   }, [error]);
 
   return (
