@@ -3,7 +3,7 @@ import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/sp
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { useWeb3React } from '@web3-react/core';
-import { erc20Abi, proxyApi, SPLToken, useProxyInfo } from 'neon-portal/dist';
+import { erc20Abi, proxyApi, SPLToken, getProxyInfo } from 'neon-portal/dist';
 import { CHAIN_IDS } from '@/connectors';
 import { useNetworkType } from '@/SplConverter/hooks';
 import { splTokensList } from '@/contexts/data';
@@ -26,7 +26,7 @@ export const TokensContext = createContext({
 
 export function TokensProvider({ children = undefined }) {
   const { chainId } = useNetworkType();
-  const proxy = useProxyInfo(proxyApi);
+  const proxy = getProxyInfo(proxyApi);
 
   const currentChainId = useMemo(() => {
     if (Number.isNaN(chainId)) {

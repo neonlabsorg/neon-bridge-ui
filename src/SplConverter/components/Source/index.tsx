@@ -45,7 +45,7 @@ export const Source = ({ className = '' }) => {
       </div>
       <div className='flex justify-center mb-6'>
         {isNeon ? <WalletModalProvider>
-            <WalletMultiButton />
+            <WalletMultiButton children={null} />
           </WalletModalProvider> :
           isSolana ? <Web3Status /> : null}
       </div>

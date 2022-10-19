@@ -22,7 +22,7 @@ export const Target = () => {
   return <div className='w-full flex flex-col'>
     <SourceCard direction={direction} prefix='To' className='mb-6' />
     {direction === Direction.solana ?
-      <WalletModalProvider><WalletMultiButton /></WalletModalProvider>
+      <WalletModalProvider><WalletMultiButton children={null} /></WalletModalProvider>
       : direction === Direction.neon ? <Web3Status className='mb-6 self-center' /> : null}
     {active ? <TransferInfo /> : null}
     <Button disabled={isDisabled} onClick={() => finishStep('target')}>Next</Button>
