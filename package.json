@@ -28,7 +28,7 @@
     "bn.js": "^5.2.1",
     "bowser": "2.11.0",
     "classnames": "2.2.5",
-    "neon-portal": "^1.6.0",
+    "neon-portal": "https://github.com/neonlabsorg/neon-client-transfer.git#NDEV-787/treasury-schema",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-modal": "3.14.4",
