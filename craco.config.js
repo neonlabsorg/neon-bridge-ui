@@ -1,5 +1,8 @@
 const path = require('path');
+const tailwindcss = require('tailwindcss');
 const VersionFile = require('webpack-version-file');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+
 const packageJson = require('./package.json');
 require('dotenv').config({ path: `./env/${process.env.ENV_CONFIG ?? `.env`}` });
 
@@ -21,12 +24,35 @@ module.exports = {
           neonPortalVersion: packageJson.dependencies['neon-portal'],
           tokenListVersion: process.env.REACT_APP_TOKEN_LIST_VER
         }
-      })
-    ]
-  },
-  style: {
-    postcss: {
-      plugins: [require('tailwindcss'), require('autoprefixer')]
+      }),
+      new NodePolyfillPlugin({ excludeAliases: ['console'] })
+    ],
+    rules: [
+      {
+        test: /\.css$/,
+        use: [
+          'style-loader',
+          'css-loader'
+        ]
+      }, {
+        test: /\.scss$/,
+        include: [
+          path.resolve(__dirname, 'src')
+        ],
+        use: [
+          'style-loader',
+          'css-loader',
+          'sass-loader'
+        ]
+      }],
+    fallback: {
+      crypto: require.resolve('crypto-browserify'),
+      stream: require.resolve('stream-browserify'),
+      assert: require.resolve('assert'),
+      buffer: require.resolve('buffer')
     }
+  },
+  postcss: {
+    plugins: [tailwindcss('./tailwind.config.js'), require('autoprefixer')]
   }
 };

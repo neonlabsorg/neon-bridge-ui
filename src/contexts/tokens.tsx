@@ -1,15 +1,16 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token';
+import { getAssociatedTokenAddress } from '@solana/spl-token';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import { useWeb3React } from '@web3-react/core';
-import { erc20Abi, proxyApi, SPLToken, getProxyInfo } from 'neon-portal';
+import { erc20Abi, proxyApi, SPLToken } from 'neon-portal';
 import { CHAIN_IDS } from '@/connectors';
 import { useNetworkType } from '@/SplConverter/hooks';
 import { splTokensList } from '@/contexts/data';
 import { Direction } from '@/contexts/models';
 import { usePrevious } from '@/utils';
 import { useConnection } from './connection';
+import { useProxyInfo } from '@/SplConverter/hooks/transfering/proxy-status';
 
 const TOKEN_LIST = `https://raw.githubusercontent.com/neonlabsorg/token-list/v${process.env.REACT_APP_TOKEN_LIST}/tokenlist.json`;
 
@@ -26,7 +27,7 @@ export const TokensContext = createContext({
 
 export function TokensProvider({ children = undefined }) {
   const { chainId } = useNetworkType();
-  const proxy = getProxyInfo(proxyApi);
+  const proxy = useProxyInfo(proxyApi);
 
   const currentChainId = useMemo(() => {
     if (Number.isNaN(chainId)) {
@@ -61,12 +62,7 @@ export function TokensProvider({ children = undefined }) {
 
   const getSplBalance = async (token) => {
     const pubkey = new PublicKey(token.address_spl);
-    const assocTokenAccountAddress = await Token.getAssociatedTokenAddress(
-      ASSOCIATED_TOKEN_PROGRAM_ID,
-      TOKEN_PROGRAM_ID,
-      pubkey,
-      publicKey
-    );
+    const assocTokenAccountAddress = await getAssociatedTokenAddress(pubkey, publicKey);
     const completed = await Promise.all([
       connection.getTokenAccountBalance(assocTokenAccountAddress),
       timeout(500)

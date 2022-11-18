@@ -4,7 +4,7 @@ import { useToast } from '@/common/Notifications';
 import { useStatesContext } from '@/contexts/states';
 import { ErrorHandler } from '@/SplConverter/components/common/ErrorHandler';
 import { TransferInfo } from '@/SplConverter/components/common/TransferInfo';
-import { useTransfering } from '@/SplConverter/hooks/transfering';
+import { useTransferring } from '@/SplConverter/hooks/transfering';
 import { ReactComponent as ArrowIcon } from '@/assets/arrow-right.svg';
 import { TokenSymbol } from '@/SplConverter/components/common/TokenManager/components/TokenSymbol';
 import { Direction } from '@/contexts/models';
@@ -12,7 +12,7 @@ import { Direction } from '@/contexts/models';
 export function Confirm() {
   const { addToast } = useToast();
   const { amount, token, direction, error, pending } = useStatesContext();
-  const { deposit, withdraw } = useTransfering();
+  const { deposit, withdraw } = useTransferring();
   let prevError = '';
 
   const handleConfirmTransfer = () => {

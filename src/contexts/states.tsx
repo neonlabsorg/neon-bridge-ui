@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useRef, useState } from 
 import { ERC20_GAS_DECIMALS, NEON_TOKEN_DECIMALS, SPLToken } from 'neon-portal';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWeb3React } from '@web3-react/core';
-import { useTransfering } from '@/SplConverter/hooks/transfering';
+import { useTransferring } from '@/SplConverter/hooks/transfering';
 import { Direction } from '@/contexts/models';
 import { useConnection } from './connection';
 import { useTokensContext } from './tokens';
@@ -49,7 +49,7 @@ export function StateProvider({ children = undefined }) {
   const [direction, setDirection] = useState<Direction>(Direction.neon);
   const [theme, setTheme] = useTheme();
   const rejected = useRef(false);
-  const { getEthereumTransactionParams } = useTransfering();
+  const { getEthereumTransactionParams } = useTransferring();
   const toggleDirection = () => setDirection(direction === Direction.neon ? Direction.solana : Direction.neon);
   const resetSteps = () => setSteps(JSON.parse(rowSteps));
 
