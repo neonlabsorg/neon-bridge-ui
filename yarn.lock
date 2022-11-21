@@ -9735,9 +9735,10 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
-"neon-portal@https://github.com/neonlabsorg/neon-client-transfer.git#fix/bigint":
+neon-portal@^1.6.2:
   version "1.6.2"
-  resolved "https://github.com/neonlabsorg/neon-client-transfer.git#49546f4c339ca1e0c72c5ea874c178a15b4ced15"
+  resolved "https://registry.yarnpkg.com/neon-portal/-/neon-portal-1.6.2.tgz#bb1232a67a4de73639a8f607bc9612bf1f6e0dae"
+  integrity sha512-TIMDpWGIXCjTTEQIxvaBjr3CzwdRSYjOlAY7kYjdWVQsL+yWsjuPAJxiLGeaZQzbdomFBf1tdTwCWSOiNhxr0w==
   dependencies:
     "@solana/spl-token" "^0.3.6"
     "@solana/web3.js" "^1.66.2"
