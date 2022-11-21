@@ -9,7 +9,7 @@ require('dotenv').config({ path: `./env/${process.env.ENV_CONFIG ?? `.env`}` });
 module.exports = {
   webpack: {
     alias: {
-      '@': path.resolve(__dirname, 'src/')
+      '@': path.resolve(__dirname, 'src')
     },
     plugins: [
       new VersionFile({
@@ -27,24 +27,6 @@ module.exports = {
       }),
       new NodePolyfillPlugin({ excludeAliases: ['console'] })
     ],
-    rules: [
-      {
-        test: /\.css$/,
-        use: [
-          'style-loader',
-          'css-loader'
-        ]
-      }, {
-        test: /\.scss$/,
-        include: [
-          path.resolve(__dirname, 'src')
-        ],
-        use: [
-          'style-loader',
-          'css-loader',
-          'sass-loader'
-        ]
-      }],
     fallback: {
       crypto: require.resolve('crypto-browserify'),
       stream: require.resolve('stream-browserify'),

@@ -20,12 +20,12 @@ export function useTransferring() {
       onBeforeSignTransaction: () => {
         setPending(true);
       },
-      onSuccessSign: (sig, txHash) => {
-        if (sig) {
-          setSolanaTransferSign(sig);
+      onSuccessSign: (signature, transactionHash) => {
+        if (signature) {
+          setSolanaTransferSign(signature);
         }
-        if (txHash) {
-          setNeonTransferSign(txHash);
+        if (transactionHash) {
+          setNeonTransferSign(transactionHash);
         }
         addTransaction({ from: publicKey.toBase58(), to: account });
         setPending(false);

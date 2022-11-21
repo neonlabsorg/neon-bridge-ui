@@ -27,7 +27,6 @@ export function useNeonTransfer(events: InstructionEvents, connection: Connectio
     connection: connection,
     solanaWalletAddress: publicKey,
     neonWalletAddress,
-    // @ts-ignore
     web3,
     proxyApi: proxyApi,
     proxyStatus: proxyStatus
