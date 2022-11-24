@@ -22,7 +22,7 @@ module.exports = {
         ].join('\n'),
         data: {
           neonPortalVersion: packageJson.dependencies['neon-portal'],
-          tokenListVersion: process.env.REACT_APP_TOKEN_LIST_VER
+          tokenListVersion: process.env.REACT_APP_TOKEN_LIST
         }
       }),
       new NodePolyfillPlugin({ excludeAliases: ['console'] })
