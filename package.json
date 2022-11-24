@@ -25,7 +25,7 @@
     "@web3-react/core": "6.1.9",
     "@web3-react/injected-connector": "6.0.7",
     "classnames": "2.3.2",
-    "neon-portal": "^1.6.2",
+    "neon-portal": "https://github.com/neonlabsorg/neon-client-transfer.git#token-list",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-modal": "3.16.1",
