@@ -1,10 +1,10 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Button from '@/common/Button';
 import { useToast } from '@/common/Notifications';
 import { useStatesContext } from '@/contexts/states';
 import { ErrorHandler } from '@/SplConverter/components/common/ErrorHandler';
 import { TransferInfo } from '@/SplConverter/components/common/TransferInfo';
-import { useTransfering } from '@/SplConverter/hooks/transfering';
+import { useTransferring } from '@/SplConverter/hooks/transfering';
 import { ReactComponent as ArrowIcon } from '@/assets/arrow-right.svg';
 import { TokenSymbol } from '@/SplConverter/components/common/TokenManager/components/TokenSymbol';
 import { Direction } from '@/contexts/models';
@@ -12,16 +12,18 @@ import { Direction } from '@/contexts/models';
 export function Confirm() {
   const { addToast } = useToast();
   const { amount, token, direction, error, pending } = useStatesContext();
-  const { deposit, withdraw } = useTransfering();
+  const { deposit, withdraw } = useTransferring();
+  const [loading, setLoading] = useState<boolean>(false);
   let prevError = '';
 
   const handleConfirmTransfer = () => {
+    setLoading(true);
     switch (direction) {
       case Direction.neon:
-        deposit(amount, token);
+        deposit(amount, token).then(() => setLoading(false));
         break;
       case Direction.solana:
-        withdraw(amount, token);
+        withdraw(amount, token).then(() => setLoading(false));
         break;
     }
   };
@@ -58,7 +60,7 @@ export function Confirm() {
         </div>
       </div>
       <TransferInfo className='mb-8' />
-      <Button onClick={handleConfirmTransfer} diabled={pending}>Confirm</Button>
+      <Button onClick={handleConfirmTransfer} diabled={pending} loading={loading}>Confirm</Button>
       <ErrorHandler className='mt-8 text-red-500' />
     </div>
   );

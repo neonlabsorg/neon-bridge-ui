@@ -10,7 +10,7 @@ import React, {
 } from 'react'
 import { createPortal } from 'react-dom'
 import { useWallet } from '@solana/wallet-adapter-react'
-import { WalletName } from '@solana/wallet-adapter-wallets'
+import { WalletName } from '@solana/wallet-adapter-base';
 
 import { Button } from './Button'
 import { Collapse } from './Collapse'
@@ -149,13 +149,13 @@ export const WalletModal: FC<WalletModalProps> = ({
               </svg>
             </button>
             <ul className='w-full flex flex-col'>
-              {featured.map((wallet) => (
+              {featured.map(({ adapter }) => (
                 <WalletListItem
-                  key={wallet.name}
+                  key={adapter.name}
                   handleClick={(event: React.MouseEvent<Element, globalThis.MouseEvent>) =>
-                    handleWalletClick(event, wallet.name)
+                    handleWalletClick(event, adapter.name)
                   }
-                  wallet={wallet}
+                  wallet={adapter}
                 />
               ))}
             </ul>
@@ -163,13 +163,13 @@ export const WalletModal: FC<WalletModalProps> = ({
               <>
                 <Collapse expanded={expanded} id='wallet-adapter-modal-collapse'>
                   <ul className='wallet-adapter-modal-list'>
-                    {more.map((wallet) => (
+                    {more.map(({ adapter }) => (
                       <WalletListItem
-                        key={wallet.name}
+                        key={adapter.name}
                         handleClick={(event: React.MouseEvent<Element, globalThis.MouseEvent>) =>
-                          handleWalletClick(event, wallet.name)
+                          handleWalletClick(event, adapter.name)
                         }
-                        wallet={wallet}
+                        wallet={adapter}
                       />
                     ))}
                   </ul>

@@ -1,12 +1,12 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWeb3React } from '@web3-react/core';
-import { useNeonTransfer } from 'neon-portal';
 import { useConnection } from '@/contexts/connection';
 import { useStatesContext } from '@/contexts/states';
 import useTransactionHistory from '@/SplConverter/hooks/useTransactionHistory';
 import { useTokensContext } from '@/contexts/tokens';
+import { useNeonTransfer } from '@/SplConverter/hooks/transfering/neon-transfer';
 
-export function useTransfering() {
+export function useTransferring() {
   const connection = useConnection();
   const { setPending, setSolanaTransferSign, setNeonTransferSign, setError } = useStatesContext();
   const { addTransaction } = useTransactionHistory();
@@ -20,12 +20,12 @@ export function useTransfering() {
       onBeforeSignTransaction: () => {
         setPending(true);
       },
-      onSuccessSign: (sig, txHash) => {
-        if (sig) {
-          setSolanaTransferSign(sig);
+      onSuccessSign: (signature, transactionHash) => {
+        if (signature) {
+          setSolanaTransferSign(signature);
         }
-        if (txHash) {
-          setNeonTransferSign(txHash);
+        if (transactionHash) {
+          setNeonTransferSign(transactionHash);
         }
         addTransaction({ from: publicKey.toBase58(), to: account });
         setPending(false);

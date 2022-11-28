@@ -17,7 +17,7 @@ const ToastContext = React.createContext(null);
 
 let id = 1;
 
-const ToastProvider = ({ children }) => {
+export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
   const addToast = useCallback((content, type = 'SUCCESS') => {
@@ -51,11 +51,11 @@ const ToastProvider = ({ children }) => {
   );
 };
 
-const useToast = () => {
+export const useToast = () => {
   return useContext(ToastContext);
 };
 
-const Toast = ({ children, id, type, style }) => {
+export const Toast = ({ children, id, type, style }) => {
   const { removeToast } = useToast();
   const { theme } = useStatesContext();
 
@@ -71,45 +71,34 @@ const Toast = ({ children, id, type, style }) => {
 
   const Icon = ICONS[type];
 
-  return (
-    <div
-      className={`
-    react-notie-container mb-8 w-full rounded-lg
-    ${theme === 'dark' ? 'react-notie-container--dark' : ''}
-  `}
-      style={style}
-    >
-      <div className='flex items-center'>
-        <div className='mr-4'>
-          <Icon />
-        </div>
-        <div className='flex flex-col'>
-          <div className='react-notie-title'>{children}</div>
-        </div>
+  return <div className={`react-notie-container mt-8 w-full rounded-lg
+    ${theme === 'dark' ? 'react-notie-container--dark' : ''}`} style={style}>
+    <div className='flex items-center'>
+      <div className='mr-4'>
+        <Icon />
       </div>
-      <div className='react-notie-dismiss' onClick={() => removeToast(id)}>
-        <CrossIcon />
+      <div className='flex flex-col'>
+        <div className='react-notie-title'>{children}</div>
       </div>
     </div>
-  );
+    <div className='react-notie-dismiss' onClick={() => removeToast(id)}>
+      <CrossIcon />
+    </div>
+  </div>;
 };
 
-const ToastContainer = ({ toasts }) => {
+export const ToastContainer = ({ toasts }) => {
   const transitions = useTransition(toasts, (toast) => toast.id, {
     from: { left: '-100%' },
     enter: { left: '0%' },
     leave: { left: '-100%' }
   });
 
-  return (
-    <div className='fixed flex flex-col justify-end left-6 z-10 top-0 bottom-0 h-full'>
-      {transitions.map(({ item, key, props }) => (
-        <Toast key={key} id={item.id} type={item.type} style={props}>
-          {item.content}
-        </Toast>
-      ))}
-    </div>
-  );
+  return <div className='fixed flex flex-col justify-end left-6 bottom-6 z-10'>
+    {transitions.map(({ item, key, props }) => (
+      <Toast key={key} id={item.id} type={item.type} style={props}>
+        {item.content}
+      </Toast>
+    ))}
+  </div>;
 };
-
-export { ToastContainer, ToastProvider, useToast };
