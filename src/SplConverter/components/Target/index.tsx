@@ -11,13 +11,21 @@ import { TransferInfo } from '@/SplConverter/components/common/TransferInfo';
 import { Direction } from '@/contexts/models';
 
 export const Target = () => {
-  const { direction, finishStep, depositFee, solBalance } = useStatesContext();
-  const { active } = useWeb3React();
+  const {
+    direction,
+    finishStep,
+    depositFee,
+    withdrawFee,
+    solBalance,
+    neonBalance
+  } = useStatesContext();
+  const { active, account } = useWeb3React();
   const { publicKey } = useWallet();
 
   const isDisabled = useMemo(() => {
-    return !active || depositFee > solBalance || !publicKey;
-  }, [direction, active, depositFee, solBalance, publicKey]);
+    return !active || !account || !publicKey || depositFee > solBalance ||
+      direction == Direction.solana && withdrawFee > neonBalance;
+  }, [direction, active, depositFee, solBalance, publicKey, account, neonBalance, withdrawFee]);
 
   return <div className='w-full flex flex-col'>
     <SourceCard direction={direction} prefix='To' className='mb-6' />

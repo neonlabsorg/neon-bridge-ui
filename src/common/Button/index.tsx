@@ -13,6 +13,7 @@ const Button = (props: any) => {
     gray = false,
     iconed = false,
     disabled = false,
+    loading = false,
     onClick = () => {
     }
   } = props;
@@ -23,15 +24,15 @@ const Button = (props: any) => {
         ${gray ? 'button--gray' : ''}
         ${iconed ? 'button--iconed' : ''}
         ${gradient ? `button--gradient` : `button--${layoutTheme}`}
-        ${disabled ? 'button--disabled' : ''}`;
+        ${disabled || loading ? 'button--disabled' : ''}`;
 
   return <>
     {to.length ?
       <a href={to} target='_blank' rel='noopener noreferrer' className={classNames}>
         {children}
       </a> :
-      <button className={classNames} onClick={onClick} disabled={disabled}>
-        {children}
+      <button className={classNames} onClick={onClick} disabled={disabled || loading}>
+        {loading ? <>Loading...</> : children}
       </button>}
   </>;
 };

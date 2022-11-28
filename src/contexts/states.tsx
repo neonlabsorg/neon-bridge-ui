@@ -1,5 +1,10 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { ERC20_GAS_DECIMALS, NEON_TOKEN_DECIMALS, SPLToken } from 'neon-portal';
+import {
+  ERC20_GAS_DECIMALS,
+  NEON_TOKEN_DECIMALS,
+  NEON_TOKEN_MINT_DECIMALS,
+  SPLToken
+} from 'neon-portal';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWeb3React } from '@web3-react/core';
 import { useTransferring } from '@/SplConverter/hooks/transfering';
@@ -7,6 +12,7 @@ import { Direction } from '@/contexts/models';
 import { useConnection } from './connection';
 import { useTokensContext } from './tokens';
 import { useTheme } from '@/contexts/theme';
+import Big from 'big.js';
 
 const STEPS = {
   source: { title: 'Source', status: 'active' },
@@ -40,6 +46,7 @@ export function StateProvider({ children = undefined }) {
   const [depositFee, setDepositFee] = useState(0);
   const [withdrawFee, setWithdrawFee] = useState(0);
   const [solBalance, setSolBalance] = useState<string>('0');
+  const [neonBalance, setNeonBalance] = useState<number>(0);
   const [pending, setPending] = useState(false);
   const [solanaTransferSign, setSolanaTransferSign] = useState('');
   const [neonTransferSign, setNeonTransferSign] = useState('');
@@ -133,6 +140,11 @@ export function StateProvider({ children = undefined }) {
       // console.log(e);
     }
   };
+  const calculatingNeonBalance = async () => {
+    const balance = await library.eth.getBalance(account);
+    const num = new Big(balance).div(Big(10).pow(NEON_TOKEN_MINT_DECIMALS));
+    setNeonBalance(num.toNumber());
+  };
   useEffect(() => {
     async function main() {
       if (publicKey) await calculatingSolBalances();
@@ -145,6 +157,7 @@ export function StateProvider({ children = undefined }) {
     async function main() {
       if (account && token && amount && publicKey) {
         await calculatingEthBalances();
+        await calculatingNeonBalance();
       }
     }
 
@@ -194,6 +207,7 @@ export function StateProvider({ children = undefined }) {
         setPending,
         depositFee,
         solBalance,
+        neonBalance,
         withdrawFee,
         maxBalance
       }}>

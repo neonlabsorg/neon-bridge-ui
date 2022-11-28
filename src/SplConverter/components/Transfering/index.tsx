@@ -25,7 +25,7 @@ export function Transferring() {
     timeout.current = setTimeout(() => {
       setReset(true);
       timeout.current = null;
-    }, 30000);
+    }, 3e4);
     return () => clearTimeout(timeout.current);
   }, [pending]);
 
@@ -53,7 +53,8 @@ export function Transferring() {
   } else if (solanaTransferSign || neonTransferSign) {
     return (
       <div className='flex flex-col items-center min-w-420px p-6 bg-white dark:bg-dark-600'>
-        <button onClick={handleRepeatScript} className='self-end mb-10 cursor-pointer fill-black dark:fill-white' >
+        <button onClick={handleRepeatScript}
+                className='self-end mb-10 cursor-pointer fill-black dark:fill-white'>
           <CloseIcon />
         </button>
         <DoneIcon className='mb-10' />
