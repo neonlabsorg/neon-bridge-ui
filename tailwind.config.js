@@ -15,6 +15,14 @@ module.exports = {
       width: {
         '18px': '18px'
       },
+      fontSize: {
+        headline: ['20px', '24px'],
+        'base-2': ['18px', '24px'],
+      },
+      letterSpacing: {
+        tight: '-0.01em',
+        tighten: '-0.6px'
+      },
       maxWidth: {
         '420px': '420px'
       },
@@ -41,7 +49,14 @@ module.exports = {
         'dark-200': '#5B5B5B',
         'op04-white': 'rgba(255, 255, 255, 0.04)',
         'op15-white': 'rgba(255, 255, 255, 0.15)',
-        'op15-black': 'rgba(0, 0, 0, 0.15)'
+        'op15-black': 'rgba(0, 0, 0, 0.15)',
+        'main-bg-color': '#06010D',
+        'light-grey': '#91879E',
+        'input-bg': '#282230',
+        'input-bg-hover': '#37313F',
+        'input-hint-text': '#3F3A46',
+        'input-bg-disabled': '#1C1920',
+        'input-text-disabled': '#91879E',
       }
     },
     fill: {

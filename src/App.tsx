@@ -3,14 +3,12 @@ import { Web3ReactProvider } from '@web3-react/core';
 import Web3 from 'web3';
 
 import { ToastProvider } from '@/common/Notifications';
-import Layout from './common/Layout';
+import Layout from './common/Layout/newIndex';
 import { ConnectionProvider } from './contexts/connection';
 import { StateProvider } from './contexts/states';
 import { TokensProvider } from './contexts/tokens';
-import { SplConverter } from './SplConverter';
+import { SplConverter } from './SplConverter/';
 import TokenManager from './SplConverter/components/common/TokenManager';
-import IssueReporter from './SplConverter/components/IssueReporter';
-import ThemeSwitcher from './SplConverter/components/ThemeSwitcher';
 import { useSolanaWallet } from './SplConverter/hooks/useSolanaWallet';
 import './App.scss';
 
@@ -28,13 +26,9 @@ function App() {
           <TokensProvider>
             <StateProvider>
               <ToastProvider>
-                <Layout className='flex flex-col w-full px-4 relative' bodyClassName='flex flex-col justify-center'>
+                <Layout className='flex flex-col w-full relative' bodyClassName='flex flex-col justify-center'>
                   <SplConverter />
                   <TokenManager />
-                  <div className='absolute z-10 right-10 bottom-10 flex flex-col items-end'>
-                    <ThemeSwitcher />
-                    <IssueReporter className='mt-10' />
-                  </div>
                 </Layout>
                 <div id='modals' />
               </ToastProvider>

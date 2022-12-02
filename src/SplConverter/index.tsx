@@ -10,6 +10,7 @@ import useTransactionHistory from './hooks/useTransactionHistory';
 import { Accordion } from './components/common/Accordion';
 import { Confirm } from './components/Confirm';
 import { Source } from './components/Source';
+import NewSource from './components/Source/newIndex';
 import { Target } from './components/Target';
 import { Transferring } from './components/Transfering';
 
@@ -60,6 +61,11 @@ export const SplConverter = () => {
     return <Transferring />;
   } else {
     return <>
+      <div className='mb-32'>
+        <NewSource></NewSource>
+      </div>
+
+
       {isFirstTransaction && viewNotify ? (
         <div className='bg-white dark:bg-dark-600 p-6 mb-4 flex flex-col relative'>
           <CrossIcon className='absolute right-5 top-5' onClick={() => setViewNotify(false)} />

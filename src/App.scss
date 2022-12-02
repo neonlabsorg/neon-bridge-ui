@@ -45,6 +45,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+:root {
+  font-size: 16px;
+}
+
 *,
 *:before,
 *:after {
@@ -77,4 +81,15 @@ input {
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+}
+
+
+.text {
+  &__headline {
+    @apply font-bold text-headline tracking-tight
+  }
+
+  &__link {
+    @apply text-base font-medium
+  }
 }
