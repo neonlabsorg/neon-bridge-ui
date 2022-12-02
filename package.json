@@ -17,6 +17,7 @@
     "test-audit": "yarn audit --groups dependencies --level high"
   },
   "dependencies": {
+    "@popperjs/core": "2.11.6",
     "@solana/spl-token": "^0.3.6",
     "@solana/wallet-adapter-base": "^0.9.19",
     "@solana/wallet-adapter-react": "^0.15.25",

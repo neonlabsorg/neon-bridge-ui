@@ -57,6 +57,8 @@ module.exports = {
         'input-hint-text': '#3F3A46',
         'input-bg-disabled': '#1C1920',
         'input-text-disabled': '#91879E',
+        'dropdown-item-hovered': '#4B4455',
+        'dropdown-item-text-hovered': '#EF6B4C',
       }
     },
     fill: {

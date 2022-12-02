@@ -4,15 +4,22 @@ import {useStatesContext} from "@/contexts/states";
 import {useMemo} from "react";
 import {Direction} from "@/contexts/models";
 import BaseInput from "@/common/BaseInput";
+import TokenSelector from "@/SplConverter/components/common/TokenSelector";
+import {useWallet} from "@solana/wallet-adapter-react";
+import {useWeb3React} from "@web3-react/core";
 
 export const Source = ({ className = '' }) => {
   const { direction, toggleDirection } = useStatesContext();
+  const { connected: solanaWalletConnected } = useWallet();
+  const { active, account } = useWeb3React();
 
   const walletName = useMemo(() => {
     return direction === Direction.solana
       ? { from: Direction.neon, to: Direction.solana }
       : { from: Direction.solana, to: Direction.neon }
   }, [direction])
+
+  const isWalletConnected = (active && account) && solanaWalletConnected
 
   return(
     <div className={`${className}`}>
@@ -27,8 +34,12 @@ export const Source = ({ className = '' }) => {
       </div>
 
       <div className='grid grid-cols-2 gap-[10px] mt-[25px]'>
-        <div></div>
-        <BaseInput label='Amount' onChange={(string) => { console.log(string)} }>
+        <TokenSelector disabled={!isWalletConnected} />
+        <BaseInput
+          disabled={!isWalletConnected}
+          label='Amount'
+          onChange={(string) => { console.log(string)} }
+        >
           <div className='flex justify-between w-full mt-2 ml-4 text-input-hint-text'>
             <div>~$ 0.0</div>
             <div>
