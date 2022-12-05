@@ -1,0 +1,19 @@
+.transfer-button {
+  background: linear-gradient(91.79deg, #6115DF 59.46%, #BA3CD9 80.5%, #F77137 101.11%);
+  background-size: 150%;
+  background-position: 90% 50%;
+  //animation: slide-background 5s ease reverse;
+}
+
+.transfer-button:hover {
+  animation: slide-background 0.5s ease forwards;
+}
+
+@keyframes slide-background {
+  0%{
+    background-position: 90% 50%;
+  }
+  100% {
+    background-position: 50% 50%;
+  }
+}

@@ -7,6 +7,7 @@ import BaseCurrencyInput from "@/common/BaseCurrencyInput";
 import TokenSelector from "@/SplConverter/components/common/TokenSelector";
 import {useWallet} from "@solana/wallet-adapter-react";
 import {useWeb3React} from "@web3-react/core";
+import './newIndex.scss'
 
 export const Source = ({ className = '' }) => {
   const { direction, toggleDirection, token } = useStatesContext();
@@ -47,6 +48,10 @@ export const Source = ({ className = '' }) => {
           </div>
         </BaseCurrencyInput>
       </div>
+
+      <button className='w-full transfer-button py-5 mt-[30px] rounded-[8px]'>
+        Transfer
+      </button>
     </div>
   )
 }
