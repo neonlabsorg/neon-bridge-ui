@@ -66,7 +66,7 @@ export const TokenSelector = ({ disabled }: TokenSelectorProps) => {
         Choose token
       </div>
       <div
-        onClick={onClick}
+        onClick={() => onClick()}
         ref={dropperRef}
         className={`flex
          rounded-[8px] border border-2 border-transparent
@@ -79,26 +79,22 @@ export const TokenSelector = ({ disabled }: TokenSelectorProps) => {
         { token ?
           <TokenItem disabled={true} token={token}></TokenItem> : <div>Token is not selected</div> }
       </div>
-      {
-        showDropdown &&
-        <div
-          className={
-            (showDropdown ? "absolute " : "hidden ") +
-            `text-base z-50 float-left py-2 list-none text-left rounded shadow-lg mt-1 bg-black overflow-auto`
-          }
-          ref={dropdownRef}
-          style={{
-            minWidth: `${dropperRef.current.clientWidth}px`,
-            width: `${dropperRef.current.clientWidth}px`,
-            maxWidth: `${dropperRef.current.clientWidth}px`,
-            maxHeight: '192px'
-          }}
-        >
-          { list.map((token: SPLToken, index) =>
-              <TokenItem onClose={() => setShowDropdown(false)} token={token} key={index} balance='0.0' />)
-          }
-        </div>
-      }
+      <div
+        className={
+          `${showDropdown ? 'absolute' : 'hidden'} text-base z-50 float-left py-2 list-none text-left rounded shadow-lg bg-black overflow-auto`
+        }
+        ref={dropdownRef}
+        style={{
+          minWidth: `${dropperRef.current?.clientWidth}px`,
+          width: `${dropperRef.current?.clientWidth}px`,
+          maxWidth: `${dropperRef.current?.clientWidth}px`,
+          maxHeight: '192px'
+        }}
+      >
+        { list.map((token: SPLToken, index) =>
+          <TokenItem onClose={() => setShowDropdown(false)} token={token} key={index} balance='0.0' />)
+        }
+      </div>
     </div>
   )
 }
