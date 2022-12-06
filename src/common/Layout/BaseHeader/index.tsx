@@ -11,12 +11,12 @@ const Header = () => {
       </div>
       <div className='text-right text__link'>
         <ul className='flex justify-end'>
-          <li className='cursor-pointer select-none'>
+          <li className='cursor-pointer select-none ease-in duration-200 hover:text-link-hover-color'>
             <a rel='noopener noreferrer' target='_blank' href='https://neon-labs.org'>
               Neon Website
             </a>
           </li>
-          <li className='cursor-pointer ml-5 select-none'>
+          <li className='cursor-pointer ml-5 select-none ease-in duration-200 hover:text-link-hover-color'>
             Help
           </li>
         </ul>

@@ -1,7 +1,12 @@
 import BaseHeader from './BaseHeader'
+import StatusBlock from '@/SplConverter/components/common/StatusBlock';
+import {useStatesContext} from "@/contexts/states";
+import {Transferring} from "@/SplConverter/components/Transfering";
 const Layout = ({ children = null, bodyClassName = '', className = '' }) => {
+  const { steps, pending, neonTransferSign, solanaTransferSign, confirmation } = useStatesContext();
+
   return (
-    <div className={`${className} bg-main-bg-color min-h-screen text-white`}>
+    <div className={`${className} bg-main-bg-color min-h-screen text-white relative`}>
       <BaseHeader></BaseHeader>
 
       <div className='layout-body max-w-[605px] w-full mx-auto'>
@@ -12,6 +17,11 @@ const Layout = ({ children = null, bodyClassName = '', className = '' }) => {
         </div>
         {children}
       </div>
+      {
+        pending === true || solanaTransferSign || neonTransferSign || confirmation
+          ? <StatusBlock />
+          : null
+      }
     </div>
   )
 }

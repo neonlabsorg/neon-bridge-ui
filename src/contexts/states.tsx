@@ -48,6 +48,7 @@ export function StateProvider({ children = undefined }) {
   const [solBalance, setSolBalance] = useState<string>('0');
   const [neonBalance, setNeonBalance] = useState<number>(0);
   const [pending, setPending] = useState(false);
+  const [confirmation, setConfirmation] = useState(false);
   const [solanaTransferSign, setSolanaTransferSign] = useState('');
   const [neonTransferSign, setNeonTransferSign] = useState('');
   const [error, setError] = useState(null);
@@ -209,7 +210,9 @@ export function StateProvider({ children = undefined }) {
         solBalance,
         neonBalance,
         withdrawFee,
-        maxBalance
+        maxBalance,
+        confirmation,
+        setConfirmation,
       }}>
       {children}
     </StateContext.Provider>

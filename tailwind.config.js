@@ -59,6 +59,9 @@ module.exports = {
         'input-text-disabled': '#91879E',
         'dropdown-item-hovered': '#4B4455',
         'dropdown-item-text-hovered': '#EF6B4C',
+        'text-purple': '#9F65FF',
+        'border-color': 'rgba(255, 255, 255, 0.3)',
+        'link-hover-color': '#F5FF6B',
       }
     },
     fill: {

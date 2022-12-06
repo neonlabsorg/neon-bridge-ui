@@ -8,7 +8,7 @@ import { useNeonTransfer } from '@/SplConverter/hooks/transfering/neon-transfer'
 
 export function useTransferring() {
   const connection = useConnection();
-  const { setPending, setSolanaTransferSign, setNeonTransferSign, setError } = useStatesContext();
+  const { setPending, setSolanaTransferSign, setNeonTransferSign, setError, setConfirmation } = useStatesContext();
   const { addTransaction } = useTransactionHistory();
   const { refreshTokenList } = useTokensContext();
   const { publicKey } = useWallet();

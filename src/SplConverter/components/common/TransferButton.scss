@@ -3,6 +3,12 @@
   background-size: 150%;
   background-position: 90% 50%;
   //animation: slide-background 5s ease reverse;
+
+  &--disabled {
+    background: none;
+    cursor: not-allowed !important;
+    @apply bg-input-bg-disabled text-input-hint-text;
+  }
 }
 
 .transfer-button:hover {
