@@ -1,0 +1,11 @@
+.wallet-block {
+  .wallet-block--disconnect {
+    display: none;
+  }
+
+  &:hover {
+    .wallet-block--disconnect {
+      display: flex;
+    }
+  }
+}

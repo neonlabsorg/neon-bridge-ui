@@ -6,7 +6,9 @@ import DisconnectLogo from '@/assets/disconnect.svg'
 import {useWeb3React} from "@web3-react/core";
 import {injected} from "@/connectors";
 import {useWallet} from "@solana/wallet-adapter-react";
-import {useEffect, useState} from "react";
+import {useEffect} from "react";
+
+import './NewSourceCard.scss';
 
 interface SourceCardProps {
   direction: 'from' | 'to';
@@ -33,7 +35,6 @@ const WalletConnectedState = ({ walletName }: { walletName: string }) => {
 }
 
 export const SourceCard = ({ direction, wallet, className = '' }: SourceCardProps) => {
-  const [hovered, setHovered] = useState(false)
   const { active, account, activate, deactivate } = useWeb3React();
   const { wallet: solanaWallet, wallets, select, connect, disconnect, connected } = useWallet();
 
@@ -98,32 +99,31 @@ export const SourceCard = ({ direction, wallet, className = '' }: SourceCardProp
         {stringCapitalize(direction)}
       </div>
       <div
-        className='px-4 py-5 rounded-[8px] bg-input-bg hover:bg-input-bg-hover ease-in duration-200 w-full h-[66px] text-base-2'
-        onMouseEnter={() => {
-          setHovered(true)
-        }}
-        onMouseLeave={() => {
-          setHovered(false)
-        }}
+        className='relative px-4 py-5 rounded-[8px] bg-input-bg hover:bg-input-bg-hover ease-in duration-200 w-full h-[66px] text-base-2 wallet-block'
       >
-        {
-          hovered && walletMapper[wallet].connected
-            ? <div onClick={walletMapper[wallet].disconnect} className='w-full text-center flex justify-center items-center text-light-grey -mt-1'>
-                <img className='mr-2' src={DisconnectLogo} alt=""/>
-                Disconnect
-              </div>
-            : <div className='w-full flex'>
-                <img src={walletMapper[wallet].img} alt=""/>
-                <div className='ml-[34px] w-full'>
-                  {
-                    walletMapper[wallet].connected
-                      ? <WalletConnectedState walletName={stringCapitalize(wallet)} />
-                      : <div onClick={walletMapper[wallet].connect}>
-                        Connect Wallet
-                      </div>
-                  }
-                </div>
-              </div>
+
+        <div className='w-full flex'>
+          <img src={walletMapper[wallet].img} alt=""/>
+          <div className='ml-[34px] w-full'>
+            { walletMapper[wallet].connected
+                ? <WalletConnectedState walletName={stringCapitalize(wallet)} />
+                : <div onClick={walletMapper[wallet].connect}>
+                  Connect Wallet
+                  </div>
+            }
+          </div>
+        </div>
+        { walletMapper[wallet].connected
+          ?
+          <div
+            onClick={walletMapper[wallet].disconnect}
+            className='wallet-block--disconnect bg-input-bg rounded-[8px] hover:bg-input-bg-hover top-0 left-0 absolute h-full w-full text-center flex justify-center items-center text-light-grey'
+          >
+            <img className='mr-2' src={DisconnectLogo} alt=""/>
+            Disconnect
+          </div>
+          : null
+
         }
       </div>
     </div>

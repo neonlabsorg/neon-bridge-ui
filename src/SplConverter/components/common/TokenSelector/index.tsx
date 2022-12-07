@@ -3,7 +3,7 @@ import {createPopper} from "@popperjs/core";
 import {useTokensContext} from "@/contexts/tokens";
 import {SPLToken} from "neon-portal/dist/models/token";
 import {useStatesContext} from "@/contexts/states";
-
+import { ReactComponent as DropDownIcon } from '@/assets/dropdown.svg';
 interface TokenSelectorProps {
   disabled: boolean
 }
@@ -35,7 +35,7 @@ export const TokenItem = (props: TokenItemProps) => {
       onClick={() => onSelect()}
     >
       <img className='w-[24px] h-[24px]' src={logo} alt={symbol} />
-      <div className={ `${hovered && 'text-dropdown-item-text-hovered '} + ml-[10px]`}> {symbol} </div>
+      <div className={ `${hovered ? 'text-dropdown-item-text-hovered' : ''} + ml-[10px]`}> {symbol} </div>
       <div className='ml-auto'> {balance} </div>
     </div>
   )
@@ -72,12 +72,17 @@ export const TokenSelector = ({ disabled }: TokenSelectorProps) => {
          rounded-[8px] border border-2 border-transparent
          bg-input-bg hover:bg-input-bg-hover ease-in duration-200
          w-full h-[66px] text-base-2
-         ${disabled && '!bg-input-bg-disabled'}
-         ${!token && 'px-4 py-5'}
+         ${disabled ? '!bg-input-bg-disabled' : ''}
+         ${!token ? 'px-4 py-5' : ''}
       `}
       >
-        { token ?
-          <TokenItem disabled={true} token={token}></TokenItem> : <div>Token is not selected</div> }
+        { token
+          ? <TokenItem disabled={true} token={token}></TokenItem>
+          : <div className='flex select-none justify-between w-full'>
+              <div className={`${disabled ? 'text-light-grey' : 'text-white'}`}>Choose token</div>
+              <DropDownIcon className={ `${disabled ? 'fill-[#91879E]' : 'fill-white'}  text-light-grey`} />
+            </div>
+        }
       </div>
       <div
         className={
