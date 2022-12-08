@@ -27,6 +27,18 @@ export const Target = () => {
       direction == Direction.solana && withdrawFee > neonBalance;
   }, [direction, active, depositFee, solBalance, publicKey, account, neonBalance, withdrawFee]);
 
+  const isEnough = useMemo(() => {
+    if (!active || !account || !publicKey) {
+      return true;
+    }
+
+    if (direction === Direction.neon) {
+      return Number(solBalance) >= Number(depositFee)
+    } else if (direction === Direction.solana) {
+      return Number(neonBalance) >= Number(withdrawFee)
+    }
+  }, [direction, depositFee, withdrawFee])
+
   return <div className='w-full flex flex-col'>
     <SourceCard direction={direction} prefix='To' className='mb-6' />
     {direction === Direction.solana ?
@@ -34,5 +46,10 @@ export const Target = () => {
       : direction === Direction.neon ? <Web3Status className='mb-6 self-center' /> : null}
     {active ? <TransferInfo /> : null}
     <Button disabled={isDisabled} onClick={() => finishStep('target')}>Next</Button>
+    {!isEnough ?
+      <div className='mt-2 text-red-600'>
+        Don't have enough tokens for transaction fee
+      </div>
+      : null}
   </div>;
 };
